@@ -95,4 +95,9 @@ export class ProductsController {
     private loweredArrayValues(array: string[]) {
         return array.map((value) => value.toLowerCase());
     }
+
+    getAllValuesFromField(field: string) {
+        const values = this.products.map((product) => product[field as keyof IProduct]);
+        return new Set(this.loweredArrayValues(values as Array<string>));
+    }
 }
