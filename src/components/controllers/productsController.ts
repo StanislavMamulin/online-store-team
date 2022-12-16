@@ -2,13 +2,13 @@ import { productsCollection } from '../products';
 import { IProduct } from '../types';
 
 export class ProductsController {
-    products: IProduct[];
+    private readonly products: IProduct[];
     private allFilters: Map<keyof IProduct, (x: IProduct) => boolean> = new Map();
 
-    categoriesForFilter: string[] = [];
-    brandsForFilter: string[] = [];
-    priceRange: [number, number] = [0, Number.MAX_VALUE];
-    stockRange: [number, number] = [0, Number.MAX_VALUE];
+    private categoriesForFilter: string[] = [];
+    private brandsForFilter: string[] = [];
+    private priceRange: [number, number] = [0, Number.MAX_VALUE];
+    private stockRange: [number, number] = [0, Number.MAX_VALUE];
 
     filteredProducts: IProduct[];
 
@@ -51,7 +51,7 @@ export class ProductsController {
         this.filterProducts();
     }
 
-    isProductInArray = (fieldOfProduct: string, filters: string[]): boolean => {
+    private isProductInArray = (fieldOfProduct: string, filters: string[]): boolean => {
         if (filters.length === 0) {
             return true;
         }
@@ -59,7 +59,7 @@ export class ProductsController {
         return this.loweredArrayValues(filters).includes(fieldOfProduct.toLowerCase());
     };
 
-    isPropertyInRange = (propertyOfProduct: number, range: number[]): boolean => {
+    private isPropertyInRange = (propertyOfProduct: number, range: number[]): boolean => {
         if (range.length === 0) {
             return true;
         }
@@ -75,16 +75,16 @@ export class ProductsController {
         return this.products.sort((a, b) => Number(b[field as keyof IProduct]) - Number(a[field as keyof IProduct]));
     }
 
-    filterByCategory = (product: IProduct): boolean =>
+    private filterByCategory = (product: IProduct): boolean =>
         this.isProductInArray(product.category, this.categoriesForFilter);
 
-    filterByBrand = (product: IProduct): boolean => this.isProductInArray(product.brand, this.brandsForFilter);
+    private filterByBrand = (product: IProduct): boolean => this.isProductInArray(product.brand, this.brandsForFilter);
 
-    filterByPrice = (product: IProduct): boolean => this.isPropertyInRange(product.price, this.priceRange);
+    private filterByPrice = (product: IProduct): boolean => this.isPropertyInRange(product.price, this.priceRange);
 
-    filterByStock = (product: IProduct): boolean => this.isPropertyInRange(product.stock, this.stockRange);
+    private filterByStock = (product: IProduct): boolean => this.isPropertyInRange(product.stock, this.stockRange);
 
-    filterProducts() {
+    private filterProducts() {
         this.filteredProducts = this.products;
 
         for (const filterFunc of this.allFilters.values()) {
