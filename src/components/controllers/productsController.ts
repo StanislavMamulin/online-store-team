@@ -23,7 +23,7 @@ export class ProductsController {
         this.allFilters.set('stock', this.filterByStock);
     }
 
-    private toggleValue(filter: string[], newValue: string) {
+    private toggleFilter(filter: string[], newValue: string) {
         const index = filter.findIndex((value) => value === newValue);
 
         if (index === -1) {
@@ -33,19 +33,25 @@ export class ProductsController {
         }
     }
 
-    private changeLimitOfRange(range: [number, number], newLimit: number) {
+    private changeLimitOfRange(range: [number, number], newLimit: [number, number]) {
         console.log('change limit of range');
     }
 
-    setFilterForField(field: keyof IProduct, filterValue: string & number) {
-        if (field === 'brand') {
-            this.toggleValue(this.brandsForFilter, filterValue);
-        } else if (field === 'category') {
-            this.toggleValue(this.categoriesForFilter, filterValue);
-        } else if (field === 'price') {
-            this.changeLimitOfRange(this.priceRange, filterValue);
-        } else if (field === 'stock') {
-            this.changeLimitOfRange(this.stockRange, filterValue);
+    setFilterForField(field: keyof IProduct, filterValue: string | [number, number]) {
+        if (typeof filterValue === 'string') {
+            if (field === 'brand') {
+                this.toggleFilter(this.brandsForFilter, filterValue);
+            } else if (field === 'category') {
+                this.toggleFilter(this.categoriesForFilter, filterValue);
+            }
+        }
+
+        if (Array.isArray(filterValue)) {
+            if (field === 'price') {
+                this.changeLimitOfRange(this.priceRange, filterValue);
+            } else if (field === 'stock') {
+                this.changeLimitOfRange(this.stockRange, filterValue);
+            }
         }
 
         this.filterProducts();
@@ -85,7 +91,7 @@ export class ProductsController {
     private filterByStock = (product: IProduct): boolean => this.isPropertyInRange(product.stock, this.stockRange);
 
     private filterProducts() {
-        this.filteredProducts = this.products;
+        this.filteredProducts = Array(...this.products);
 
         for (const filterFunc of this.allFilters.values()) {
             this.filteredProducts = this.filteredProducts.filter(filterFunc);
