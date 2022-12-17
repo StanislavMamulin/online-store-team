@@ -11,13 +11,13 @@ export class CatalogPage {
         this.el.append(productsItems);
     }
 
-    private createDiv(className: string) {
+    private createDiv(className: string): HTMLElement {
         const div = document.createElement('div');
         div.classList.add(className);
         return div;
     }
 
-    private createCardInfoText(field: string, value: string) {
+    private createCardInfoText(field: string, value: string): HTMLElement {
         const p = document.createElement('p');
         p.innerText = field;
         const span = document.createElement('span');
@@ -26,7 +26,7 @@ export class CatalogPage {
         return p;
     }
 
-    private createCardInfoTexts(obj: IProduct) {
+    private createCardInfoTexts(obj: IProduct): HTMLElement {
         const div = this.createDiv('card-info-item');
         const categoryInfo = this.createCardInfoText('category', obj.category);
         const brandInfo = this.createCardInfoText('brand', obj.brand);
@@ -38,7 +38,7 @@ export class CatalogPage {
         return div;
     }
 
-    private renderCard(obj: IProduct) {
+    private renderCard(obj: IProduct): HTMLElement {
         const cardWrapper = this.createDiv('card-wrapper');
         const cardText = this.createDiv('card-text');
         const cardTitle = this.createDiv('card-title');
@@ -50,7 +50,7 @@ export class CatalogPage {
         return cardWrapper;
     }
 
-    private renderCards() {
+    private renderCards(): HTMLElement {
         const productsItems = this.createDiv('products-items');
         for (const product of this.productsController.filteredProducts) {
             const card = this.renderCard(product);
