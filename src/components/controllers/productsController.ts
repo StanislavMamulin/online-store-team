@@ -16,7 +16,10 @@ export class ProductsController {
         this.products = productsCollection;
         this.filteredProducts = this.products;
 
-        // add filters
+        this.addFilters();
+    }
+
+    private addFilters(): void {
         this.allFilters.set('category', this.filterByCategory);
         this.allFilters.set('brand', this.filterByBrand);
         this.allFilters.set('price', this.filterByPrice);
