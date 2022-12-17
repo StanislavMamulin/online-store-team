@@ -106,4 +106,18 @@ export class ProductsController {
         const values = this.products.map((product) => product[field as keyof IProduct]);
         return new Set(this.loweredArrayValues(values as Array<string>));
     }
+
+    searchProduct(searchRequest: string) {
+        this.filteredProducts = this.filteredProducts.filter((product) => {
+            // skip unnecessary fields
+            const excludeField = new Set(['id', 'thumbnail', 'images']);
+            const searchableFields = { ...Object.entries(product).filter((e) => !excludeField.has(e[0])) };
+
+            // array of all product values
+            const productValues = Object.values(searchableFields).map((value) => String(value).toLowerCase());
+
+            return productValues.some((value) => value.includes(searchRequest.toLowerCase()));
+        });
+        console.log(this.filteredProducts);
+    }
 }
