@@ -1,0 +1,29 @@
+* {
+    box-sizing: border-box;
+}
+
+.products-items {
+    display: flex;
+    flex-wrap: wrap;
+    .card-wrapper {
+        width: 23%;
+        margin: 1%;
+        border: 1px solid rgb(120, 81, 11);
+        border-radius: 0.5rem;
+        font-size: 0.6rem;
+        padding: 2% 0 5%;
+        .card-text {
+            width: 55%;
+            border: 1px solid rgb(120, 81, 11);
+            border-radius: 0 0 0.4rem;
+            .card-info {
+                .card-info-item {
+                    p {
+                        margin: 0;
+                        word-wrap: break-word;
+                    }
+                }
+            }
+        }
+    }
+}

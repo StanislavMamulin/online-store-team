@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+}
+
+.products-items {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.products-items .card-wrapper {
+  width: 23%;
+  margin: 1%;
+  border: 1px solid #78510b;
+  border-radius: 0.5rem;
+  font-size: 0.6rem;
+  padding: 2% 0 5%;
+}
+
+.products-items .card-wrapper .card-text {
+  width: 55%;
+  border: 1px solid #78510b;
+  border-radius: 0 0 0.4rem;
+}
+
+.products-items .card-wrapper .card-text .card-info .card-info-item p {
+  margin: 0;
+  word-wrap: break-word;
+}
