@@ -1,5 +1,25 @@
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-size: calc(0.2rem + 1vw);
+    color: orange;
+    font-family: "Philosopher400", sans-serif;
+    word-wrap: break-word;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #181a1c;
+    border-radius: 20px;
+    border: 2px solid orange;
+}
+
+::-webkit-scrollbar-track {
+    background: orange;
 }
 
 @font-face {
@@ -9,15 +29,12 @@
 
 body {
     background: no-repeat 0% 0% / cover url("../../assets/images/body-bg.jpg");
-    margin: 0;
-    font-family: "Philosopher400", sans-serif;
 }
 
 header,
 footer {
     width: 100%;
     background-color: #181a1c;
-    color: orange;
     display: flex;
     align-items: center;
     padding: 0 2%;
@@ -36,33 +53,84 @@ footer {
     border-top: 2px solid orange;
     border-radius: 1.5rem 1.5rem 0 0;
     justify-content: center;
-    p {
-        margin: 0;
-        font-size: calc(0.2rem + 1vw);
-    }
+}
+
+main {
+    min-height: 85vh;
+    width: 100%;
+    padding: 2%;
+    display: flex;
+    justify-content: center;
 }
 
 .products-items {
     display: flex;
     flex-wrap: wrap;
+    padding: 0.5%;
+    // will be moved to the parent block
+    width: 74%;
+    background: rgba(24, 26, 28, 0.5);
+    border: 1px solid orange;
+    border-radius: 0.7rem;
+    overflow: hidden;
     .card-wrapper {
         width: 23%;
+        height: 6%;
+        position: relative;
         margin: 1%;
-        border: 1px solid rgb(120, 81, 11);
+        border: 1px solid orange;
         border-radius: 0.5rem;
-        font-size: 0.6rem;
-        padding: 2% 0 5%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
         .card-text {
-            width: 55%;
-            border: 1px solid rgb(120, 81, 11);
-            border-radius: 0 0 0.4rem;
+            width: 100%;
+            cursor: pointer;
+            .card-title {
+                background: rgba(24, 26, 28, 0.8);
+                padding: 1%;
+                font-size: 90%;
+                text-align: center;
+                border-bottom: 1px solid orange;
+                white-space: nowrap;
+            }
             .card-info {
+                color: wheat;
                 .card-info-item {
+                    width: 55%;
+                    padding: 1%;
+                    border-radius: 0 0 0.4rem;
+                    background-color: rgba(77, 47, 20, 0.95);
+                    border-bottom: 1px solid orange;
+                    border-right: 1px solid orange;
                     p {
-                        margin: 0;
-                        word-wrap: break-word;
+                        font-size: 0.6rem;
+                        color: wheat;
+                        text-transform: capitalize;
+                        span {
+                            font-size: 0.6rem;
+                            color: #bb954e;
+                            word-wrap: normal;
+                        }
                     }
                 }
+            }
+        }
+        .card-buttons {
+            width: 100%;
+            display: flex;
+            justify-content: space-evenly;
+            position: absolute;
+            bottom: 3%;
+            button {
+                background-color: #181a1c;
+                border: 1px solid orange;
+                border-radius: 0.3rem;
+                // padding-left: 2%;
+                // padding-right: 2%;
+                padding: 3% 2%;
+                font-size: 80%;
+                cursor: pointer;
             }
         }
     }

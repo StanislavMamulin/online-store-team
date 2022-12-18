@@ -21,7 +21,7 @@ export class CatalogPage {
         const p = document.createElement('p');
         p.innerText = field;
         const span = document.createElement('span');
-        span.innerText = value;
+        span.innerText = ` ${value}`;
         p.appendChild(span);
         return p;
     }
@@ -38,15 +38,28 @@ export class CatalogPage {
         return div;
     }
 
+    private createCardButtons() {
+        const block = this.createDiv('card-buttons');
+        const buttonAdd = document.createElement('button');
+        buttonAdd.innerText = 'ADD TO CART';
+        const buttonDetails = document.createElement('button');
+        buttonDetails.innerText = 'DETAILS';
+        block.append(buttonAdd, buttonDetails);
+        return block;
+    }
+
     private renderCard(obj: IProduct): HTMLElement {
         const cardWrapper = this.createDiv('card-wrapper');
+        cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
+        const cardButtons = this.createCardButtons();
         const cardText = this.createDiv('card-text');
         const cardTitle = this.createDiv('card-title');
+        cardTitle.innerText = obj.title;
         const cardInfo = this.createDiv('card-info');
         const cardInfoItem = this.createCardInfoTexts(obj);
         cardInfo.append(cardInfoItem);
         cardText.append(cardTitle, cardInfo);
-        cardWrapper.append(cardText);
+        cardWrapper.append(cardText, cardButtons);
         return cardWrapper;
     }
 
