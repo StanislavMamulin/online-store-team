@@ -2,6 +2,47 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: "Philosopher400";
+  src: url("../../assets/fonts/Philosopher/Philosopher-Regular.ttf") format("truetype");
+}
+
+body {
+  background: no-repeat 0% 0%/cover url("../../assets/images/body-bg.jpg");
+  margin: 0;
+  font-family: "Philosopher400", sans-serif;
+}
+
+header,
+footer {
+  width: 100%;
+  background-color: #181a1c;
+  color: orange;
+  display: flex;
+  align-items: center;
+  padding: 0 2%;
+}
+
+header {
+  height: 10vh;
+  border-bottom: 2px solid orange;
+  border-radius: 0 0 1.5rem 1.5rem;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+footer {
+  min-height: 5vh;
+  border-top: 2px solid orange;
+  border-radius: 1.5rem 1.5rem 0 0;
+  justify-content: center;
+}
+
+footer p {
+  margin: 0;
+  font-size: calc(0.2rem + 1vw);
+}
+
 .products-items {
   display: flex;
   flex-wrap: wrap;

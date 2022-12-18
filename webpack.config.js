@@ -26,6 +26,13 @@ const baseConfig = {
                 test: /\.html$/i,
                 loader: 'html-loader',
             },
+            {
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]',
+                },
+            },
         ],
     },
     resolve: {
@@ -34,7 +41,7 @@ const baseConfig = {
     output: {
         filename: 'index.js',
         path: path.resolve(__dirname, '../dist'),
-        assetModuleFilename: 'assets/[name][ext][query]'
+        assetModuleFilename: 'assets/[name][ext][query]',
     },
     plugins: [
         new HtmlWebpackPlugin({
