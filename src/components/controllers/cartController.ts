@@ -5,21 +5,23 @@ interface CartProduct extends IProduct {
     quantity: number;
 }
 
-let instanceOfCart: CartController;
-
-class CartController {
+export class CartController {
+    private static instance: CartController;
     private cart: Map<number, CartProduct> = new Map();
     private moneyAmount: number;
     private totalProducts: number;
 
-    constructor() {
-        if (instanceOfCart) {
-            throw new Error('New instance cannot be created!!');
-        }
-
-        this.cart = new Map();
+    private constructor() {
         this.moneyAmount = 0;
         this.totalProducts = 0;
+    }
+
+    public static getInstance(): CartController {
+        if (!CartController.instance) {
+            CartController.instance = new CartController();
+        }
+
+        return CartController.instance;
     }
 
     addProductToCartByID(id: number, product: IProduct): void {
@@ -95,5 +97,3 @@ class CartController {
         return this.moneyAmount;
     }
 }
-
-export const Cart = Object.freeze(new CartController());
