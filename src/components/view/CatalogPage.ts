@@ -7,8 +7,8 @@ export class CatalogPage {
 
     public render() {
         this.el.innerHTML = '';
-        const productsItems = this.renderCards();
-        this.el.append(productsItems);
+        const cardsBlock = this.createCardsBlock();
+        this.el.append(cardsBlock);
     }
 
     private createDiv(className: string): HTMLElement {
@@ -19,7 +19,7 @@ export class CatalogPage {
 
     private createCardInfoText(field: string, value: string): HTMLElement {
         const p = document.createElement('p');
-        p.innerText = field;
+        p.innerText = `${field}:`;
         const span = document.createElement('span');
         span.innerText = ` ${value}`;
         p.appendChild(span);
@@ -38,7 +38,7 @@ export class CatalogPage {
         return div;
     }
 
-    private createCardButtons() {
+    private createCardButtons(): HTMLElement {
         const block = this.createDiv('card-buttons');
         const buttonAdd = document.createElement('button');
         buttonAdd.innerText = 'ADD TO CART';
@@ -61,6 +61,44 @@ export class CatalogPage {
         cardText.append(cardTitle, cardInfo);
         cardWrapper.append(cardText, cardButtons);
         return cardWrapper;
+    }
+
+    private createCardsSortRow(): HTMLElement {
+        const block = this.createDiv('products-sort');
+        const sortOptionsBar = this.createDiv('sort-bar');
+        const barSelection = document.createElement('select');
+        sortOptionsBar.append(barSelection);
+        const foundCount = this.createDiv('found-count');
+        foundCount.innerText = 'Found:';
+        const searchBar = this.createDiv('search-bar');
+        const searchInput = document.createElement('input');
+        searchInput.type = 'search';
+        searchInput.placeholder = 'Search product';
+        searchBar.append(searchInput);
+        const viewMode = this.createDiv('view-mode');
+        const smallV = this.createDiv('small-v');
+        for (let i = 0; i < 36; i++) {
+            const smallDot = this.createDiv('small-dot');
+            smallDot.innerText = '.';
+            smallV.append(smallDot);
+        }
+        const bigV = this.createDiv('big-v');
+        for (let i = 0; i < 16; i++) {
+            const bigDot = this.createDiv('big-dot');
+            bigDot.innerText = '.';
+            bigV.append(bigDot);
+        }
+        viewMode.append(smallV, bigV);
+        block.append(sortOptionsBar, foundCount, searchBar, viewMode);
+        return block;
+    }
+
+    private createCardsBlock(): HTMLElement {
+        const block = this.createDiv('products');
+        const productsSort = this.createCardsSortRow();
+        const productsItems = this.renderCards();
+        block.append(productsSort, productsItems);
+        return block;
     }
 
     private renderCards(): HTMLElement {

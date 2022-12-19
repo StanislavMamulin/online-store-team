@@ -27,6 +27,21 @@
     src: url("../../assets/fonts/Philosopher/Philosopher-Regular.ttf") format("truetype");
 }
 
+%view-mode-block {
+    border: 1px solid orange;
+    height: 2rem;
+    width: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: 0.3rem;
+    justify-content: center;
+    align-items: center;
+    padding: 2%;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    user-select: none;
+}
+
 body {
     background: no-repeat 0% 0% / cover url("../../assets/images/body-bg.jpg");
 }
@@ -63,74 +78,142 @@ main {
     justify-content: center;
 }
 
-.products-items {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0.5%;
-    // will be moved to the parent block
+.products {
     width: 74%;
     background: rgba(24, 26, 28, 0.5);
     border: 1px solid orange;
     border-radius: 0.7rem;
     overflow: hidden;
-    .card-wrapper {
-        width: 23%;
-        height: 6%;
-        position: relative;
-        margin: 1%;
-        border: 1px solid orange;
-        border-radius: 0.5rem;
-        overflow: hidden;
+    .products-sort {
         display: flex;
-        flex-direction: column;
-        .card-text {
-            width: 100%;
-            cursor: pointer;
-            .card-title {
-                background: rgba(24, 26, 28, 0.8);
-                padding: 1%;
-                font-size: 90%;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(24, 26, 28, 0.5);
+        padding: 0.5%;
+        border-bottom: 1px solid orange;
+        .sort-bar {
+            select {
+                outline: 0;
+                padding: 0 1em;
+                background-color: #181a1c;
+                cursor: pointer;
+                border-radius: 1rem;
+                color: orange;
+                border: 1px solid orange;
                 text-align: center;
-                border-bottom: 1px solid orange;
-                white-space: nowrap;
             }
-            .card-info {
-                color: wheat;
-                .card-info-item {
-                    width: 55%;
+        }
+        .found-count {
+            color: wheat;
+        }
+        .search-bar {
+            input {
+                background-color: #181a1c;
+                width: 140%;
+                border: 1px solid orange;
+                color: orange;
+                border-radius: 2rem;
+                padding: 0.2rem;
+                outline: none;
+                font-size: 80%;
+                text-align: center;
+            }
+        }
+        .view-mode {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .small-v {
+                @extend %view-mode-block;
+                .small-dot {
+                    white-space: nowrap;
+                    width: 12%;
+                    height: 12%;
+                    margin: 2%;
+                    font-size: 50%;
+                    border-radius: 100%;
+                    overflow: hidden;
+                    background: orange;
+                    user-select: none;
+                }
+            }
+            .big-v {
+                @extend %view-mode-block;
+                .big-dot {
+                    white-space: nowrap;
+                    width: 20%;
+                    height: 20%;
+                    margin: 2%;
+                    font-size: 50%;
+                    border-radius: 100%;
+                    overflow: hidden;
+                    background: orange;
+                    user-select: none;
+                }
+            }
+        }
+    }
+    .products-items {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0.5%;
+        .card-wrapper {
+            width: 23%;
+            position: relative;
+            margin: 1%;
+            border: 1px solid orange;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            .card-text {
+                width: 100%;
+                cursor: pointer;
+                .card-title {
+                    background: rgba(24, 26, 28, 0.8);
                     padding: 1%;
-                    border-radius: 0 0 0.4rem;
-                    background-color: rgba(77, 47, 20, 0.95);
+                    font-size: 90%;
+                    text-align: center;
                     border-bottom: 1px solid orange;
-                    border-right: 1px solid orange;
-                    p {
-                        font-size: 0.6rem;
-                        color: wheat;
-                        text-transform: capitalize;
-                        span {
+                    white-space: nowrap;
+                }
+                .card-info {
+                    color: wheat;
+                    .card-info-item {
+                        width: 55%;
+                        padding: 1%;
+                        border-radius: 0 0 0.4rem;
+                        background-color: rgba(77, 47, 20, 0.95);
+                        border-bottom: 1px solid orange;
+                        border-right: 1px solid orange;
+                        p {
                             font-size: 0.6rem;
                             color: #bb954e;
-                            word-wrap: normal;
+                            text-transform: capitalize;
+                            span {
+                                font-size: 0.6rem;
+                                color: wheat;
+                                word-wrap: normal;
+                            }
                         }
                     }
                 }
             }
-        }
-        .card-buttons {
-            width: 100%;
-            display: flex;
-            justify-content: space-evenly;
-            position: absolute;
-            bottom: 3%;
-            button {
-                background-color: #181a1c;
-                border: 1px solid orange;
-                border-radius: 0.3rem;
-                // padding-left: 2%;
-                // padding-right: 2%;
-                padding: 3% 2%;
-                font-size: 80%;
-                cursor: pointer;
+            .card-buttons {
+                width: 100%;
+                margin: 25% 0 2%;
+                display: flex;
+                justify-content: space-evenly;
+                align-items: flex-end;
+                flex-grow: 1;
+                button {
+                    background-color: #181a1c;
+                    border: 1px solid orange;
+                    border-radius: 0.3rem;
+                    padding: 3% 2%;
+                    font-size: 80%;
+                    cursor: pointer;
+                }
             }
         }
     }
