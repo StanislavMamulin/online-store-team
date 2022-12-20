@@ -1,0 +1,227 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: calc(0.2rem + 1vw);
+  color: orange;
+  font-family: "Philosopher400", sans-serif;
+  word-wrap: break-word;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #181a1c;
+  border-radius: 20px;
+  border: 2px solid orange;
+}
+
+::-webkit-scrollbar-track {
+  background: orange;
+}
+
+@font-face {
+  font-family: "Philosopher400";
+  src: url("../../assets/fonts/Philosopher/Philosopher-Regular.ttf") format("truetype");
+}
+
+.products .products-sort .view-mode .small-v, .products .products-sort .view-mode .big-v {
+  border: 1px solid orange;
+  height: 2rem;
+  width: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 0.3rem;
+  justify-content: center;
+  align-items: center;
+  padding: 2%;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  user-select: none;
+}
+
+body {
+  background: no-repeat 0% 0%/cover url("../../assets/images/body-bg.jpg");
+}
+
+header,
+footer {
+  width: 100%;
+  background-color: #181a1c;
+  display: flex;
+  align-items: center;
+  padding: 0 2%;
+}
+
+header {
+  height: 10vh;
+  border-bottom: 2px solid orange;
+  border-radius: 0 0 1.5rem 1.5rem;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+footer {
+  min-height: 5vh;
+  border-top: 2px solid orange;
+  border-radius: 1.5rem 1.5rem 0 0;
+  justify-content: center;
+}
+
+main {
+  min-height: 85vh;
+  width: 100%;
+  padding: 2%;
+  display: flex;
+  justify-content: center;
+}
+
+.products {
+  width: 74%;
+  background: rgba(24, 26, 28, 0.5);
+  border: 1px solid orange;
+  border-radius: 0.7rem;
+  overflow: hidden;
+}
+
+.products .products-sort {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(24, 26, 28, 0.5);
+  padding: 0.5%;
+  border-bottom: 1px solid orange;
+}
+
+.products .products-sort .sort-bar select {
+  outline: 0;
+  padding: 0 1em;
+  background-color: #181a1c;
+  cursor: pointer;
+  border-radius: 1rem;
+  color: orange;
+  border: 1px solid orange;
+  text-align: center;
+}
+
+.products .products-sort .found-count {
+  color: wheat;
+}
+
+.products .products-sort .search-bar input {
+  background-color: #181a1c;
+  width: 140%;
+  border: 1px solid orange;
+  color: orange;
+  border-radius: 2rem;
+  padding: 0.2rem;
+  outline: none;
+  font-size: 80%;
+  text-align: center;
+}
+
+.products .products-sort .view-mode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.products .products-sort .view-mode .small-v .small-dot {
+  white-space: nowrap;
+  width: 12%;
+  height: 12%;
+  margin: 2%;
+  font-size: 50%;
+  border-radius: 100%;
+  overflow: hidden;
+  background: orange;
+  user-select: none;
+}
+
+.products .products-sort .view-mode .big-v .big-dot {
+  white-space: nowrap;
+  width: 20%;
+  height: 20%;
+  margin: 2%;
+  font-size: 50%;
+  border-radius: 100%;
+  overflow: hidden;
+  background: orange;
+  user-select: none;
+}
+
+.products .products-items {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.5%;
+}
+
+.products .products-items .card-wrapper {
+  width: 23%;
+  position: relative;
+  margin: 1%;
+  border: 1px solid orange;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.products .products-items .card-wrapper .card-text {
+  width: 100%;
+  cursor: pointer;
+}
+
+.products .products-items .card-wrapper .card-text .card-title {
+  background: rgba(24, 26, 28, 0.8);
+  padding: 1%;
+  font-size: 90%;
+  text-align: center;
+  border-bottom: 1px solid orange;
+  white-space: nowrap;
+}
+
+.products .products-items .card-wrapper .card-text .card-info {
+  color: wheat;
+}
+
+.products .products-items .card-wrapper .card-text .card-info .card-info-item {
+  width: 55%;
+  padding: 1%;
+  border-radius: 0 0 0.4rem;
+  background-color: rgba(77, 47, 20, 0.95);
+  border-bottom: 1px solid orange;
+  border-right: 1px solid orange;
+}
+
+.products .products-items .card-wrapper .card-text .card-info .card-info-item p {
+  font-size: 0.6rem;
+  color: #bb954e;
+  text-transform: capitalize;
+}
+
+.products .products-items .card-wrapper .card-text .card-info .card-info-item p span {
+  font-size: 0.6rem;
+  color: wheat;
+  word-wrap: normal;
+}
+
+.products .products-items .card-wrapper .card-buttons {
+  width: 100%;
+  margin: 25% 0 2%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  flex-grow: 1;
+}
+
+.products .products-items .card-wrapper .card-buttons button {
+  background-color: #181a1c;
+  border: 1px solid orange;
+  border-radius: 0.3rem;
+  padding: 3% 2%;
+  font-size: 80%;
+  cursor: pointer;
+}

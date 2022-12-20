@@ -111,6 +111,9 @@ export class ProductsController {
     }
 
     searchProduct(searchRequest: string) {
+        this.filteredProducts = Array(...this.products);
+        this.filterProducts();
+
         this.filteredProducts = this.filteredProducts.filter((product) => {
             // skip unnecessary fields
             const excludeField = new Set(['id', 'thumbnail', 'images']);

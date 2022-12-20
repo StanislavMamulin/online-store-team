@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ProductsController } from './components/controllers/productsController';
 import { CatalogPage } from './components/view/CatalogPage';
+import './components/view/styles.css';
 
 //@ts-ignore
 window.createGame = () => new ProductsController();
