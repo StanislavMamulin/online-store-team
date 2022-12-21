@@ -127,6 +127,20 @@ export class ProductsController {
         return new Set(this.loweredArrayValues(values as Array<string>));
     }
 
+    public getAllValuesAndTotalAmountFromField(field: keyof IProduct) {
+        const counter: Map<string, number> = new Map();
+
+        this.products.forEach((product: IProduct) => {
+            const fieldValue = String(product[field]).trim().toLowerCase();
+            const currentAmount: number | undefined = counter.get(fieldValue);
+
+            const newAmount = currentAmount ? currentAmount + 1 : 1;
+            counter.set(String(fieldValue).toLowerCase(), newAmount);
+        });
+
+        return counter;
+    }
+
     searchProduct(searchRequest: string) {
         this.filteredProducts = Array(...this.products);
         this.filterProducts();
