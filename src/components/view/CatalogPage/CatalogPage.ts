@@ -1,5 +1,6 @@
 import { ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
+import { FilterList } from './Filter';
 
 export class CatalogPage {
     constructor(private el: HTMLElement) {}
@@ -8,7 +9,26 @@ export class CatalogPage {
     public render() {
         this.el.innerHTML = '';
         const cardsBlock = this.createCardsBlock();
-        this.el.append(cardsBlock);
+        const filters = this.createFilters();
+        this.el.append(cardsBlock, ...filters);
+    }
+
+    private filterHandler = (event: Event, typeOfFilter: string) => {
+        const clickedFilter = (event.target as HTMLInputElement).id;
+        this.productsController.setFilterForField(typeOfFilter as keyof IProduct, clickedFilter);
+        this.renderCards();
+    };
+
+    private createFilters(): HTMLElement[] {
+        const filters: HTMLElement[] = [];
+        const fieldsForFilters = ['category', 'brand'];
+
+        fieldsForFilters.forEach((field) => {
+            const dataForFilter = this.productsController.getAllValuesAndTotalAmountFromField(field as keyof IProduct);
+            filters.push(FilterList(field, dataForFilter, this.filterHandler));
+        });
+
+        return filters;
     }
 
     private createDiv(className: string): HTMLElement {
