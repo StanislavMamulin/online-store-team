@@ -1,34 +1,80 @@
+import { getSortDirectionAndFieldName } from '../../controllers/catalogPageController';
 import { ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
-import { FilterList } from './Filter';
 
 export class CatalogPage {
+    private HEADER_OPTION = 'Sort options:';
+    private FIELDS_FOR_SORT = ['price', 'rating', 'discount'];
+    private SORT_DIRECTION = ['ASC', 'DESC'];
+
     constructor(private el: HTMLElement) {}
     productsController: ProductsController = new ProductsController();
 
     public render() {
         this.el.innerHTML = '';
         const cardsBlock = this.createCardsBlock();
-        const filters = this.createFilters();
-        this.el.append(cardsBlock, ...filters);
+        const filtersBrand = this.createFilters('brand');
+        const filtersCategory = this.createFilters('category');
+
+        this.el.append(cardsBlock, filtersBrand, filtersCategory);
     }
 
     private filterHandler = (event: Event, typeOfFilter: string) => {
         const clickedFilter = (event.target as HTMLInputElement).id;
         this.productsController.setFilterForField(typeOfFilter as keyof IProduct, clickedFilter);
         this.renderCards();
+
+        this.createFilters('brand');
+        this.createFilters('category');
     };
 
-    private createFilters(): HTMLElement[] {
-        const filters: HTMLElement[] = [];
-        const fieldsForFilters = ['category', 'brand'];
+    private createFilter(
+        value: string,
+        typeOfFilter: string,
+        totalCount: number,
+        currentCount: number,
+        active: boolean
+    ) {
+        const filterLine: HTMLElement = this.createDiv('filter-line');
 
-        fieldsForFilters.forEach((field) => {
-            const dataForFilter = this.productsController.getAllValuesAndTotalAmountFromField(field as keyof IProduct);
-            filters.push(FilterList(field, dataForFilter, this.filterHandler));
+        const check: HTMLInputElement = document.createElement('input');
+        check.type = 'checkbox';
+        check.id = value;
+        check.checked = active;
+        check.addEventListener('change', (ev) => {
+            this.filterHandler(ev, typeOfFilter);
         });
 
-        return filters;
+        const label: HTMLLabelElement = document.createElement('label');
+        label.htmlFor = value;
+        label.appendChild(document.createTextNode(value));
+
+        const totalElement: HTMLSpanElement = document.createElement('span');
+        totalElement.innerHTML = `(${currentCount}/${totalCount})`;
+        filterLine.append(check, label, totalElement);
+        return filterLine;
+    }
+
+    private createFilters(field: string) {
+        const actualFilters = this.productsController.getAllValuesFromField(field);
+        let filterList: HTMLElement;
+
+        if (document.querySelector(`.filter-list-${field}`)) {
+            filterList = document.querySelector(`.filter-list-${field}`) as HTMLElement;
+            filterList.innerHTML = '';
+        } else {
+            filterList = this.createDiv(`filter-list-${field}`);
+        }
+
+        actualFilters.forEach((value) => {
+            const totalCount = this.productsController.getCountValuesFromProduct(field, value, false);
+            const currentCount = this.productsController.getCountValuesFromProduct(field, value, true);
+            const isFilterActive = this.productsController.isFilterActive(value);
+
+            filterList.append(this.createFilter(value, field, totalCount, currentCount, isFilterActive));
+        });
+
+        return filterList;
     }
 
     private createDiv(className: string): HTMLElement {
@@ -98,26 +144,15 @@ export class CatalogPage {
     }
 
     private addSortOptions(selectEl: HTMLSelectElement) {
-        const headerOption = 'Sort options:';
-        const filedsForSort = ['price', 'rating', 'discount'];
-        const sortDirection = ['ASC', 'DESC'];
-
-        const headerOp = this.addHeaderForSortOptions(headerOption);
+        const headerOp = this.addHeaderForSortOptions(this.HEADER_OPTION);
         selectEl.add(headerOp);
 
-        filedsForSort.forEach((field) => {
-            sortDirection.forEach((direction) => {
+        this.FIELDS_FOR_SORT.forEach((field) => {
+            this.SORT_DIRECTION.forEach((direction) => {
                 const option: HTMLOptionElement = this.createOption(`Sort by ${field} ${direction}`);
                 selectEl.add(option);
             });
         });
-    }
-
-    private getSortDirectionAndFieldName(selectedValue: string): [string, string] {
-        const select = selectedValue.split(' ');
-        const direction = select[select.length - 1].trim();
-        const field = select[select.length - 2].trim();
-        return [direction, field];
     }
 
     private createSortOptionsBar(): HTMLElement {
@@ -127,7 +162,7 @@ export class CatalogPage {
 
         barSelection.addEventListener('change', () => {
             const selectedValues: string = barSelection.options[barSelection.selectedIndex].value;
-            const [direction, field]: [string, string] = this.getSortDirectionAndFieldName(selectedValues);
+            const [direction, field]: [string, string] = getSortDirectionAndFieldName(selectedValues);
 
             if (direction === 'ASC') {
                 this.productsController.sortAsc(field);

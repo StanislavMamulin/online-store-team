@@ -60,6 +60,13 @@ export class ProductsController {
         this.filterProducts();
     }
 
+    public isFilterActive(field: string): boolean {
+        const isCategoryFilter = this.categoriesForFilter.includes(field);
+        const isBrandFilter = this.brandsForFilter.includes(field);
+
+        return isCategoryFilter || isBrandFilter;
+    }
+
     private isProductInArray = (fieldOfProduct: string, filters: string[]): boolean => {
         if (filters.length === 0) {
             return true;
@@ -127,18 +134,18 @@ export class ProductsController {
         return new Set(this.loweredArrayValues(values as Array<string>));
     }
 
-    public getAllValuesAndTotalAmountFromField(field: keyof IProduct) {
-        const counter: Map<string, number> = new Map();
-
-        this.products.forEach((product: IProduct) => {
-            const fieldValue = String(product[field]).trim().toLowerCase();
-            const currentAmount: number | undefined = counter.get(fieldValue);
-
-            const newAmount = currentAmount ? currentAmount + 1 : 1;
-            counter.set(String(fieldValue).toLowerCase(), newAmount);
-        });
-
-        return counter;
+    getCountValuesFromProduct(field: string, value: string, filtered: boolean) {
+        let counter;
+        if (filtered) {
+            counter = this.filteredProducts.filter((product) => {
+                return String(product[field as keyof IProduct]).toLowerCase() === value.toLowerCase();
+            });
+        } else {
+            counter = this.products.filter((product) => {
+                return String(product[field as keyof IProduct]).toLowerCase() === value.toLowerCase();
+            });
+        }
+        return counter.length;
     }
 
     searchProduct(searchRequest: string) {
