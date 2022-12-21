@@ -1,5 +1,5 @@
-import { ProductsController } from '../controllers/productsController';
-import { IProduct } from '../types';
+import { ProductsController } from '../../controllers/productsController';
+import { IProduct } from '../../types';
 
 export class CatalogPage {
     constructor(private el: HTMLElement) {}
@@ -63,9 +63,60 @@ export class CatalogPage {
         return cardWrapper;
     }
 
+    private createOption(optionValue: string): HTMLOptionElement {
+        const option = document.createElement('option');
+        option.text = optionValue;
+        return option;
+    }
+
+    private addHeaderForSortOptions(text: string): HTMLOptionElement {
+        const headerOption = this.createOption(text);
+        headerOption.disabled = true;
+        headerOption.defaultSelected = true;
+
+        return headerOption;
+    }
+
+    private addSortOptions(selectEl: HTMLSelectElement) {
+        const headerOption = 'Sort options:';
+        const filedsForSort = ['price', 'rating', 'discount'];
+        const sortDirection = ['ASC', 'DESC'];
+
+        const headerOp = this.addHeaderForSortOptions(headerOption);
+        selectEl.add(headerOp);
+
+        filedsForSort.forEach((field) => {
+            sortDirection.forEach((direction) => {
+                const option: HTMLOptionElement = this.createOption(`Sort by ${field} ${direction}`);
+                selectEl.add(option);
+            });
+        });
+    }
+
+    private getSortDirectionAndFieldName(selectedValue: string): [string, string] {
+        const select = selectedValue.split(' ');
+        const direction = select[select.length - 1].trim();
+        const field = select[select.length - 2].trim();
+        return [direction, field];
+    }
+
     private createSortOptionsBar(): HTMLElement {
         const sortOptionsBar = this.createDiv('sort-bar');
         const barSelection = document.createElement('select');
+        this.addSortOptions(barSelection);
+
+        barSelection.addEventListener('change', () => {
+            const selectedValues: string = barSelection.options[barSelection.selectedIndex].value;
+            const [direction, field]: [string, string] = this.getSortDirectionAndFieldName(selectedValues);
+
+            if (direction === 'ASC') {
+                this.productsController.sortAsc(field);
+            } else if (direction === 'DESC') {
+                this.productsController.sortDesc(field);
+            }
+            this.renderCards();
+        });
+
         sortOptionsBar.append(barSelection);
 
         return sortOptionsBar;

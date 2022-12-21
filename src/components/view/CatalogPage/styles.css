@@ -24,7 +24,7 @@
 
 @font-face {
   font-family: "Philosopher400";
-  src: url("../../assets/fonts/Philosopher/Philosopher-Regular.ttf") format("truetype");
+  src: url("../../../assets/fonts/Philosopher/Philosopher-Regular.ttf") format("truetype");
 }
 
 .products .products-sort .view-mode .small-v, .products .products-sort .view-mode .big-v {
@@ -43,7 +43,7 @@
 }
 
 body {
-  background: no-repeat 0% 0%/cover url("../../assets/images/body-bg.jpg");
+  background: no-repeat 0% 0%/cover url("../../../assets/images/body-bg.jpg");
 }
 
 header,

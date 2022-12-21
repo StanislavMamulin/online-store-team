@@ -76,12 +76,29 @@ export class ProductsController {
         return propertyOfProduct >= Math.min(...range) && propertyOfProduct <= Math.max(...range);
     };
 
+    private normalizeField(field: string): string {
+        let searchField: string = field;
+        if (field.includes('discount')) {
+            searchField = 'discountPercentage';
+        }
+
+        return searchField;
+    }
+
     sortAsc(field: string) {
-        return this.products.sort((a, b) => Number(a[field as keyof IProduct]) - Number(b[field as keyof IProduct]));
+        const searchField: string = this.normalizeField(field);
+
+        return this.filteredProducts.sort(
+            (a, b) => Number(a[searchField as keyof IProduct]) - Number(b[searchField as keyof IProduct])
+        );
     }
 
     sortDesc(field: string) {
-        return this.products.sort((a, b) => Number(b[field as keyof IProduct]) - Number(a[field as keyof IProduct]));
+        const searchField: string = this.normalizeField(field);
+
+        return this.filteredProducts.sort(
+            (a, b) => Number(b[searchField as keyof IProduct]) - Number(a[searchField as keyof IProduct])
+        );
     }
 
     private filterByCategory = (product: IProduct): boolean =>
