@@ -88,7 +88,7 @@ export class ProductsController {
     sortAsc(field: string) {
         const searchField: string = this.normalizeField(field);
 
-        return this.products.sort(
+        return this.filteredProducts.sort(
             (a, b) => Number(a[searchField as keyof IProduct]) - Number(b[searchField as keyof IProduct])
         );
     }
@@ -96,7 +96,7 @@ export class ProductsController {
     sortDesc(field: string) {
         const searchField: string = this.normalizeField(field);
 
-        return this.products.sort(
+        return this.filteredProducts.sort(
             (a, b) => Number(b[searchField as keyof IProduct]) - Number(a[searchField as keyof IProduct])
         );
     }
