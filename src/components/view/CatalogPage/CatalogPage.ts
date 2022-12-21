@@ -1,5 +1,5 @@
-import { ProductsController } from '../controllers/productsController';
-import { IProduct } from '../types';
+import { ProductsController } from '../../controllers/productsController';
+import { IProduct } from '../../types';
 
 export class CatalogPage {
     constructor(private el: HTMLElement) {}
