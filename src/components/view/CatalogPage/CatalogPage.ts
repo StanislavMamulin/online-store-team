@@ -13,10 +13,34 @@ export class CatalogPage {
     public render() {
         this.el.innerHTML = '';
         const cardsBlock = this.createCardsBlock();
-        const filtersBrand = this.createFilters('brand');
-        const filtersCategory = this.createFilters('category');
+        const filtersBlock = this.createFiltersBlock();
 
-        this.el.append(cardsBlock, filtersBrand, filtersCategory);
+        this.el.append(filtersBlock, cardsBlock);
+    }
+
+    private createFiltersBlock(): HTMLElement {
+        const block = this.createDiv('filters');
+        const filtersButtons = this.createDiv('filter-buttons');
+        const resetButton = document.createElement('button');
+        resetButton.innerText = 'Reset Filters';
+        const copyButton = document.createElement('button');
+        copyButton.innerText = 'Copy Link';
+        filtersButtons.append(resetButton, copyButton);
+
+        const categoryList = this.createDiv('category-list');
+        const categoryHeader = document.createElement('h3');
+        categoryHeader.innerText = 'Category';
+        const filtersCategory = this.createFilters('category');
+        categoryList.append(categoryHeader, filtersCategory);
+
+        const brandList = this.createDiv('brand-list');
+        const brandHeader = document.createElement('h3');
+        brandHeader.innerText = 'Brand';
+        const filtersBrand = this.createFilters('brand');
+        brandList.append(brandHeader, filtersBrand);
+
+        block.append(filtersButtons, categoryList, brandList);
+        return block;
     }
 
     private filterHandler = (event: Event, typeOfFilter: string) => {
@@ -194,6 +218,8 @@ export class CatalogPage {
         searchInput.addEventListener('input', (e: Event) => {
             this.productsController.searchProduct((e.target as HTMLInputElement).value);
             this.renderCards();
+            this.createFilters('brand');
+            this.createFilters('category');
         });
 
         return searchBar;

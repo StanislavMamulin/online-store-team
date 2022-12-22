@@ -42,6 +42,28 @@
   user-select: none;
 }
 
+.filters .category-list, .filters .brand-list {
+  border: 1px solid orange;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 5%;
+  display: block;
+}
+
+.filters .category-list h3, .filters .brand-list h3 {
+  text-align: center;
+  background-color: #181a1c;
+  border-bottom: 1px solid orange;
+}
+
+.filters .category-list .filter-list-category, .filters .brand-list .filter-list-brand {
+  height: 10rem;
+  overflow: hidden;
+  overflow-y: auto;
+  background: rgba(76, 74, 65, 0.4);
+  padding: 2%;
+}
+
 body {
   background: no-repeat 0% 0%/cover url("../../../assets/images/body-bg.jpg");
 }
@@ -76,6 +98,33 @@ main {
   padding: 2%;
   display: flex;
   justify-content: center;
+}
+
+.filters {
+  width: 25%;
+  background: rgba(24, 26, 28, 0.5);
+  border: 1px solid orange;
+  border-radius: 0.7rem;
+  padding: 0.5%;
+  height: fit-content;
+}
+
+.filters .filter-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 2%;
+  color: wheat;
+}
+
+.filters .filter-buttons button {
+  background-color: #181a1c;
+  border: 1px solid orange;
+  border-radius: 0.3rem;
+  padding-left: 2%;
+  padding-right: 2%;
+  font-size: 120%;
+  cursor: pointer;
 }
 
 .products {
