@@ -2,7 +2,7 @@ import { getSortDirectionAndFieldName } from '../../controllers/catalogPageContr
 import { ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
 import { addClass, removeClass } from '../../../helpers/classToggle';
-import { createDiv } from '../../../helpers/createHTMLElements';
+import { createDiv, createHeaderContent } from '../../../helpers/createHTMLElements';
 
 export class CatalogPage {
     private HEADER_OPTION = 'Sort options:';
@@ -19,33 +19,7 @@ export class CatalogPage {
 
         this.el.append(filtersBlock, cardsBlock);
         this.foundCounter();
-        this.createHeaderContent();
-    }
-
-    private createHeaderContent() {
-        const headerBlock = document.querySelector('header');
-        const logoContainer = createDiv('logo-container');
-        const logo = createDiv('logo');
-        logo.innerText = '🛍';
-        const brandName = document.createElement('h2');
-        brandName.className = 'brand-name';
-        brandName.innerText = 'Online Store';
-        logoContainer.append(logo, brandName);
-
-        const totalPrice = createDiv('total-price');
-        totalPrice.innerText = ' €0.00';
-        const priceSpan = document.createElement('span');
-        priceSpan.innerText = 'Cart total:';
-        totalPrice.prepend(priceSpan);
-
-        const shoppingCart = createDiv('shopping-cart');
-        const cartItems = createDiv('cart-items');
-        const cartItemsCounter = createDiv('cart-items-counter');
-        cartItemsCounter.innerText = '0';
-        cartItems.append(cartItemsCounter);
-        shoppingCart.append(cartItems);
-
-        headerBlock?.append(logoContainer, totalPrice, shoppingCart);
+        createHeaderContent();
     }
 
     private createFiltersBlock(): HTMLElement {
