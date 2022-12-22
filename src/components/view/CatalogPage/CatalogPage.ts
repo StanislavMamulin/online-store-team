@@ -139,6 +139,8 @@ export class CatalogPage {
     }
 
     private renderCard(obj: IProduct): HTMLElement {
+        const productItem = this.createDiv('product-item');
+        const div = document.createElement('div');
         const cardWrapper = this.createDiv('card-wrapper');
         cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
         const cardButtons = this.createCardButtons();
@@ -150,7 +152,9 @@ export class CatalogPage {
         cardInfo.append(cardInfoItem);
         cardText.append(cardTitle, cardInfo);
         cardWrapper.append(cardText, cardButtons);
-        return cardWrapper;
+        div.append(cardWrapper);
+        productItem.append(div);
+        return productItem;
     }
 
     private createOption(optionValue: string): HTMLOptionElement {
