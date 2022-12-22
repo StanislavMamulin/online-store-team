@@ -1,7 +1,8 @@
 import { getSortDirectionAndFieldName } from '../../controllers/catalogPageController';
 import { ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
-import { addClass, removeClass } from '../classes/classToggle';
+import { addClass, removeClass } from '../../../helpers/classToggle';
+import { createDiv } from '../../../helpers/createHTMLElements';
 
 export class CatalogPage {
     private HEADER_OPTION = 'Sort options:';
@@ -23,23 +24,23 @@ export class CatalogPage {
 
     private createHeaderContent() {
         const headerBlock = document.querySelector('header');
-        const logoContainer = this.createDiv('logo-container');
-        const logo = this.createDiv('logo');
+        const logoContainer = createDiv('logo-container');
+        const logo = createDiv('logo');
         logo.innerText = '🛍';
         const brandName = document.createElement('h2');
         brandName.className = 'brand-name';
         brandName.innerText = 'Online Store';
         logoContainer.append(logo, brandName);
 
-        const totalPrice = this.createDiv('total-price');
+        const totalPrice = createDiv('total-price');
         totalPrice.innerText = ' €0.00';
         const priceSpan = document.createElement('span');
         priceSpan.innerText = 'Cart total:';
         totalPrice.prepend(priceSpan);
 
-        const shoppingCart = this.createDiv('shopping-cart');
-        const cartItems = this.createDiv('cart-items');
-        const cartItemsCounter = this.createDiv('cart-items-counter');
+        const shoppingCart = createDiv('shopping-cart');
+        const cartItems = createDiv('cart-items');
+        const cartItemsCounter = createDiv('cart-items-counter');
         cartItemsCounter.innerText = '0';
         cartItems.append(cartItemsCounter);
         shoppingCart.append(cartItems);
@@ -48,21 +49,21 @@ export class CatalogPage {
     }
 
     private createFiltersBlock(): HTMLElement {
-        const block = this.createDiv('filters');
-        const filtersButtons = this.createDiv('filter-buttons');
+        const block = createDiv('filters');
+        const filtersButtons = createDiv('filter-buttons');
         const resetButton = document.createElement('button');
         resetButton.innerText = 'Reset Filters';
         const copyButton = document.createElement('button');
         copyButton.innerText = 'Copy Link';
         filtersButtons.append(resetButton, copyButton);
 
-        const categoryList = this.createDiv('category-list');
+        const categoryList = createDiv('category-list');
         const categoryHeader = document.createElement('h3');
         categoryHeader.innerText = 'Category';
         const filtersCategory = this.createFilters('category');
         categoryList.append(categoryHeader, filtersCategory);
 
-        const brandList = this.createDiv('brand-list');
+        const brandList = createDiv('brand-list');
         const brandHeader = document.createElement('h3');
         brandHeader.innerText = 'Brand';
         const filtersBrand = this.createFilters('brand');
@@ -89,7 +90,7 @@ export class CatalogPage {
         currentCount: number,
         active: boolean
     ) {
-        const filterLine: HTMLElement = this.createDiv('filter-line');
+        const filterLine: HTMLElement = createDiv('filter-line');
 
         const check: HTMLInputElement = document.createElement('input');
         check.type = 'checkbox';
@@ -117,7 +118,7 @@ export class CatalogPage {
             filterList = document.querySelector(`.filter-list-${field}`) as HTMLElement;
             filterList.innerHTML = '';
         } else {
-            filterList = this.createDiv(`filter-list-${field}`);
+            filterList = createDiv(`filter-list-${field}`);
         }
 
         actualFilters.forEach((value) => {
@@ -131,12 +132,6 @@ export class CatalogPage {
         return filterList;
     }
 
-    private createDiv(className: string): HTMLElement {
-        const div = document.createElement('div');
-        div.classList.add(className);
-        return div;
-    }
-
     private createCardInfoText(field: string, value: string): HTMLElement {
         const p = document.createElement('p');
         p.innerText = `${field}:`;
@@ -147,7 +142,7 @@ export class CatalogPage {
     }
 
     private createCardInfoTexts(obj: IProduct): HTMLElement {
-        const div = this.createDiv('card-info-item');
+        const div = createDiv('card-info-item');
         const categoryInfo = this.createCardInfoText('category', obj.category);
         const brandInfo = this.createCardInfoText('brand', obj.brand);
         const priceInfo = this.createCardInfoText('price', `€${obj.price}`);
@@ -159,7 +154,7 @@ export class CatalogPage {
     }
 
     private createCardButtons(): HTMLElement {
-        const block = this.createDiv('card-buttons');
+        const block = createDiv('card-buttons');
         const buttonAdd = document.createElement('button');
         buttonAdd.innerText = 'ADD TO CART';
         const buttonDetails = document.createElement('button');
@@ -169,15 +164,15 @@ export class CatalogPage {
     }
 
     private renderCard(obj: IProduct): HTMLElement {
-        const productItem = this.createDiv('product-item');
+        const productItem = createDiv('product-item');
         const div = document.createElement('div');
-        const cardWrapper = this.createDiv('card-wrapper');
+        const cardWrapper = createDiv('card-wrapper');
         cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
         const cardButtons = this.createCardButtons();
-        const cardText = this.createDiv('card-text');
-        const cardTitle = this.createDiv('card-title');
+        const cardText = createDiv('card-text');
+        const cardTitle = createDiv('card-title');
         cardTitle.innerText = obj.title;
-        const cardInfo = this.createDiv('card-info');
+        const cardInfo = createDiv('card-info');
         const cardInfoItem = this.createCardInfoTexts(obj);
         cardInfo.append(cardInfoItem);
         cardText.append(cardTitle, cardInfo);
@@ -214,7 +209,7 @@ export class CatalogPage {
     }
 
     private createSortOptionsBar(): HTMLElement {
-        const sortOptionsBar = this.createDiv('sort-bar');
+        const sortOptionsBar = createDiv('sort-bar');
         const barSelection = document.createElement('select');
         this.addSortOptions(barSelection);
 
@@ -241,7 +236,7 @@ export class CatalogPage {
     }
 
     private createFoundCount(): HTMLElement {
-        const found = this.createDiv('found-count');
+        const found = createDiv('found-count');
         found.innerText = 'Found: ';
         const foundCount = document.createElement('span');
         foundCount.classList.add('found-counter');
@@ -251,7 +246,7 @@ export class CatalogPage {
     }
 
     private createSearchBar(): HTMLElement {
-        const searchBar = this.createDiv('search-bar');
+        const searchBar = createDiv('search-bar');
         const searchInput = document.createElement('input');
         searchInput.type = 'search';
         searchInput.placeholder = 'Search product';
@@ -269,18 +264,18 @@ export class CatalogPage {
     }
 
     private createViewMode(): HTMLElement {
-        const viewMode = this.createDiv('view-mode');
+        const viewMode = createDiv('view-mode');
 
-        const smallV = this.createDiv('small-v');
+        const smallV = createDiv('small-v');
         for (let i = 0; i < 36; i++) {
-            const smallDot = this.createDiv('small-dot');
+            const smallDot = createDiv('small-dot');
             smallDot.innerText = '.';
             smallV.append(smallDot);
         }
 
-        const bigV = this.createDiv('big-v');
+        const bigV = createDiv('big-v');
         for (let i = 0; i < 16; i++) {
-            const bigDot = this.createDiv('big-dot');
+            const bigDot = createDiv('big-dot');
             bigDot.innerText = '.';
             bigV.append(bigDot);
         }
@@ -306,7 +301,7 @@ export class CatalogPage {
     }
 
     private createCardsSortRow(): HTMLElement {
-        const block = this.createDiv('products-sort');
+        const block = createDiv('products-sort');
 
         const sortOptionsBar = this.createSortOptionsBar();
         const foundCount = this.createFoundCount();
@@ -318,7 +313,7 @@ export class CatalogPage {
     }
 
     private createCardsBlock(): HTMLElement {
-        const block = this.createDiv('products');
+        const block = createDiv('products');
         const productsSort = this.createCardsSortRow();
         const productsItems = this.renderCards();
         block.append(productsSort, productsItems);
@@ -333,7 +328,7 @@ export class CatalogPage {
             productsItemsCheck.innerHTML = '';
             productsItems = productsItemsCheck;
         } else {
-            productsItems = this.createDiv('products-items');
+            productsItems = createDiv('products-items');
         }
 
         for (const product of this.productsController.filteredProducts) {
