@@ -171,6 +171,9 @@ main {
         }
         .found-count {
             color: wheat;
+            span {
+                color: inherit;
+            }
         }
         .search-bar {
             input {

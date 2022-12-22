@@ -159,6 +159,10 @@ main {
   color: wheat;
 }
 
+.products .products-sort .found-count span {
+  color: inherit;
+}
+
 .products .products-sort .search-bar input {
   background-color: #181a1c;
   width: 140%;

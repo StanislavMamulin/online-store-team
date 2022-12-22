@@ -16,6 +16,7 @@ export class CatalogPage {
         const filtersBlock = this.createFiltersBlock();
 
         this.el.append(filtersBlock, cardsBlock);
+        this.foundCounter();
     }
 
     private createFiltersBlock(): HTMLElement {
@@ -50,6 +51,7 @@ export class CatalogPage {
 
         this.createFilters('brand');
         this.createFilters('category');
+        this.foundCounter();
     };
 
     private createFilter(
@@ -205,11 +207,19 @@ export class CatalogPage {
         return sortOptionsBar;
     }
 
-    private createFoundCount(): HTMLElement {
-        const foundCount = this.createDiv('found-count');
-        foundCount.innerText = 'Found:';
+    private foundCounter(): void {
+        const count = document.querySelector('.found-counter') as HTMLElement;
+        count.innerText = String(document.querySelector('.products-items')?.children.length);
+    }
 
-        return foundCount;
+    private createFoundCount(): HTMLElement {
+        const found = this.createDiv('found-count');
+        found.innerText = 'Found: ';
+        const foundCount = document.createElement('span');
+        foundCount.classList.add('found-counter');
+        found.append(foundCount);
+
+        return found;
     }
 
     private createSearchBar(): HTMLElement {
@@ -224,6 +234,7 @@ export class CatalogPage {
             this.renderCards();
             this.createFilters('brand');
             this.createFilters('category');
+            this.foundCounter();
         });
 
         return searchBar;
