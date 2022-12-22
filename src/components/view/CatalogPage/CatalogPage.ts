@@ -1,6 +1,7 @@
 import { getSortDirectionAndFieldName } from '../../controllers/catalogPageController';
 import { ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
+import { addClass, removeClass } from '../classes/classToggle';
 
 export class CatalogPage {
     private HEADER_OPTION = 'Sort options:';
@@ -284,6 +285,22 @@ export class CatalogPage {
             bigV.append(bigDot);
         }
         viewMode.append(smallV, bigV);
+
+        bigV.classList.add('active-mode');
+
+        bigV.addEventListener('click', () => {
+            smallV.classList.remove('active-mode');
+            bigV.classList.add('active-mode');
+            removeClass(document.querySelectorAll('.product-item'), 'small');
+            removeClass(document.querySelectorAll('.card-info'), 'small');
+        });
+
+        smallV.addEventListener('click', () => {
+            bigV.classList.remove('active-mode');
+            smallV.classList.add('active-mode');
+            addClass(document.querySelectorAll('.product-item'), 'small');
+            addClass(document.querySelectorAll('.card-info'), 'small');
+        });
 
         return viewMode;
     }

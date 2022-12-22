@@ -248,6 +248,10 @@ main {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            .active-mode {
+                box-shadow: 0 0 3px 1px #c45f07;
+                border: 1px solid rgb(235, 68, 68);
+            }
             .small-v {
                 @extend %view-mode-block;
                 .small-dot {
@@ -294,6 +298,10 @@ main {
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            &.small {
+                width: 14.6%;
+                padding-top: 12%;
+            }
             div {
                 .card-wrapper {
                     width: 100%;
@@ -314,6 +322,9 @@ main {
                         }
                         .card-info {
                             color: wheat;
+                            &.small {
+                                display: none;
+                            }
                             .card-info-item {
                                 background-color: rgba(77, 47, 20, 0.95);
                                 width: 55%;
