@@ -17,6 +17,33 @@ export class CatalogPage {
 
         this.el.append(filtersBlock, cardsBlock);
         this.foundCounter();
+        this.createHeaderContent();
+    }
+
+    private createHeaderContent() {
+        const headerBlock = document.querySelector('header');
+        const logoContainer = this.createDiv('logo-container');
+        const logo = this.createDiv('logo');
+        logo.innerText = '🛍';
+        const brandName = document.createElement('h2');
+        brandName.className = 'brand-name';
+        brandName.innerText = 'Online Store';
+        logoContainer.append(logo, brandName);
+
+        const totalPrice = this.createDiv('total-price');
+        totalPrice.innerText = ' €0.00';
+        const priceSpan = document.createElement('span');
+        priceSpan.innerText = 'Cart total:';
+        totalPrice.prepend(priceSpan);
+
+        const shoppingCart = this.createDiv('shopping-cart');
+        const cartItems = this.createDiv('cart-items');
+        const cartItemsCounter = this.createDiv('cart-items-counter');
+        cartItemsCounter.innerText = '0';
+        cartItems.append(cartItemsCounter);
+        shoppingCart.append(cartItems);
+
+        headerBlock?.append(logoContainer, totalPrice, shoppingCart);
     }
 
     private createFiltersBlock(): HTMLElement {

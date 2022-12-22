@@ -85,6 +85,69 @@ header {
   overflow: hidden;
 }
 
+header .logo-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+header .logo-container .logo {
+  line-height: 100%;
+  font-size: 400%;
+  display: flex;
+  align-items: center;
+  text-shadow: 0 0 10px #584444, 0 0 5px red, 0 0 10px red, 0 0 15px red;
+  padding-bottom: 5%;
+}
+
+header .logo-container .brand-name {
+  margin-left: 1rem;
+  text-shadow: 0 0 10px #b81818, 0 0 20px red, 0 0 30px red, 0 0 40px red;
+  font-size: 160%;
+}
+
+header .total-price {
+  display: block;
+  color: wheat;
+}
+
+header .shopping-cart {
+  width: 5%;
+  height: 80%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background-image: url("../../../assets/images/cart.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  justify-content: center;
+}
+
+header .shopping-cart .cart-items {
+  overflow: hidden;
+  position: relative;
+  width: 40%;
+  padding-bottom: 40%;
+}
+
+header .shopping-cart .cart-items .cart-items-counter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #181a1c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99;
+  border: 1px solid orange;
+  font-size: 130%;
+  border-radius: 50%;
+}
+
 footer {
   min-height: 5vh;
   border-top: 2px solid orange;
