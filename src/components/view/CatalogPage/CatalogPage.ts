@@ -2,7 +2,7 @@ import { getSortDirectionAndFieldName } from '../../controllers/catalogPageContr
 import { ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
 import { addClass, removeClass } from '../../../helpers/classToggle';
-import { createDiv, createHeaderContent } from '../../../helpers/createHTMLElements';
+import { createDiv, createHeader } from '../../../helpers/createHTMLElements';
 
 export class CatalogPage {
     private HEADER_OPTION = 'Sort options:';
@@ -16,10 +16,11 @@ export class CatalogPage {
         this.el.innerHTML = '';
         const cardsBlock = this.createCardsBlock();
         const filtersBlock = this.createFiltersBlock();
+        const header = createHeader(0, 0);
 
         this.el.append(filtersBlock, cardsBlock);
         this.foundCounter();
-        createHeaderContent();
+        this.el.before(header);
     }
 
     private createFiltersBlock(): HTMLElement {
@@ -130,6 +131,7 @@ export class CatalogPage {
     private createCardButtons(): HTMLElement {
         const block = createDiv('card-buttons');
         const buttonAdd = document.createElement('button');
+        buttonAdd.className = 'button-add';
         buttonAdd.innerText = 'ADD TO CART';
         const buttonDetails = document.createElement('button');
         buttonDetails.innerText = 'DETAILS';

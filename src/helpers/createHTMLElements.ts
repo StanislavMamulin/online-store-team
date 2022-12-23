@@ -4,8 +4,8 @@ export function createDiv(className: string): HTMLDivElement {
     return div;
 }
 
-export function createHeaderContent() {
-    const headerBlock = document.querySelector('header');
+export function createHeader(carttotal: number, cartitems: number) {
+    const headerBlock = document.createElement('header');
     const logoContainer = createDiv('logo-container');
     const logo = createDiv('logo');
     logo.innerText = '🛍';
@@ -15,7 +15,7 @@ export function createHeaderContent() {
     logoContainer.append(logo, brandName);
 
     const totalPrice = createDiv('total-price');
-    totalPrice.innerText = ' €0.00';
+    totalPrice.innerText = ` €${carttotal.toFixed(2)}`;
     const priceSpan = document.createElement('span');
     priceSpan.innerText = 'Cart total:';
     totalPrice.prepend(priceSpan);
@@ -23,9 +23,10 @@ export function createHeaderContent() {
     const shoppingCart = createDiv('shopping-cart');
     const cartItems = createDiv('cart-items');
     const cartItemsCounter = createDiv('cart-items-counter');
-    cartItemsCounter.innerText = '0';
+    cartItemsCounter.innerText = `${cartitems}`;
     cartItems.append(cartItemsCounter);
     shoppingCart.append(cartItems);
 
     headerBlock?.append(logoContainer, totalPrice, shoppingCart);
+    return headerBlock;
 }
