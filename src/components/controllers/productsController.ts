@@ -28,10 +28,6 @@ export class ProductsController {
         this.allFilters.set('stock', this.filterByStock);
     }
 
-    private changeLimitOfRange(range: [number, number], newLimit: [number, number]) {
-        console.log('change limit of range');
-    }
-
     setFilterForField(field: keyof IProduct, filterValue: string | [number, number]) {
         if (typeof filterValue === 'string') {
             if (field === 'brand') {
@@ -43,9 +39,9 @@ export class ProductsController {
 
         if (Array.isArray(filterValue)) {
             if (field === 'price') {
-                this.changeLimitOfRange(this.priceRange, filterValue);
+                this.priceRange = filterValue;
             } else if (field === 'stock') {
-                this.changeLimitOfRange(this.stockRange, filterValue);
+                this.stockRange = filterValue;
             }
         }
 
@@ -101,9 +97,17 @@ export class ProductsController {
         }
     }
 
-    getAllValuesFromField(field: string) {
+    getAllValuesFromField(field: string): Set<number | string> {
         const values = this.products.map((product) => product[field as keyof IProduct]);
-        return new Set(loweredArrayValues(values as Array<string>));
+        let result: (number | string)[] = [];
+
+        if (typeof values[0] === 'string') {
+            result = loweredArrayValues(values as Array<string>);
+        } else if (typeof values[0] === 'number') {
+            result = (values as Array<number>).sort((a, b) => a - b);
+        }
+
+        return new Set(result);
     }
 
     getCountValuesFromProduct(field: string, value: string, filtered: boolean) {

@@ -46,11 +46,18 @@ export class CatalogPage {
 
         valuesWrapper.append(minValueEl, maxValueEl);
 
-        const slider = new RangeSlider(minValue, maxValue, `${type}-slider`);
+        const rangeForField = Array.from(this.productsController.getAllValuesFromField(type)) as Array<number>;
+
+        const slider = new RangeSlider(rangeForField, `${type}-slider`);
         slider.addHandler((values: SliderValues) => {
             const [minValue, maxValue] = values;
-            minValueEl.innerText = String(minValue);
-            maxValueEl.innerText = String(maxValue);
+            const minRange = Math.round(Number(minValue));
+            const maxRange = Math.round(Number(maxValue));
+            minValueEl.innerText = String(minRange);
+            maxValueEl.innerText = String(maxRange);
+
+            this.productsController.setFilterForField(`${type as keyof IProduct}`, [minRange, maxRange]);
+            this.renderCards();
         });
 
         sliderWrapper.append(sliderHeader, valuesWrapper, slider.sliderElement);
@@ -125,6 +132,7 @@ export class CatalogPage {
 
     private createFilters(field: string) {
         const actualFilters = this.productsController.getAllValuesFromField(field);
+
         let filterList: HTMLElement;
 
         if (document.querySelector(`.filter-list-${field}`)) {
@@ -135,11 +143,12 @@ export class CatalogPage {
         }
 
         actualFilters.forEach((value) => {
-            const totalCount = this.productsController.getCountValuesFromProduct(field, value, false);
-            const currentCount = this.productsController.getCountValuesFromProduct(field, value, true);
-            const isFilterActive = this.productsController.isFilterActive(value);
+            const strValue = String(value);
+            const totalCount = this.productsController.getCountValuesFromProduct(field, strValue, false);
+            const currentCount = this.productsController.getCountValuesFromProduct(field, strValue, true);
+            const isFilterActive = this.productsController.isFilterActive(strValue);
 
-            filterList.append(this.createFilter(value, field, totalCount, currentCount, isFilterActive));
+            filterList.append(this.createFilter(strValue, field, totalCount, currentCount, isFilterActive));
         });
 
         return filterList;

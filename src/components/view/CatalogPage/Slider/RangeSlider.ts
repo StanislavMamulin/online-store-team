@@ -6,18 +6,32 @@ export type SliderValues = (string | number)[];
 
 export class RangeSlider {
     public sliderElement: noUiSlider.target;
-    constructor(from: number, to: number, className: string) {
-        const dualSlider = createDiv(className);
 
-        noUiSlider.create(dualSlider, {
+    constructor(values: number[], className: string) {
+        const rangeSlider = createDiv(className);
+        const from = values[0];
+        const to = values[values.length - 1];
+
+        const format = {
+            to: function (value: number) {
+                return values[Math.round(value)];
+            },
+            from: function (value: string) {
+                return values.indexOf(Number(value));
+            },
+        };
+
+        noUiSlider.create(rangeSlider, {
             start: [from, to],
             range: {
-                min: from,
-                max: to,
+                min: 0,
+                max: values.length - 1,
             },
+            step: 1,
+            format: format,
         });
 
-        this.sliderElement = dualSlider as noUiSlider.target;
+        this.sliderElement = rangeSlider as noUiSlider.target;
     }
 
     public value() {
