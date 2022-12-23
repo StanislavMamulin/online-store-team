@@ -3,11 +3,16 @@ import { ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
 import { addClass, removeClass } from '../../../helpers/classToggle';
 import { createDiv, createHeader } from '../../../helpers/createHTMLElements';
+import { RangeSlider, SliderValues } from './Slider/RangeSlider';
 
 export class CatalogPage {
     private HEADER_OPTION = 'Sort options:';
     private FIELDS_FOR_SORT = ['price', 'rating', 'discount'];
     private SORT_DIRECTION = ['ASC', 'DESC'];
+    private minPrice = 1;
+    private maxPrice = 3000;
+    private minStock = 1;
+    private maxStock = 3000;
 
     constructor(private el: HTMLElement) {}
     productsController: ProductsController = new ProductsController();
@@ -21,6 +26,36 @@ export class CatalogPage {
         this.el.append(filtersBlock, cardsBlock);
         this.foundCounter();
         this.el.before(header);
+    }
+
+    private createSlider(type: string, range: [number, number]): HTMLElement {
+        const minValue = range[0];
+        const maxValue = range[1];
+        const sliderWrapper = createDiv('slider-wrapper');
+        const sliderHeader = document.createElement('h3');
+        sliderHeader.innerText = type;
+
+        const valuesWrapper = createDiv(`${type}-values-wrapper`);
+        const minValueEl = document.createElement('span');
+        minValueEl.classList.add(`${type}-min-value`);
+        minValueEl.innerText = String(minValue);
+
+        const maxValueEl = document.createElement('span');
+        maxValueEl.classList.add(`${type}-max-value`);
+        maxValueEl.innerText = String(maxValue);
+
+        valuesWrapper.append(minValueEl, maxValueEl);
+
+        const slider = new RangeSlider(minValue, maxValue, `${type}-slider`);
+        slider.addHandler((values: SliderValues) => {
+            const [minValue, maxValue] = values;
+            minValueEl.innerText = String(minValue);
+            maxValueEl.innerText = String(maxValue);
+        });
+
+        sliderWrapper.append(sliderHeader, valuesWrapper, slider.sliderElement);
+
+        return sliderWrapper;
     }
 
     private createFiltersBlock(): HTMLElement {
@@ -44,7 +79,10 @@ export class CatalogPage {
         const filtersBrand = this.createFilters('brand');
         brandList.append(brandHeader, filtersBrand);
 
-        block.append(filtersButtons, categoryList, brandList);
+        const priceSlider = this.createSlider('price', [this.minPrice, this.maxPrice]);
+        const stockSlider = this.createSlider('stock', [this.minStock, this.maxStock]);
+
+        block.append(filtersButtons, categoryList, brandList, priceSlider, stockSlider);
         return block;
     }
 
