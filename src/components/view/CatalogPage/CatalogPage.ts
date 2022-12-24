@@ -66,7 +66,11 @@ export class CatalogPage {
             }
 
             this.productsController.setFilterForField(`${type as keyof IProduct}`, [minRange, maxRange]);
+
             this.renderCards();
+            this.foundCounter();
+            this.createFilters('brand');
+            this.createFilters('category');
         });
 
         sliderWrapper.append(sliderHeader, valuesWrapper, slider.sliderElement);
@@ -263,8 +267,11 @@ export class CatalogPage {
     }
 
     private foundCounter(): void {
-        const count = document.querySelector('.found-counter') as HTMLElement;
-        count.innerText = String(document.querySelector('.products-items')?.children.length);
+        const count: HTMLElement | null = document.querySelector('.found-counter');
+
+        if (count) {
+            count.innerText = String(document.querySelector('.products-items')?.children.length);
+        }
     }
 
     private createFoundCount(): HTMLElement {
