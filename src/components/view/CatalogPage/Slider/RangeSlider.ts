@@ -43,6 +43,6 @@ export class RangeSlider {
     }
 
     public addHandler(onChange: (values: SliderValues) => void): void {
-        this.sliderElement.noUiSlider?.on('update', onChange);
+        this.sliderElement.noUiSlider?.on('slide', onChange);
     }
 }

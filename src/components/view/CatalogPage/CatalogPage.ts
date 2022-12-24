@@ -4,15 +4,15 @@ import { IProduct } from '../../types';
 import { addClass, removeClass } from '../../../helpers/classToggle';
 import { createDiv, createHeader } from '../../../helpers/createHTMLElements';
 import { RangeSlider, SliderValues } from './Slider/RangeSlider';
+import { getMinAndMaxNumberFromArray } from '../../../helpers/arrayHelpers';
 
 export class CatalogPage {
     private HEADER_OPTION = 'Sort options:';
     private FIELDS_FOR_SORT = ['price', 'rating', 'discount'];
     private SORT_DIRECTION = ['ASC', 'DESC'];
-    private minPrice = 1;
-    private maxPrice = 3000;
-    private minStock = 1;
-    private maxStock = 3000;
+    private RANGE_SLIDER_FIELDS = ['price', 'stock'];
+    private priceSlider?: RangeSlider;
+    private stockSlider?: RangeSlider;
 
     constructor(private el: HTMLElement) {}
     productsController: ProductsController = new ProductsController();
@@ -28,7 +28,15 @@ export class CatalogPage {
         this.el.before(header);
     }
 
-    private createSlider(type: string, range: [number, number]): HTMLElement {
+    private setSliderTextValue(slider: HTMLElement, type: string, value: number): void {
+        if (type === 'price') {
+            slider.innerText = `€${String(value.toFixed(2))}`;
+        } else {
+            slider.innerText = String(value);
+        }
+    }
+
+    private createSlider(type: string, range: [number, number], rangeForField: number[]): HTMLElement {
         const minValue = range[0];
         const maxValue = range[1];
         const sliderWrapper = createDiv('slider-wrapper');
@@ -38,41 +46,54 @@ export class CatalogPage {
         const valuesWrapper = createDiv(`${type}-values-wrapper`);
         const minValueEl = document.createElement('span');
         minValueEl.classList.add(`${type}-min-value`);
-        minValueEl.innerText = String(minValue);
 
         const maxValueEl = document.createElement('span');
         maxValueEl.classList.add(`${type}-max-value`);
-        maxValueEl.innerText = String(maxValue);
 
         const arrow = createDiv('arrow');
         arrow.innerText = '⟷';
 
         valuesWrapper.append(minValueEl, arrow, maxValueEl);
 
-        const rangeForField = Array.from(this.productsController.getAllValuesFromField(type)) as Array<number>;
+        this.setSliderTextValue(minValueEl, type, minValue);
+        this.setSliderTextValue(maxValueEl, type, maxValue);
 
         const slider = new RangeSlider(rangeForField, `${type}-slider`);
         slider.addHandler((values: SliderValues) => {
             const [minValue, maxValue] = values;
 
             if (typeof minValue === 'number' && typeof maxValue === 'number') {
-                if (type === 'price') {
-                    minValueEl.innerText = `€${String(minValue.toFixed(2))}`;
-                    maxValueEl.innerText = `€${String(maxValue.toFixed(2))}`;
-                } else {
-                    minValueEl.innerText = String(minValue);
-                    maxValueEl.innerText = String(maxValue);
-                }
+                this.setSliderTextValue(minValueEl, type, minValue);
+                this.setSliderTextValue(maxValueEl, type, maxValue);
 
                 this.productsController.setFilterForField(`${type as keyof IProduct}`, [minValue, maxValue]);
 
-                this.filterDidUpdate();
+                this.filterDidUpdate(type);
             }
         });
 
         sliderWrapper.append(sliderHeader, valuesWrapper, slider.sliderElement);
 
+        if (type === 'price') {
+            this.priceSlider = slider;
+        } else if (type === 'stock') {
+            this.stockSlider = slider;
+        }
+
         return sliderWrapper;
+    }
+
+    private createSliders(): HTMLElement[] {
+        const sliders: HTMLElement[] = [];
+        this.RANGE_SLIDER_FIELDS.forEach((field: string) => {
+            const rangeForField = Array.from(this.productsController.getAllValuesFromField(field)) as Array<number>;
+            const [minValue, maxValue]: number[] = getMinAndMaxNumberFromArray(rangeForField);
+
+            const slider = this.createSlider(field, [minValue, maxValue], rangeForField);
+            sliders.push(slider);
+        });
+
+        return sliders;
     }
 
     private createFiltersBlock(): HTMLElement {
@@ -96,10 +117,9 @@ export class CatalogPage {
         const filtersBrand = this.createFilters('brand');
         brandList.append(brandHeader, filtersBrand);
 
-        const priceSlider = this.createSlider('price', [this.minPrice, this.maxPrice]);
-        const stockSlider = this.createSlider('stock', [this.minStock, this.maxStock]);
+        const sliders = this.createSliders();
 
-        block.append(filtersButtons, categoryList, brandList, priceSlider, stockSlider);
+        block.append(filtersButtons, categoryList, brandList, ...sliders);
         return block;
     }
 
@@ -197,7 +217,7 @@ export class CatalogPage {
         const productItem = createDiv('product-item');
         const div = document.createElement('div');
         const cardWrapper = createDiv('card-wrapper');
-        cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
+        // cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
         const cardButtons = this.createCardButtons();
         const cardText = createDiv('card-text');
         const cardTitle = createDiv('card-title');
@@ -368,10 +388,30 @@ export class CatalogPage {
         return productsItems;
     }
 
-    private filterDidUpdate() {
+    private filterDidUpdate(filter = '') {
         this.renderCards();
         this.createFilters('brand');
         this.createFilters('category');
         this.foundCounter();
+        this.updateFilterRanges(filter);
+    }
+
+    private updateFilterRanges(filter: string) {
+        this.RANGE_SLIDER_FIELDS.forEach((field: string) => {
+            if (field !== filter) {
+                const values = this.productsController.getAllValuesFromField(field, true) as Set<number>;
+                const [minValue, maxValue] = getMinAndMaxNumberFromArray(Array.from(values));
+
+                const slider: RangeSlider | undefined = field === 'price' ? this.priceSlider : this.stockSlider;
+                slider?.setValues(minValue, maxValue);
+
+                const minTextEl = document.querySelector(`.${field}-min-value`);
+                const maxTextEl = document.querySelector(`.${field}-max-value`);
+                if (minTextEl && minTextEl instanceof HTMLElement && maxTextEl instanceof HTMLElement) {
+                    this.setSliderTextValue(minTextEl, field, minValue);
+                    this.setSliderTextValue(maxTextEl, field, maxValue);
+                }
+            }
+        });
     }
 }
