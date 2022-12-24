@@ -101,6 +101,54 @@ input[type="search"]::-webkit-search-cancel-button {
   padding-left: 0.3rem;
 }
 
+.slider-wrapper .price-values-wrapper, .slider-wrapper .stock-values-wrapper {
+  margin-top: 5%;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  color: wheat;
+}
+
+.slider-wrapper .price-values-wrapper span, .slider-wrapper .stock-values-wrapper span, .slider-wrapper .price-values-wrapper .arrow, .slider-wrapper .stock-values-wrapper .arrow {
+  color: wheat;
+}
+
+.slider-wrapper .price-slider, .slider-wrapper .stock-slider {
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  margin: 0 7% 2%;
+}
+
+.slider-wrapper .noUi-target.price-slider, .slider-wrapper .noUi-target.stock-slider {
+  box-shadow: none;
+}
+
+.slider-wrapper .price-slider .noUi-base, .slider-wrapper .stock-slider .noUi-base {
+  background: linear-gradient(orange, orange) no-repeat center;
+  height: 2px;
+}
+
+.slider-wrapper .price-slider .noUi-base .noUi-origin .noUi-handle, .slider-wrapper .stock-slider .noUi-base .noUi-origin .noUi-handle {
+  height: 16px;
+  width: 16px;
+  right: -8px;
+  top: -7px;
+  border: 1px solid orange;
+  border-radius: 50%;
+  background: #000;
+  cursor: default;
+  box-shadow: 0px 0px 5px orange;
+}
+
+.slider-wrapper .price-slider .noUi-base .noUi-origin .noUi-handle::before, .slider-wrapper .stock-slider .noUi-base .noUi-origin .noUi-handle::before, .slider-wrapper .price-slider .noUi-base .noUi-origin .noUi-handle::after, .slider-wrapper .stock-slider .noUi-base .noUi-origin .noUi-handle::after {
+  content: "";
+  display: none;
+}
+
 body {
   background: no-repeat 0% 0%/cover url("../../../assets/images/body-bg.jpg");
 }
@@ -403,4 +451,20 @@ main {
   padding-right: 2%;
   font-size: 80%;
   cursor: pointer;
+}
+
+.slider-wrapper {
+  border: 1px solid orange;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 5%;
+  display: block;
+  background: rgba(76, 74, 65, 0.4);
+}
+
+.slider-wrapper h3 {
+  text-transform: capitalize;
+  text-align: center;
+  background-color: #181a1c;
+  border-bottom: 1px solid orange;
 }

@@ -44,7 +44,10 @@ export class CatalogPage {
         maxValueEl.classList.add(`${type}-max-value`);
         maxValueEl.innerText = String(maxValue);
 
-        valuesWrapper.append(minValueEl, maxValueEl);
+        const arrow = createDiv('arrow');
+        arrow.innerText = '⟷';
+
+        valuesWrapper.append(minValueEl, arrow, maxValueEl);
 
         const rangeForField = Array.from(this.productsController.getAllValuesFromField(type)) as Array<number>;
 
@@ -53,8 +56,14 @@ export class CatalogPage {
             const [minValue, maxValue] = values;
             const minRange = Math.round(Number(minValue));
             const maxRange = Math.round(Number(maxValue));
-            minValueEl.innerText = String(minRange);
-            maxValueEl.innerText = String(maxRange);
+
+            if (type === 'price') {
+                minValueEl.innerText = `€${String(minRange.toFixed(2))}`;
+                maxValueEl.innerText = `€${String(maxRange.toFixed(2))}`;
+            } else {
+                minValueEl.innerText = String(minRange);
+                maxValueEl.innerText = String(maxRange);
+            }
 
             this.productsController.setFilterForField(`${type as keyof IProduct}`, [minRange, maxRange]);
             this.renderCards();
