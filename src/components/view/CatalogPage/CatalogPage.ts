@@ -54,23 +54,23 @@ export class CatalogPage {
         const slider = new RangeSlider(rangeForField, `${type}-slider`);
         slider.addHandler((values: SliderValues) => {
             const [minValue, maxValue] = values;
-            const minRange = Math.round(Number(minValue));
-            const maxRange = Math.round(Number(maxValue));
 
-            if (type === 'price') {
-                minValueEl.innerText = `€${String(minRange.toFixed(2))}`;
-                maxValueEl.innerText = `€${String(maxRange.toFixed(2))}`;
-            } else {
-                minValueEl.innerText = String(minRange);
-                maxValueEl.innerText = String(maxRange);
+            if (typeof minValue === 'number' && typeof maxValue === 'number') {
+                if (type === 'price') {
+                    minValueEl.innerText = `€${String(minValue.toFixed(2))}`;
+                    maxValueEl.innerText = `€${String(maxValue.toFixed(2))}`;
+                } else {
+                    minValueEl.innerText = String(minValue);
+                    maxValueEl.innerText = String(maxValue);
+                }
+
+                this.productsController.setFilterForField(`${type as keyof IProduct}`, [minValue, maxValue]);
+
+                this.renderCards();
+                this.foundCounter();
+                this.createFilters('brand');
+                this.createFilters('category');
             }
-
-            this.productsController.setFilterForField(`${type as keyof IProduct}`, [minRange, maxRange]);
-
-            this.renderCards();
-            this.foundCounter();
-            this.createFilters('brand');
-            this.createFilters('category');
         });
 
         sliderWrapper.append(sliderHeader, valuesWrapper, slider.sliderElement);
