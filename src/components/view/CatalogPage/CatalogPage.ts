@@ -66,10 +66,7 @@ export class CatalogPage {
 
                 this.productsController.setFilterForField(`${type as keyof IProduct}`, [minValue, maxValue]);
 
-                this.renderCards();
-                this.foundCounter();
-                this.createFilters('brand');
-                this.createFilters('category');
+                this.filterDidUpdate();
             }
         });
 
@@ -109,11 +106,8 @@ export class CatalogPage {
     private filterHandler = (event: Event, typeOfFilter: string) => {
         const clickedFilter = (event.target as HTMLInputElement).id;
         this.productsController.setFilterForField(typeOfFilter as keyof IProduct, clickedFilter);
-        this.renderCards();
 
-        this.createFilters('brand');
-        this.createFilters('category');
-        this.foundCounter();
+        this.filterDidUpdate();
     };
 
     private createFilter(
@@ -293,10 +287,7 @@ export class CatalogPage {
 
         searchInput.addEventListener('input', (e: Event) => {
             this.productsController.searchProduct((e.target as HTMLInputElement).value);
-            this.renderCards();
-            this.createFilters('brand');
-            this.createFilters('category');
-            this.foundCounter();
+            this.filterDidUpdate();
         });
 
         return searchBar;
@@ -375,5 +366,12 @@ export class CatalogPage {
             productsItems.append(card);
         }
         return productsItems;
+    }
+
+    private filterDidUpdate() {
+        this.foundCounter();
+        this.renderCards();
+        this.createFilters('brand');
+        this.createFilters('category');
     }
 }
