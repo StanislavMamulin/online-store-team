@@ -4,6 +4,12 @@ export function createDiv(className: string): HTMLDivElement {
     return div;
 }
 
+export function createSpan(className: string): HTMLSpanElement {
+    const span = document.createElement('span');
+    span.classList.add(className);
+    return span;
+}
+
 export function createHeader(carttotal: number, cartitems: number) {
     const headerBlock = document.createElement('header');
     const logoContainer = createDiv('logo-container');
