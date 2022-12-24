@@ -97,8 +97,10 @@ export class ProductsController {
         }
     }
 
-    getAllValuesFromField(field: string): Set<number | string> {
-        const values = this.products.map((product) => product[field as keyof IProduct]);
+    getAllValuesFromField(field: string, filtered = false): Set<number | string> {
+        const valuesFromArray: IProduct[] = filtered ? this.filteredProducts : this.products;
+
+        const values = valuesFromArray.map((product) => product[field as keyof IProduct]);
         let result: (number | string)[] = [];
 
         if (typeof values[0] === 'string') {
