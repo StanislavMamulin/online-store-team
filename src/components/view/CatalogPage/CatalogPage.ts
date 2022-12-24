@@ -369,9 +369,9 @@ export class CatalogPage {
     }
 
     private filterDidUpdate() {
-        this.foundCounter();
         this.renderCards();
         this.createFilters('brand');
         this.createFilters('category');
+        this.foundCounter();
     }
 }
