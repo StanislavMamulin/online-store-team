@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ProductsController } from './components/controllers/productsController';
 import { CatalogPage } from './components/view/CatalogPage/CatalogPage';
 import { createHeader } from './helpers/createHTMLElements';
@@ -10,14 +9,8 @@ import { PageIds } from './helpers/constants';
 import './components/view/CatalogPage/styles.css';
 import './components/view/ErrorPage/error.css';
 
-//@ts-ignore
-window.createGame = () => new ProductsController();
-
-// const main = document.querySelector('main') as HTMLElement;
-// const body = new CatalogPage(main);
-// body.render();
-
 class App {
+    private static productsController = new ProductsController();
     private static container: HTMLElement = document.querySelector('main') as HTMLElement;
 
     private header: HTMLElement;
@@ -35,13 +28,13 @@ class App {
         let page: Page | null = null;
 
         if (idPage === PageIds.CatalogPage) {
-            page = new CatalogPage(this.container, idPage);
+            page = new CatalogPage(this.container, idPage, this.productsController);
         } else if (idPage === PageIds.CartPage) {
-            page = new CartPage(this.container, idPage);
+            page = new CartPage(this.container, idPage, this.productsController);
         } else if (idPage === PageIds.ProductPage) {
-            page = new ProductPage(this.container, idPage);
+            page = new ProductPage(this.container, idPage, this.productsController);
         } else {
-            page = new ErrorPage(this.container, PageIds.ErrorPage);
+            page = new ErrorPage(this.container, PageIds.ErrorPage, this.productsController);
         }
 
         if (page) {

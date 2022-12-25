@@ -15,11 +15,9 @@ export class CatalogPage extends Page {
     private priceSlider?: RangeSlider;
     private stockSlider?: RangeSlider;
 
-    constructor(el: HTMLElement, id: string) {
-        super(el, id);
+    constructor(el: HTMLElement, id: string, productsController: ProductsController) {
+        super(el, id, productsController);
     }
-
-    productsController: ProductsController = new ProductsController();
 
     public render() {
         this.el.innerHTML = '';
