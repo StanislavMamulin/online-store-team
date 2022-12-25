@@ -6,17 +6,24 @@ interface CartProduct extends IProduct {
     quantity: number;
 }
 
-let instanceOfCart: CartController;
-
 export class CartController {
-    private cart: Map<number, CartProduct> = new Map();
+    private static instance: CartController;
 
-    constructor(private header: Header) {
-        if (instanceOfCart) {
-            throw new Error('New instance cannot be created!!');
+    private cart: Map<number, CartProduct> = new Map();
+    private moneyAmount: number;
+    private totalProducts: number;
+
+    private constructor() {
+        this.moneyAmount = 0;
+        this.totalProducts = 0;
+    }
+
+    public static getInstance(): CartController {
+        if (!CartController.instance) {
+            CartController.instance = new CartController();
         }
 
-        this.cart = new Map();
+        return CartController.instance;
     }
 
     getActualCart() {
@@ -29,46 +36,81 @@ export class CartController {
 
     addProductToCartByID(id: number, product: IProduct): void {
         if (this.cart.has(id)) {
-            this.cart.delete(id); // the product is already in the cart - delete it
+            // the product is already in the cart - delete it
+            this.quantityHasChangedByPcs(-1, this.cart.get(id) as CartProduct);
+            this.cart.delete(id);
         } else {
-            this.cart.set(id, {
+            const newProductInCart = {
                 ...product,
                 quantity: 1,
-            });
+            };
+
+            this.cart.set(id, newProductInCart);
+            this.quantityHasChangedByPcs(1, newProductInCart);
         }
         this.header.updateHeader(100, this.cart.size);
     }
 
     addToCartByID(id: number): void {
         if (this.cart.has(id)) {
-            this.cart.delete(id); // the product is already in the cart - delete it
+            // the product is already in the cart - delete it
+            this.quantityHasChangedByPcs(-1, this.cart.get(id) as CartProduct);
+            this.cart.delete(id);
         } else {
             const product: IProduct | undefined = productsCollection.find((product) => product.id === id);
 
             if (product) {
-                this.cart.set(id, {
+                const newProductInCart = {
                     ...product,
                     quantity: 1,
-                });
+                };
+
+                this.cart.set(id, newProductInCart);
+                this.quantityHasChangedByPcs(1, newProductInCart);
             }
         }
+    }
+
+    private quantityHasChangedByPcs(pcs: number, product: CartProduct) {
+        this.moneyAmount += product.price * pcs;
+        this.totalProducts += pcs;
     }
 
     /**
      * Change the quantity of the product in the cart
      * @param id - Product ID
-     * @param quantity - How much to change the amount
+     * @param quantity - How much to change the amount (-1/+1)
      */
     changeQuantityById(id: number, quantity: number): void {
-        const product = this.cart.get(id);
+        const product: CartProduct | undefined = this.cart.get(id);
 
         if (product) {
-            this.cart.set(id, {
-                ...product,
-                quantity: product.quantity + quantity,
-            });
+            const currentProductsStock: number = product.stock;
+            const newQuantity: number = product.quantity + quantity;
+            if (newQuantity > currentProductsStock) {
+                return;
+            }
+
+            this.quantityHasChangedByPcs(quantity, product);
+
+            if (newQuantity <= 0) {
+                this.cart.delete(id); // delete the product
+            } else {
+                // change the quantity
+                this.cart.set(id, {
+                    ...product,
+                    quantity: newQuantity,
+                });
+            }
         }
+    }
+
+    public getTotalProductsInCart(): number {
+        return this.totalProducts;
+    }
+
+    public getMoneyAmount(): number {
+        return this.moneyAmount;
     }
 }
 
-// export const Cart = Object.freeze(new CartController());
