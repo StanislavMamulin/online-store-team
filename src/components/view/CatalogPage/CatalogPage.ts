@@ -1,8 +1,23 @@
 import { ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
+import { addClass, removeClass } from '../../../helpers/classToggle';
+import { createDiv, createHeader } from '../../../helpers/createHTMLElements';
+import { RangeSlider, SliderValues } from './Slider/RangeSlider';
+import { getMinAndMaxNumberFromArray } from '../../../helpers/arrayHelpers';
+import { Page } from '../../../helpers/Page';
 
-export class CatalogPage {
-    constructor(private el: HTMLElement) {}
+export class CatalogPage extends Page {
+    private HEADER_OPTION = 'Sort options:';
+    private FIELDS_FOR_SORT = ['price', 'rating', 'discount'];
+    private SORT_DIRECTION = ['ASC', 'DESC'];
+    private RANGE_SLIDER_FIELDS = ['price', 'stock'];
+    private priceSlider?: RangeSlider;
+    private stockSlider?: RangeSlider;
+
+    constructor(el: HTMLElement, id: string) {
+        super(el, id);
+    }
+
     productsController: ProductsController = new ProductsController();
 
     public render() {
@@ -49,8 +64,10 @@ export class CatalogPage {
     }
 
     private renderCard(obj: IProduct): HTMLElement {
-        const cardWrapper = this.createDiv('card-wrapper');
-        cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
+        const productItem = createDiv('product-item');
+        const div = document.createElement('div');
+        const cardWrapper = createDiv('card-wrapper');
+        // cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
         const cardButtons = this.createCardButtons();
         const cardText = this.createDiv('card-text');
         const cardTitle = this.createDiv('card-title');
@@ -120,6 +137,14 @@ export class CatalogPage {
         sortOptionsBar.append(barSelection);
 
         return sortOptionsBar;
+    }
+
+    private foundCounter(): void {
+        const count: HTMLElement | null = document.querySelector('.found-counter');
+
+        if (count) {
+            count.innerText = String(this.productsController.filteredProducts.length);
+        }
     }
 
     private createFoundCount(): HTMLElement {
