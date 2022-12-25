@@ -6,12 +6,29 @@ export class Header {
     private headerInfo = HEADER_INFO;
     public updateHeader(totalPrice: number, totalCount: number) {
         const totalCountEl = document.querySelector(`.${this.headerInfo.cartItemsCounter}`) as HTMLElement;
-        const totalPriceEl = document.querySelector(`.${this.headerInfo.totalPrice}`) as HTMLElement;
+        this.updateTotalPrice(totalPrice);
 
-        if (totalCountEl && totalPriceEl) {
+        if (totalCountEl) {
             totalCountEl.innerText = String(totalCount);
-            totalPriceEl.innerText = ` €${totalPrice.toFixed(2)}`;
         }
+    }
+
+    private updateTotalPrice(price: number) {
+        let totalPriceEl = document.querySelector(`.${this.headerInfo.totalPrice}`) as HTMLElement;
+
+        if (totalPriceEl) {
+            totalPriceEl.innerHTML = '';
+        } else {
+            totalPriceEl = createDiv(this.headerInfo.totalPrice);
+        }
+
+        totalPriceEl.innerText = ` €${price.toFixed(2)}`;
+
+        const priceSpan = document.createElement('span');
+        priceSpan.innerText = 'Cart total:';
+        totalPriceEl.prepend(priceSpan);
+
+        return totalPriceEl;
     }
 
     public createHeader() {
@@ -26,11 +43,7 @@ export class Header {
         brandName.innerText = 'Online Store';
         logoContainer.append(logo, brandName);
 
-        const totalPrice = createDiv(this.headerInfo.totalPrice);
-        totalPrice.innerText = '0'; //` €${carttotal.toFixed(2)}`;
-        const priceSpan = document.createElement('span');
-        priceSpan.innerText = 'Cart total:';
-        totalPrice.prepend(priceSpan);
+        const totalPrice = this.updateTotalPrice(0);
 
         const shoppingCart = document.createElement('a');
         shoppingCart.href = `#${PageIds.CartPage}`;
