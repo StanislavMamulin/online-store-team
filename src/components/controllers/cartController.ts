@@ -74,7 +74,12 @@ export class CartController {
         const product: CartProduct | undefined = this.cart.get(id);
 
         if (product) {
+            const currentProductsStock: number = product.stock;
             const newQuantity: number = product.quantity + quantity;
+            if (newQuantity > currentProductsStock) {
+                return;
+            }
+
             this.quantityHasChangedByPcs(quantity, product);
 
             if (newQuantity <= 0) {
