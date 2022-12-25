@@ -13,26 +13,18 @@ export class CartController {
     private moneyAmount: number;
     private totalProducts: number;
 
-    private constructor() {
+    constructor(private header: Header) {
         this.moneyAmount = 0;
         this.totalProducts = 0;
     }
 
-    public static getInstance(): CartController {
-        if (!CartController.instance) {
-            CartController.instance = new CartController();
-        }
+    // public static getInstance(): CartController {
+    //     if (!CartController.instance) {
+    //         CartController.instance = new CartController();
+    //     }
 
-        return CartController.instance;
-    }
-
-    getActualCart() {
-        return this.cart;
-    }
-
-    getActualCartCount() {
-        return this.cart.size;
-    }
+    //     return CartController.instance;
+    // }
 
     addProductToCartByID(id: number, product: IProduct): void {
         if (this.cart.has(id)) {
@@ -48,7 +40,7 @@ export class CartController {
             this.cart.set(id, newProductInCart);
             this.quantityHasChangedByPcs(1, newProductInCart);
         }
-        this.header.updateHeader(100, this.cart.size);
+        this.header.updateHeader(this.moneyAmount, this.totalProducts);
     }
 
     addToCartByID(id: number): void {
@@ -113,4 +105,3 @@ export class CartController {
         return this.moneyAmount;
     }
 }
-
