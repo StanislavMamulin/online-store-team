@@ -1,5 +1,3 @@
-import { PageIds } from './constants';
-
 export function createDiv(className: string): HTMLDivElement {
     const div = document.createElement('div');
     div.classList.add(className);
@@ -10,35 +8,4 @@ export function createSpan(className: string): HTMLSpanElement {
     const span = document.createElement('span');
     span.classList.add(className);
     return span;
-}
-
-export function createHeader(carttotal: number, cartitems: number) {
-    const headerBlock = document.createElement('header');
-    const logoContainer = document.createElement('a');
-    logoContainer.href = `#${PageIds.CatalogPage}`;
-    logoContainer.className = 'logo-container';
-    const logo = createDiv('logo');
-    logo.innerText = '🛍';
-    const brandName = document.createElement('h2');
-    brandName.className = 'brand-name';
-    brandName.innerText = 'Online Store';
-    logoContainer.append(logo, brandName);
-
-    const totalPrice = createDiv('total-price');
-    totalPrice.innerText = ` €${carttotal.toFixed(2)}`;
-    const priceSpan = document.createElement('span');
-    priceSpan.innerText = 'Cart total:';
-    totalPrice.prepend(priceSpan);
-
-    const shoppingCart = document.createElement('a');
-    shoppingCart.href = `#${PageIds.CartPage}`;
-    shoppingCart.className = 'shopping-cart';
-    const cartItems = createDiv('cart-items');
-    const cartItemsCounter = createDiv('cart-items-counter');
-    cartItemsCounter.innerText = `${cartitems}`;
-    cartItems.append(cartItemsCounter);
-    shoppingCart.append(cartItems);
-
-    headerBlock?.append(logoContainer, totalPrice, shoppingCart);
-    return headerBlock;
 }

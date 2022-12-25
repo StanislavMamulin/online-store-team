@@ -1,5 +1,6 @@
 import { productsCollection } from '../products';
 import { IProduct } from '../types';
+import { Header } from '../view/Header/Header';
 
 interface CartProduct extends IProduct {
     quantity: number;
@@ -7,15 +8,23 @@ interface CartProduct extends IProduct {
 
 let instanceOfCart: CartController;
 
-class CartController {
+export class CartController {
     private cart: Map<number, CartProduct> = new Map();
 
-    constructor() {
+    constructor(private header: Header) {
         if (instanceOfCart) {
             throw new Error('New instance cannot be created!!');
         }
 
         this.cart = new Map();
+    }
+
+    getActualCart() {
+        return this.cart;
+    }
+
+    getActualCartCount() {
+        return this.cart.size;
     }
 
     addProductToCartByID(id: number, product: IProduct): void {
@@ -27,6 +36,7 @@ class CartController {
                 quantity: 1,
             });
         }
+        this.header.updateHeader(100, this.cart.size);
     }
 
     addToCartByID(id: number): void {
@@ -61,4 +71,4 @@ class CartController {
     }
 }
 
-export const Cart = Object.freeze(new CartController());
+// export const Cart = Object.freeze(new CartController());

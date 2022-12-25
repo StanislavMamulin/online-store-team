@@ -1,6 +1,5 @@
 import { ProductsController } from './components/controllers/productsController';
 import { CatalogPage } from './components/view/CatalogPage/CatalogPage';
-import { createHeader } from './helpers/createHTMLElements';
 import { Page } from './helpers/Page';
 import { CartPage } from './components/view/CartPage/CartPage';
 import { ProductPage } from './components/view/ProductPage/ProductPage';
@@ -8,9 +7,13 @@ import { ErrorPage } from './components/view/ErrorPage/ErrorPage';
 import { PageIds } from './helpers/constants';
 import './components/view/CatalogPage/styles.css';
 import './components/view/ErrorPage/error.css';
+import { CartController } from './components/controllers/cartController';
+import { Header } from './components/view/Header/Header';
 
 class App {
     private static productsController = new ProductsController();
+    private static headerView = new Header();
+    private static cartController = new CartController(App.headerView);
     private static container: HTMLElement = document.querySelector('main') as HTMLElement;
 
     private header: HTMLElement;
@@ -28,13 +31,13 @@ class App {
         let page: Page | null = null;
 
         if (idPage === PageIds.CatalogPage) {
-            page = new CatalogPage(this.container, idPage, this.productsController);
+            page = new CatalogPage(this.container, idPage, this.productsController, this.cartController);
         } else if (idPage === PageIds.CartPage) {
-            page = new CartPage(this.container, idPage, this.productsController);
+            page = new CartPage(this.container, idPage, this.productsController, this.cartController);
         } else if (idPage === PageIds.ProductPage) {
-            page = new ProductPage(this.container, idPage, this.productsController);
+            page = new ProductPage(this.container, idPage, this.productsController, this.cartController);
         } else {
-            page = new ErrorPage(this.container, PageIds.ErrorPage, this.productsController);
+            page = new ErrorPage(this.container, PageIds.ErrorPage, this.productsController, this.cartController);
         }
 
         if (page) {
@@ -43,7 +46,8 @@ class App {
     }
 
     constructor() {
-        this.header = createHeader(0, 0);
+        const header = new Header();
+        this.header = header.createHeader();
     }
 
     run() {

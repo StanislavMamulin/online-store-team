@@ -1,10 +1,11 @@
 import { createDiv } from '../../../helpers/createHTMLElements';
 import { Page } from '../../../helpers/Page';
+import { CartController } from '../../controllers/cartController';
 import { ProductsController } from '../../controllers/productsController';
 
 export class ErrorPage extends Page {
-    constructor(el: HTMLElement, id: string, productsController: ProductsController) {
-        super(el, id, productsController);
+    constructor(el: HTMLElement, id: string, productsController: ProductsController, cartController: CartController) {
+        super(el, id, productsController, cartController);
     }
 
     render() {
