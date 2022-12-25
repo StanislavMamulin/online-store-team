@@ -20,17 +20,14 @@ window.createGame = () => new ProductsController();
 class App {
     private static container: HTMLElement = document.querySelector('main') as HTMLElement;
 
-    private initialPage: CatalogPage;
     private header: HTMLElement;
 
     private enableRouteChange() {
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.slice(1);
-            App.renderNewPage(hash);
-        });
-        window.addEventListener('load', () => {
-            const hash = window.location.hash.slice(1);
-            App.renderNewPage(hash);
+            if (hash) {
+                App.renderNewPage(hash);
+            }
         });
     }
 
@@ -54,7 +51,6 @@ class App {
 
     constructor() {
         this.header = createHeader(0, 0);
-        this.initialPage = new CatalogPage(App.container, 'catalog');
     }
 
     run() {
