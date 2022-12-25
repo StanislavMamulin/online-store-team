@@ -1,5 +1,6 @@
 import { productsCollection } from '../products';
 import { IProduct } from '../types';
+import { Header } from '../view/Header/Header';
 
 interface CartProduct extends IProduct {
     quantity: number;
@@ -7,6 +8,7 @@ interface CartProduct extends IProduct {
 
 export class CartController {
     private static instance: CartController;
+
     private cart: Map<number, CartProduct> = new Map();
     private moneyAmount: number;
     private totalProducts: number;
@@ -24,6 +26,14 @@ export class CartController {
         return CartController.instance;
     }
 
+    getActualCart() {
+        return this.cart;
+    }
+
+    getActualCartCount() {
+        return this.cart.size;
+    }
+
     addProductToCartByID(id: number, product: IProduct): void {
         if (this.cart.has(id)) {
             // the product is already in the cart - delete it
@@ -38,6 +48,7 @@ export class CartController {
             this.cart.set(id, newProductInCart);
             this.quantityHasChangedByPcs(1, newProductInCart);
         }
+        this.header.updateHeader(100, this.cart.size);
     }
 
     addToCartByID(id: number): void {
@@ -102,3 +113,4 @@ export class CartController {
         return this.moneyAmount;
     }
 }
+
