@@ -2,11 +2,13 @@ import { getSortDirectionAndFieldName } from '../../controllers/catalogPageContr
 import { ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
 import { addClass, removeClass } from '../../../helpers/classToggle';
-import { createDiv, createHeader } from '../../../helpers/createHTMLElements';
+import { createDiv } from '../../../helpers/createHTMLElements';
 import { RangeSlider, SliderValues } from './Slider/RangeSlider';
 import { getMinAndMaxNumberFromArray } from '../../../helpers/arrayHelpers';
+import { Page } from '../../../helpers/Page';
+import { CartController } from '../../controllers/cartController';
 
-export class CatalogPage {
+export class CatalogPage extends Page {
     private HEADER_OPTION = 'Sort options:';
     private FIELDS_FOR_SORT = ['price', 'rating', 'discount'];
     private SORT_DIRECTION = ['ASC', 'DESC'];
@@ -14,18 +16,19 @@ export class CatalogPage {
     private priceSlider?: RangeSlider;
     private stockSlider?: RangeSlider;
 
-    constructor(private el: HTMLElement) {}
-    productsController: ProductsController = new ProductsController();
+    constructor(el: HTMLElement, id: string, productsController: ProductsController, cartController: CartController) {
+        super(el, id, productsController, cartController);
+    }
 
     public render() {
         this.el.innerHTML = '';
         const cardsBlock = this.createCardsBlock();
         const filtersBlock = this.createFiltersBlock();
-        const header = createHeader(0, 0);
+        // const header = createHeader(0, 0);
 
         this.el.append(filtersBlock, cardsBlock);
         this.foundCounter();
-        this.el.before(header);
+        // this.el.before(header);
     }
 
     private setSliderTextValue(slider: HTMLElement, type: string, value: number): void {
@@ -202,11 +205,15 @@ export class CatalogPage {
         return div;
     }
 
-    private createCardButtons(): HTMLElement {
+    private createCardButtons(obj: IProduct): HTMLElement {
         const block = createDiv('card-buttons');
         const buttonAdd = document.createElement('button');
         buttonAdd.className = 'button-add';
         buttonAdd.innerText = 'ADD TO CART';
+        buttonAdd.addEventListener('click', () => {
+            this.cartController.addProductToCartByID(obj.id, obj);
+        });
+
         const buttonDetails = document.createElement('button');
         buttonDetails.innerText = 'DETAILS';
         block.append(buttonAdd, buttonDetails);
@@ -218,7 +225,7 @@ export class CatalogPage {
         const div = document.createElement('div');
         const cardWrapper = createDiv('card-wrapper');
         // cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
-        const cardButtons = this.createCardButtons();
+        const cardButtons = this.createCardButtons(obj);
         const cardText = createDiv('card-text');
         const cardTitle = createDiv('card-title');
         cardTitle.innerText = obj.title;
@@ -284,7 +291,7 @@ export class CatalogPage {
         const count: HTMLElement | null = document.querySelector('.found-counter');
 
         if (count) {
-            count.innerText = String(document.querySelector('.products-items')?.children.length);
+            count.innerText = String(this.productsController.filteredProducts.length);
         }
     }
 
