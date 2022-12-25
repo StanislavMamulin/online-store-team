@@ -1,3 +1,5 @@
+import { loweredArrayValues, toggleValueInArray } from '../../helpers/arrayHelpers';
+import { isNumberInRange, isStringInArray } from '../../helpers/checkers';
 import { productsCollection } from '../products';
 import { IProduct } from '../types';
 
@@ -26,55 +28,32 @@ export class ProductsController {
         this.allFilters.set('stock', this.filterByStock);
     }
 
-    private toggleFilter(filter: string[], newValue: string) {
-        const index = filter.findIndex((value) => value === newValue);
-
-        if (index === -1) {
-            filter.push(newValue);
-        } else {
-            filter.splice(index, 1);
-        }
-    }
-
-    private changeLimitOfRange(range: [number, number], newLimit: [number, number]) {
-        console.log('change limit of range');
-    }
-
     setFilterForField(field: keyof IProduct, filterValue: string | [number, number]) {
         if (typeof filterValue === 'string') {
             if (field === 'brand') {
-                this.toggleFilter(this.brandsForFilter, filterValue);
+                toggleValueInArray<string>(this.brandsForFilter, filterValue);
             } else if (field === 'category') {
-                this.toggleFilter(this.categoriesForFilter, filterValue);
+                toggleValueInArray<string>(this.categoriesForFilter, filterValue);
             }
         }
 
         if (Array.isArray(filterValue)) {
             if (field === 'price') {
-                this.changeLimitOfRange(this.priceRange, filterValue);
+                this.priceRange = filterValue;
             } else if (field === 'stock') {
-                this.changeLimitOfRange(this.stockRange, filterValue);
+                this.stockRange = filterValue;
             }
         }
 
         this.filterProducts();
     }
 
-    private isProductInArray = (fieldOfProduct: string, filters: string[]): boolean => {
-        if (filters.length === 0) {
-            return true;
-        }
+    public isFilterActive(field: string): boolean {
+        const isCategoryFilter = this.categoriesForFilter.includes(field);
+        const isBrandFilter = this.brandsForFilter.includes(field);
 
-        return this.loweredArrayValues(filters).includes(fieldOfProduct.toLowerCase());
-    };
-
-    private isPropertyInRange = (propertyOfProduct: number, range: number[]): boolean => {
-        if (range.length === 0) {
-            return true;
-        }
-
-        return propertyOfProduct >= Math.min(...range) && propertyOfProduct <= Math.max(...range);
-    };
+        return isCategoryFilter || isBrandFilter;
+    }
 
     private normalizeField(field: string): string {
         let searchField: string = field;
@@ -102,13 +81,13 @@ export class ProductsController {
     }
 
     private filterByCategory = (product: IProduct): boolean =>
-        this.isProductInArray(product.category, this.categoriesForFilter);
+        isStringInArray(product.category, this.categoriesForFilter);
 
-    private filterByBrand = (product: IProduct): boolean => this.isProductInArray(product.brand, this.brandsForFilter);
+    private filterByBrand = (product: IProduct): boolean => isStringInArray(product.brand, this.brandsForFilter);
 
-    private filterByPrice = (product: IProduct): boolean => this.isPropertyInRange(product.price, this.priceRange);
+    private filterByPrice = (product: IProduct): boolean => isNumberInRange(product.price, this.priceRange);
 
-    private filterByStock = (product: IProduct): boolean => this.isPropertyInRange(product.stock, this.stockRange);
+    private filterByStock = (product: IProduct): boolean => isNumberInRange(product.stock, this.stockRange);
 
     private filterProducts() {
         this.filteredProducts = Array(...this.products);
@@ -118,13 +97,33 @@ export class ProductsController {
         }
     }
 
-    private loweredArrayValues(array: string[]) {
-        return array.map((value) => value.toLowerCase());
+    getAllValuesFromField(field: string, filtered = false): Set<number | string> {
+        const valuesFromArray: IProduct[] = filtered ? this.filteredProducts : this.products;
+
+        const values = valuesFromArray.map((product) => product[field as keyof IProduct]);
+        let result: (number | string)[] = [];
+
+        if (typeof values[0] === 'string') {
+            result = loweredArrayValues(values as Array<string>);
+        } else if (typeof values[0] === 'number') {
+            result = (values as Array<number>).sort((a, b) => a - b);
+        }
+
+        return new Set(result);
     }
 
-    getAllValuesFromField(field: string) {
-        const values = this.products.map((product) => product[field as keyof IProduct]);
-        return new Set(this.loweredArrayValues(values as Array<string>));
+    getCountValuesFromProduct(field: string, value: string, filtered: boolean) {
+        let counter;
+        if (filtered) {
+            counter = this.filteredProducts.filter((product) => {
+                return String(product[field as keyof IProduct]).toLowerCase() === value.toLowerCase();
+            });
+        } else {
+            counter = this.products.filter((product) => {
+                return String(product[field as keyof IProduct]).toLowerCase() === value.toLowerCase();
+            });
+        }
+        return counter.length;
     }
 
     searchProduct(searchRequest: string) {
@@ -141,6 +140,5 @@ export class ProductsController {
 
             return productValues.some((value) => value.includes(searchRequest.toLowerCase()));
         });
-        console.log(this.filteredProducts);
     }
 }
