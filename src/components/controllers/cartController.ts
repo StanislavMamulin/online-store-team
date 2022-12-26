@@ -34,8 +34,9 @@ export class CartController {
      * Change the quantity of the product in the cart
      * @param id - Product ID
      * @param quantity - How much to change the amount (-1/+1)
+     * @returns Actual product quantity or -1 if product not found
      */
-    changeQuantityById(id: number, quantity: number): void {
+    changeQuantityById(id: number, quantity: number): number {
         const productItemsInCart: IProduct[] | undefined = this.cart.get(id);
 
         if (productItemsInCart) {
@@ -45,7 +46,7 @@ export class CartController {
 
             const newQuantity: number = productQuantity + quantity;
             if (newQuantity > currentProductStock) {
-                return;
+                return currentProductStock;
             }
 
             this.quantityHasChangedByPcs(quantity, theProduct);
@@ -56,7 +57,10 @@ export class CartController {
                 // change the quantity
                 productItemsInCart.push(theProduct);
             }
+
+            return newQuantity;
         }
+        return -1;
     }
 
     public getTotalProductsInCart(): number {
