@@ -33,11 +33,11 @@ class App {
         if (idPage === PageIds.CatalogPage) {
             page = new CatalogPage(this.container, idPage, this.productsController, this.cartController);
         } else if (idPage === PageIds.CartPage) {
-            page = new CartPage(this.container, idPage, this.productsController, this.cartController);
+            page = new CartPage(this.container, idPage, this.cartController);
         } else if (idPage === PageIds.ProductPage) {
-            page = new ProductPage(this.container, idPage, this.productsController, this.cartController);
+            page = new ProductPage(this.container, idPage, this.cartController);
         } else {
-            page = new ErrorPage(this.container, PageIds.ErrorPage, this.productsController, this.cartController);
+            page = new ErrorPage(this.container, PageIds.ErrorPage);
         }
 
         if (page) {
