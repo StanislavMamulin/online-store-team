@@ -80,4 +80,12 @@ export class CartController {
             this.cart.delete(id);
         }
     }
+
+    /**
+     * Get products from cart
+     * @returns Products in Cart. Structure is "id: Array_of_product_items".
+     */
+    getAllProducts(): Map<number, IProduct[]> {
+        return this.cart;
+    }
 }
