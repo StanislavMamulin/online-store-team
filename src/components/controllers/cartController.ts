@@ -76,4 +76,14 @@ export class CartController {
     public getMoneyAmount(): number {
         return this.moneyAmount;
     }
+
+    dropProductFromCart(product: IProduct): void {
+        const { id } = product;
+        const productInCart: CartProduct | undefined = this.cart.get(id);
+
+        if (productInCart) {
+            this.quantityHasChangedByPcs(productInCart.quantity, productInCart);
+            this.cart.delete(id);
+        }
+    }
 }
