@@ -1,14 +1,8 @@
 import { IProduct } from '../types';
 import { Header } from '../view/Header/Header';
 
-interface CartProduct extends IProduct {
-    quantity: number;
-}
-
 export class CartController {
-    private static instance: CartController;
-
-    private cart: Map<number, CartProduct> = new Map();
+    private cart: Map<number, IProduct[]> = new Map();
     private moneyAmount: number;
     private totalProducts: number;
 
@@ -19,23 +13,19 @@ export class CartController {
 
     addProductToCart(product: IProduct): void {
         const { id } = product;
-        if (this.cart.has(id)) {
-            // the product is already in the cart - delete it
-            this.quantityHasChangedByPcs(-1, this.cart.get(id) as CartProduct);
-            this.cart.delete(id);
-        } else {
-            const newProductInCart = {
-                ...product,
-                quantity: 1,
-            };
+        const productItemsInCart: IProduct[] | undefined = this.cart.get(id);
 
-            this.cart.set(id, newProductInCart);
-            this.quantityHasChangedByPcs(1, newProductInCart);
+        if (productItemsInCart) {
+            // the product is already in the cart - delete it
+            this.dropProductFromCart(product);
+        } else {
+            this.cart.set(id, [product]);
+            this.quantityHasChangedByPcs(1, product);
         }
         this.header.updateHeader(this.moneyAmount, this.totalProducts);
     }
 
-    private quantityHasChangedByPcs(pcs: number, product: CartProduct) {
+    private quantityHasChangedByPcs(pcs: number, product: IProduct) {
         this.moneyAmount += product.price * pcs;
         this.totalProducts += pcs;
     }
@@ -46,25 +36,25 @@ export class CartController {
      * @param quantity - How much to change the amount (-1/+1)
      */
     changeQuantityById(id: number, quantity: number): void {
-        const product: CartProduct | undefined = this.cart.get(id);
+        const productItemsInCart: IProduct[] | undefined = this.cart.get(id);
 
-        if (product) {
-            const currentProductsStock: number = product.stock;
-            const newQuantity: number = product.quantity + quantity;
-            if (newQuantity > currentProductsStock) {
+        if (productItemsInCart) {
+            const theProduct: IProduct = productItemsInCart[0];
+            const productQuantity: number = productItemsInCart.length;
+            const currentProductStock: number = theProduct.stock;
+
+            const newQuantity: number = productQuantity + quantity;
+            if (newQuantity > currentProductStock) {
                 return;
             }
 
-            this.quantityHasChangedByPcs(quantity, product);
+            this.quantityHasChangedByPcs(quantity, theProduct);
 
             if (newQuantity <= 0) {
                 this.cart.delete(id); // delete the product
             } else {
                 // change the quantity
-                this.cart.set(id, {
-                    ...product,
-                    quantity: newQuantity,
-                });
+                productItemsInCart.push(theProduct);
             }
         }
     }
@@ -79,10 +69,10 @@ export class CartController {
 
     dropProductFromCart(product: IProduct): void {
         const { id } = product;
-        const productInCart: CartProduct | undefined = this.cart.get(id);
+        const productItemsInCart: IProduct[] | undefined = this.cart.get(id);
 
-        if (productInCart) {
-            this.quantityHasChangedByPcs(productInCart.quantity, productInCart);
+        if (productItemsInCart) {
+            this.quantityHasChangedByPcs(-productItemsInCart.length, productItemsInCart[0]);
             this.cart.delete(id);
         }
     }
