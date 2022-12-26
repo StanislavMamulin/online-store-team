@@ -1,4 +1,3 @@
-import { productsCollection } from '../products';
 import { IProduct } from '../types';
 import { Header } from '../view/Header/Header';
 
@@ -18,15 +17,8 @@ export class CartController {
         this.totalProducts = 0;
     }
 
-    // public static getInstance(): CartController {
-    //     if (!CartController.instance) {
-    //         CartController.instance = new CartController();
-    //     }
-
-    //     return CartController.instance;
-    // }
-
-    addProductToCartByID(id: number, product: IProduct): void {
+    addProductToCart(product: IProduct): void {
+        const { id } = product;
         if (this.cart.has(id)) {
             // the product is already in the cart - delete it
             this.quantityHasChangedByPcs(-1, this.cart.get(id) as CartProduct);
@@ -41,26 +33,6 @@ export class CartController {
             this.quantityHasChangedByPcs(1, newProductInCart);
         }
         this.header.updateHeader(this.moneyAmount, this.totalProducts);
-    }
-
-    addToCartByID(id: number): void {
-        if (this.cart.has(id)) {
-            // the product is already in the cart - delete it
-            this.quantityHasChangedByPcs(-1, this.cart.get(id) as CartProduct);
-            this.cart.delete(id);
-        } else {
-            const product: IProduct | undefined = productsCollection.find((product) => product.id === id);
-
-            if (product) {
-                const newProductInCart = {
-                    ...product,
-                    quantity: 1,
-                };
-
-                this.cart.set(id, newProductInCart);
-                this.quantityHasChangedByPcs(1, newProductInCart);
-            }
-        }
     }
 
     private quantityHasChangedByPcs(pcs: number, product: CartProduct) {

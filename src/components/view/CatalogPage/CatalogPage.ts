@@ -216,7 +216,7 @@ export class CatalogPage extends Page {
         buttonAdd.className = 'button-add';
         buttonAdd.innerText = 'ADD TO CART';
         buttonAdd.addEventListener('click', () => {
-            this.cartController.addProductToCartByID(obj.id, obj);
+            this.cartController.addProductToCart(obj);
         });
 
         const buttonDetails = document.createElement('button');
