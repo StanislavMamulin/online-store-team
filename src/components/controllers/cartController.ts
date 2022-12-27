@@ -9,6 +9,7 @@ export class CartController {
     constructor(private header: Header) {
         this.moneyAmount = 0;
         this.totalProducts = 0;
+        this.loadCartStateFromLocalStorage();
     }
 
     addProductToCart(product: IProduct): void {
@@ -22,7 +23,7 @@ export class CartController {
             this.cart.set(id, [product]);
             this.quantityHasChangedByPcs(1, product);
         }
-        this.header.updateHeader(this.moneyAmount, this.totalProducts);
+        this.cartDidUpdate();
     }
 
     private quantityHasChangedByPcs(pcs: number, product: IProduct) {
@@ -58,8 +59,11 @@ export class CartController {
                 productItemsInCart.push(theProduct);
             }
 
+            this.cartDidUpdate();
+
             return newQuantity;
         }
+
         return -1;
     }
 
@@ -79,6 +83,7 @@ export class CartController {
             this.quantityHasChangedByPcs(-productItemsInCart.length, productItemsInCart[0]);
             this.cart.delete(id);
         }
+        this.cartDidUpdate();
     }
 
     /**
@@ -87,5 +92,39 @@ export class CartController {
      */
     getAllProducts(): Map<number, IProduct[]> {
         return this.cart;
+    }
+
+    private saveCartStateToLocalStorage() {
+        const objFromMap = Object.fromEntries(this.cart);
+        localStorage.setItem('cart', JSON.stringify(objFromMap));
+        localStorage.setItem('moneyAmount', String(this.moneyAmount));
+        localStorage.setItem('totalProducts', String(this.totalProducts));
+    }
+
+    private loadCartStateFromLocalStorage() {
+        const cartString: string | null = localStorage.getItem('cart');
+        const moneyAmount: string | null = localStorage.getItem('moneyAmount');
+        const totalProducts: string | null = localStorage.getItem('totalProducts');
+
+        if (cartString) {
+            const jsonCart: { [id: string]: IProduct[] } = JSON.parse(cartString);
+
+            for (const [id, product] of Object.entries(jsonCart)) {
+                this.cart.set(Number(id), product);
+            }
+            console.log(this.cart);
+        }
+
+        if (moneyAmount) {
+            this.moneyAmount = Number(moneyAmount);
+        }
+        if (totalProducts) {
+            this.totalProducts = Number(totalProducts);
+        }
+    }
+
+    private cartDidUpdate(): void {
+        this.header.updateHeader(this.moneyAmount, this.totalProducts);
+        this.saveCartStateToLocalStorage();
     }
 }
