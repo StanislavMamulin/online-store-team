@@ -389,6 +389,11 @@ main {
   padding-top: 12%;
 }
 
+.products .products-items .product-item.in-cart {
+  box-shadow: 0 0 5px 2px #c45f07;
+  border: 1px solid #eb4444;
+}
+
 .products .products-items .product-item div .card-wrapper {
   width: 100%;
   height: 100%;

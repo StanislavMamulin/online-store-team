@@ -61,7 +61,7 @@
   color: wheat;
 }
 
-.cart-wrapper .products-in-cart .title-and-page-control .page-control .limit button {
+.cart-wrapper .products-in-cart .title-and-page-control .page-control .limit input {
   width: 2rem;
   text-align: center;
   outline: none;

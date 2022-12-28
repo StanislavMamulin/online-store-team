@@ -26,6 +26,10 @@ export class CartController {
         this.cartDidUpdate();
     }
 
+    isProductInCart(product: IProduct): boolean {
+        return this.cart.has(product.id);
+    }
+
     private quantityHasChangedByPcs(pcs: number, product: IProduct) {
         this.moneyAmount += product.price * pcs;
         this.totalProducts += pcs;
@@ -56,7 +60,11 @@ export class CartController {
                 this.cart.delete(id); // delete the product
             } else {
                 // change the quantity
-                productItemsInCart.push(theProduct);
+                if (quantity > 0) {
+                    productItemsInCart.push(theProduct);
+                } else {
+                    productItemsInCart.pop();
+                }
             }
 
             this.cartDidUpdate();

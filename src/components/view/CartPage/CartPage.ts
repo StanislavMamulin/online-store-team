@@ -1,19 +1,16 @@
 import { Page } from '../../../helpers/Page';
 import { CartController } from '../../controllers/cartController';
-import { IProduct } from '../../types';
 import { createDiv } from '../../../helpers/createHTMLElements';
+import { IProduct } from '../../types';
 
 export class CartPage extends Page {
-    private productsMap: Map<number, IProduct[]>;
-
     constructor(el: HTMLElement, id: string, private cartController: CartController) {
         super(el, id);
-        this.productsMap = this.cartController.getAllProducts();
     }
 
-    render() {
+    render(): void {
         this.el.innerHTML = '';
-        if (this.productsMap.size) {
+        if (this.cartController.getAllProducts().size) {
             const cartWrapper = this.createCartWrapper();
             this.el.append(cartWrapper);
         } else {
@@ -30,11 +27,11 @@ export class CartPage extends Page {
         return emptyBlock;
     }
 
-    private createCartWrapper() {
+    private createCartWrapper(): HTMLElement {
         const wrapper = createDiv('wrapper');
         const cartWrapper = createDiv('cart-wrapper');
         const products = this.createProductsInCart();
-        const totalCart = this.CreateTotalCart();
+        const totalCart = this.createTotalCart();
         cartWrapper.append(products, totalCart);
         wrapper.append(cartWrapper);
         return wrapper;
@@ -42,76 +39,20 @@ export class CartPage extends Page {
 
     private createProductsInCart(): HTMLElement {
         const products = createDiv('products-in-cart');
-
-        const title = createDiv('title-and-page-control');
-        const titleName = document.createElement('h2');
-        titleName.innerText = 'Products In Cart';
-        const pageControl = createDiv('page-control');
-        const limit = createDiv('limit');
-        limit.innerText = ' ITEMS: ';
-        const limitInput = document.createElement('button');
-        limitInput.innerText = '3';
-        limitInput.disabled = true;
-        limit.append(limitInput);
-        const pageNumbers = createDiv('page-numbers');
-        pageNumbers.innerText = ' PAGE: ';
-        const buttonBack = document.createElement('button');
-        buttonBack.innerText = ' < ';
-        const numberPage = document.createElement('span');
-        numberPage.innerText = '1'; // will be changed
-        const buttonForward = document.createElement('button');
-        buttonForward.innerText = ' > ';
-        pageNumbers.append(buttonBack, numberPage, buttonForward);
-        pageControl.append(limit, pageNumbers);
-        title.append(titleName, pageControl);
-
+        const title = this.createCartProductsTitle();
         const items = createDiv('cart-items');
         let ind = 0;
-        for (const key of this.productsMap.keys()) {
-            const product = this.productsMap.get(key);
-            if (product) {
+        for (const key of this.cartController.getAllProducts().keys()) {
+            const products = this.cartController.getAllProducts().get(key);
+            if (products) {
+                const product = products[0];
                 const itemWrapper = createDiv('cart-item-wrapper');
                 const item = createDiv('cart-item');
-
                 const itemIndex = createDiv('item-index');
                 ind++;
                 itemIndex.innerText = `${ind}`;
-
-                const itemInfo = createDiv('item-info');
-                const itemImage = document.createElement('img');
-                itemImage.src = '#'; // product[0].thumbnail;
-                itemImage.alt = product[0].title;
-                const itemDetail = createDiv('item-detail-p');
-                const itemTitle = createDiv('item-title');
-                const itemTitleName = document.createElement('h3');
-                itemTitleName.innerText = product[0].title;
-                itemTitle.append(itemTitleName);
-                const itemDescription = createDiv('item-description');
-                itemDescription.innerText = product[0].description;
-                const itemOther = createDiv('item-other');
-                const itemRating = createDiv('item-rating');
-                itemRating.innerText = `Rating: ${product[0].rating}`;
-                const itemDiscount = createDiv('item-discount');
-                itemDiscount.innerText = `Discount: ${product[0].discountPercentage}%`;
-                itemOther.append(itemRating, itemDiscount);
-                itemDetail.append(itemTitle, itemDescription, itemOther);
-                itemInfo.append(itemImage, itemDetail);
-
-                const itemControl = createDiv('item-control');
-                const stockControl = createDiv('stock-control');
-                stockControl.innerText = ` Stock: ${product[0].stock} `;
-                const incDecControl = createDiv('incDec-control');
-                incDecControl.innerText = ' 1 '; // will be changed
-                const buttonInc = document.createElement('button');
-                buttonInc.innerText = '+';
-                const buttonDec = document.createElement('button');
-                buttonDec.innerText = '-';
-                incDecControl.prepend(buttonInc);
-                incDecControl.append(buttonDec);
-                const amountControl = createDiv('amount-control');
-                amountControl.innerText = ` €${product[0].price.toFixed(2)} `; // will be changed
-                itemControl.append(stockControl, incDecControl, amountControl);
-
+                const itemInfo = this.createItemInfoBlock(product);
+                const itemControl = this.createItemAdditionBlock(product, products);
                 item.append(itemIndex, itemInfo, itemControl);
                 itemWrapper.append(item);
                 items.append(itemWrapper);
@@ -121,27 +62,111 @@ export class CartPage extends Page {
         return products;
     }
 
-    private CreateTotalCart(): HTMLElement {
+    private createCartProductsTitle(): HTMLElement {
+        const title = createDiv('title-and-page-control');
+        const titleName = document.createElement('h2');
+        titleName.innerText = 'Products In Cart';
+        const pageControl = createDiv('page-control');
+        const limit = createDiv('limit');
+        limit.innerText = ' ITEMS: ';
+        const limitInput = document.createElement('input');
+        limitInput.value = '3';
+        limit.append(limitInput);
+        const pageNumbers = this.createPageNumbers();
+        pageControl.append(limit, pageNumbers);
+        title.append(titleName, pageControl);
+        return title;
+    }
+
+    private createItemInfoBlock(product: IProduct): HTMLElement {
+        const itemInfo = createDiv('item-info');
+        const itemImage = document.createElement('img');
+        itemImage.src = '#'; // product.thumbnail;
+        itemImage.alt = product.title;
+        const itemDetail = createDiv('item-detail-p');
+        const itemTitle = this.createItemTitle(product);
+        const itemDescription = createDiv('item-description');
+        itemDescription.innerText = product.description;
+        const itemOther = this.createItemOtherBlock(product);
+        itemDetail.append(itemTitle, itemDescription, itemOther);
+        itemInfo.append(itemImage, itemDetail);
+        return itemInfo;
+    }
+
+    private createItemAdditionBlock(product: IProduct, products: IProduct[]): HTMLElement {
+        const itemControl = createDiv('item-control');
+        const stockControl = createDiv('stock-control');
+        stockControl.innerText = ` Stock: ${product.stock} `;
+        const incDecControl = createDiv('incDec-control');
+        incDecControl.innerText = ` ${products.length} `; // will be changed
+        const buttonInc = document.createElement('button');
+        buttonInc.innerText = '+';
+        buttonInc.addEventListener('click', () => {
+            this.cartController.changeQuantityById(product.id, 1);
+            this.render();
+        });
+        const buttonDec = document.createElement('button');
+        buttonDec.innerText = '-';
+        buttonDec.addEventListener('click', () => {
+            this.cartController.changeQuantityById(product.id, -1);
+            this.render();
+        });
+        incDecControl.prepend(buttonInc);
+        incDecControl.append(buttonDec);
+        const amountControl = createDiv('amount-control');
+        amountControl.innerText = ` €${product.price.toFixed(2)} `; // will be changed
+        itemControl.append(stockControl, incDecControl, amountControl);
+        return itemControl;
+    }
+
+    private createItemTitle(product: IProduct): HTMLElement {
+        const itemTitle = createDiv('item-title');
+        const itemTitleName = document.createElement('h3');
+        itemTitleName.innerText = product.title;
+        itemTitle.append(itemTitleName);
+        return itemTitle;
+    }
+
+    private createItemOtherBlock(product: IProduct): HTMLElement {
+        const itemOther = createDiv('item-other');
+        const itemRating = createDiv('item-rating');
+        itemRating.innerText = `Rating: ${product.rating}`;
+        const itemDiscount = createDiv('item-discount');
+        itemDiscount.innerText = `Discount: ${product.discountPercentage}%`;
+        itemOther.append(itemRating, itemDiscount);
+        return itemOther;
+    }
+
+    private createPageNumbers(): HTMLElement {
+        const pageNumbers = createDiv('page-numbers');
+        pageNumbers.innerText = ' PAGE: ';
+        const buttonBack = document.createElement('button');
+        buttonBack.innerText = ' < ';
+        const numberPage = document.createElement('span');
+        numberPage.innerText = '1'; // will be changed
+        const buttonForward = document.createElement('button');
+        buttonForward.innerText = ' > ';
+        pageNumbers.append(buttonBack, numberPage, buttonForward);
+        return pageNumbers;
+    }
+
+    private createTotalCart(): HTMLElement {
         const total = createDiv('total-cart');
         const totalTitle = document.createElement('h2');
         totalTitle.innerText = 'Summary';
-        const totalAmount = createDiv('total-price');
-        totalAmount.innerText = ` ${this.productsMap.size} `; // will be changed
-        const totalAmountSpan = document.createElement('span');
-        totalAmountSpan.innerText = 'Products:';
-        totalAmount.prepend(totalAmountSpan);
-        const totalPrices = createDiv('total-price');
-        let sumPrice = 0; // will be changed
-        for (const key of this.productsMap.keys()) {
-            const product = this.productsMap.get(key);
-            if (product) {
-                sumPrice += product[0].price;
-            }
-        }
-        totalPrices.innerText = ` €${sumPrice.toFixed(2)} `;
-        const totalPricesSpan = document.createElement('span');
-        totalPricesSpan.innerText = 'Total:';
-        totalPrices.prepend(totalPricesSpan);
+        const totalAmount = this.createTotalAmount();
+        const totalPrices = this.createTotalPrices();
+        const { promoCode, promoCodeExample: promoEx } = this.createPromoCodes();
+        const buyButton = document.createElement('button');
+        buyButton.innerText = 'BUY NOW';
+        total.append(totalTitle, totalAmount, totalPrices, promoCode, promoEx, buyButton);
+        return total;
+    }
+
+    private createPromoCodes(): {
+        promoCode: HTMLElement;
+        promoCodeExample: HTMLElement;
+    } {
         const promoCode = createDiv('promo-code');
         const promoCodeInput = document.createElement('input');
         promoCodeInput.type = 'search';
@@ -150,10 +175,24 @@ export class CartPage extends Page {
         const promoEx = document.createElement('span');
         promoEx.className = 'promo-ex';
         promoEx.innerText = `Promo for test: 'RS', 'EPM'`;
-        const buyButton = document.createElement('button');
-        buyButton.innerText = 'BUY NOW';
-        total.append(totalTitle, totalAmount, totalPrices, promoCode, promoEx, buyButton);
+        return { promoCode, promoCodeExample: promoEx };
+    }
 
-        return total;
+    private createTotalPrices(): HTMLElement {
+        const totalPrices = createDiv('total-price');
+        totalPrices.innerText = ` €${this.cartController.getMoneyAmount().toFixed(2)} `;
+        const totalPricesSpan = document.createElement('span');
+        totalPricesSpan.innerText = 'Total:';
+        totalPrices.prepend(totalPricesSpan);
+        return totalPrices;
+    }
+
+    private createTotalAmount(): HTMLElement {
+        const totalAmount = createDiv('total-price');
+        totalAmount.innerText = ` ${this.cartController.getTotalProductsInCart()} `;
+        const totalAmountSpan = document.createElement('span');
+        totalAmountSpan.innerText = 'Products:';
+        totalAmount.prepend(totalAmountSpan);
+        return totalAmount;
     }
 }
