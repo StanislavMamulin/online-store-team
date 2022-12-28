@@ -175,9 +175,7 @@ export class CartPage extends Page {
             if (promoCodeInput.value === 'RS' || promoCodeInput.value === 'EPM') {
                 promoCode.after(correctPromoCode);
             } else {
-                if (correctPromoCode) {
-                    correctPromoCode.remove();
-                }
+                correctPromoCode.remove();
             }
         });
         promoCodeInput.placeholder = 'Enter promo code';
