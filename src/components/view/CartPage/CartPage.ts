@@ -170,12 +170,31 @@ export class CartPage extends Page {
         const promoCode = createDiv('promo-code');
         const promoCodeInput = document.createElement('input');
         promoCodeInput.type = 'search';
+        const correctPromoCode = this.createCorrectPromoCodesResponse();
+        promoCodeInput.addEventListener('input', () => {
+            if (promoCodeInput.value === 'RS' || promoCodeInput.value === 'EPM') {
+                promoCode.after(correctPromoCode);
+            } else {
+                if (correctPromoCode) {
+                    correctPromoCode.remove();
+                }
+            }
+        });
         promoCodeInput.placeholder = 'Enter promo code';
         promoCode.append(promoCodeInput);
         const promoEx = document.createElement('span');
         promoEx.className = 'promo-ex';
         promoEx.innerText = `Promo for test: 'RS', 'EPM'`;
         return { promoCode, promoCodeExample: promoEx };
+    }
+
+    private createCorrectPromoCodesResponse(): HTMLElement {
+        const response = createDiv('res-promo');
+        response.innerText = 'Rolling Scopes School - 10% ';
+        const responseValue = document.createElement('span');
+        responseValue.innerText = 'ADD';
+        response.append(responseValue);
+        return response;
     }
 
     private createTotalPrices(): HTMLElement {

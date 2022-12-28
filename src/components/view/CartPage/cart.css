@@ -254,6 +254,22 @@
   font-size: 100%;
 }
 
+.cart-wrapper .total-cart .res-promo {
+  text-align: center;
+  color: wheat;
+  margin-top: 3%;
+}
+
+.cart-wrapper .total-cart .res-promo span {
+  color: wheat;
+  background-color: #181a1c;
+  border: 1px solid orange;
+  border-radius: 0.3rem;
+  padding: 1%;
+  cursor: pointer;
+  font-size: 90%;
+}
+
 .cart-wrapper .total-cart .promo-ex {
   display: block;
   margin: 3% auto;
