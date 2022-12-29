@@ -10,12 +10,21 @@ export class ProductPage extends Page {
     }
 
     render(): void {
+        this.el.innerHTML = '';
+        this.el.classList.add('product-details');
+
         if (this.selectedProduct) {
-            this.el.innerHTML = '';
-            this.el.classList.add('product-details');
             const productWrapper = this.createProductWrapper();
             this.el.append(productWrapper);
+        } else {
+            this.el.append(this.createProductNotFound());
         }
+    }
+
+    private createProductNotFound() {
+        const error = createDiv('product-not-found');
+        error.innerHTML = 'Product not found';
+        return error;
     }
 
     private createProductWrapper(): HTMLElement {
