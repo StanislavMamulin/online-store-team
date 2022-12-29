@@ -14,3 +14,8 @@ export const removeUrlParameter = (key: string) => {
 
     window.history.pushState({ path: newUrl }, '', newUrl);
 };
+
+export function getLastSubstring(str: string): string {
+    const arr = str.split('/');
+    return arr[arr.length - 1];
+}

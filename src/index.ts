@@ -8,8 +8,10 @@ import { PageIds } from './helpers/constants';
 import './components/view/CatalogPage/styles.css';
 import './components/view/ErrorPage/error.css';
 import './components/view/CartPage/cart.css';
+import './components/view/ProductPage/product.css';
 import { CartController } from './components/controllers/cartController';
 import { Header } from './components/view/Header/Header';
+import { getLastSubstring } from './helpers/routeHelper';
 
 class App {
     private static productsController = new ProductsController();
@@ -28,6 +30,10 @@ class App {
         });
     }
 
+    private static getIdFromHash() {
+        return getLastSubstring(window.location.hash);
+    }
+
     static renderNewPage(idPage: string) {
         let page: Page | null = null;
 
@@ -35,8 +41,8 @@ class App {
             page = new CatalogPage(this.container, idPage, this.productsController, this.cartController);
         } else if (idPage === PageIds.CartPage) {
             page = new CartPage(this.container, idPage, this.cartController);
-        } else if (idPage === PageIds.ProductPage) {
-            page = new ProductPage(this.container, idPage, this.cartController);
+        } else if (idPage === `${PageIds.ProductPage}/${this.getIdFromHash()}`) {
+            page = new ProductPage(this.container, idPage, this.cartController, Number(this.getIdFromHash()));
         } else {
             page = new ErrorPage(this.container, PageIds.ErrorPage);
         }

@@ -38,7 +38,7 @@ export class CartPage extends Page {
     }
 
     private createProductsInCart(): HTMLElement {
-        const products = createDiv('products-in-cart');
+        const productsBlock = createDiv('products-in-cart');
         const title = this.createCartProductsTitle();
         const items = createDiv('cart-items');
         let ind = 0;
@@ -58,8 +58,8 @@ export class CartPage extends Page {
                 items.append(itemWrapper);
             }
         }
-        products.append(title, items);
-        return products;
+        productsBlock.append(title, items);
+        return productsBlock;
     }
 
     private createCartProductsTitle(): HTMLElement {

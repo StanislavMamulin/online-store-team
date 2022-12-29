@@ -1,5 +1,9 @@
 import { Page } from '../../../helpers/Page';
 import { CartController } from '../../controllers/cartController';
+import { IProduct } from '../../types';
+import { productsCollection } from '../../products';
+import { createDiv } from '../../../helpers/createHTMLElements';
+import { PageIds } from '../../../helpers/constants';
 
 export class ProductPage extends Page {
     selectedProduct?: IProduct;

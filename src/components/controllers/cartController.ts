@@ -12,6 +12,10 @@ export class CartController {
         this.loadCartStateFromLocalStorage();
     }
 
+    getProductId(product: IProduct): number {
+        return product.id;
+    }
+
     addProductToCart(product: IProduct): void {
         const { id } = product;
         const productItemsInCart: IProduct[] | undefined = this.cart.get(id);
