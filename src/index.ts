@@ -43,7 +43,6 @@ class App {
 
         if (page) {
             page.render();
-            console.log(this.cartController.getAllProducts());
         }
     }
 
