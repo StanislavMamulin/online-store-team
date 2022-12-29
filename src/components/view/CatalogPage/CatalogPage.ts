@@ -222,6 +222,17 @@ export class CatalogPage extends Page {
 
         const buttonDetails = document.createElement('button');
         buttonDetails.innerText = 'DETAILS';
+        buttonDetails.addEventListener('click', () => {
+            if (window.location.href.includes(PageIds.CatalogPage)) {
+                window.location.href = window.location.href.replace(
+                    PageIds.CatalogPage,
+                    `${PageIds.ProductPage}/${obj.id}`
+                );
+            } else {
+                window.location.href += `#${PageIds.ProductPage}/${obj.id}`;
+            }
+        });
+
         block.append(buttonAdd, buttonDetails);
         return block;
     }
