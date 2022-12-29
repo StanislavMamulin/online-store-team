@@ -22,11 +22,16 @@ class App {
     private header: HTMLElement;
 
     private enableRouteChange() {
-        window.addEventListener('hashchange', () => {
+        const pageAddressChangedHandler = () => {
             const hash = window.location.hash.slice(1);
-            if (hash) {
-                App.renderNewPage(hash);
-            }
+            App.renderNewPage(hash);
+        };
+
+        window.addEventListener('hashchange', () => {
+            pageAddressChangedHandler();
+        });
+        window.addEventListener('load', () => {
+            pageAddressChangedHandler();
         });
     }
 
@@ -37,7 +42,7 @@ class App {
     static renderNewPage(idPage: string) {
         let page: Page | null = null;
 
-        if (idPage === PageIds.CatalogPage) {
+        if (idPage === PageIds.CatalogPage || idPage.length === 0) {
             page = new CatalogPage(this.container, idPage, this.productsController, this.cartController);
         } else if (idPage === PageIds.CartPage) {
             page = new CartPage(this.container, idPage, this.cartController);
@@ -58,7 +63,6 @@ class App {
     }
 
     run() {
-        App.renderNewPage('catalog');
         App.container.before(this.header);
         this.enableRouteChange();
     }
