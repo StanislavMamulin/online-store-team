@@ -7,6 +7,7 @@ import { ErrorPage } from './components/view/ErrorPage/ErrorPage';
 import { PageIds } from './helpers/constants';
 import './components/view/CatalogPage/styles.css';
 import './components/view/ErrorPage/error.css';
+import './components/view/CartPage/cart.css';
 import { CartController } from './components/controllers/cartController';
 import { Header } from './components/view/Header/Header';
 
@@ -33,15 +34,16 @@ class App {
         if (idPage === PageIds.CatalogPage) {
             page = new CatalogPage(this.container, idPage, this.productsController, this.cartController);
         } else if (idPage === PageIds.CartPage) {
-            page = new CartPage(this.container, idPage, this.productsController, this.cartController);
+            page = new CartPage(this.container, idPage, this.cartController);
         } else if (idPage === PageIds.ProductPage) {
-            page = new ProductPage(this.container, idPage, this.productsController, this.cartController);
+            page = new ProductPage(this.container, idPage, this.cartController);
         } else {
-            page = new ErrorPage(this.container, PageIds.ErrorPage, this.productsController, this.cartController);
+            page = new ErrorPage(this.container, PageIds.ErrorPage);
         }
 
         if (page) {
             page.render();
+            console.log(this.cartController.getAllProducts());
         }
     }
 

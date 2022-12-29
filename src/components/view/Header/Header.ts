@@ -4,6 +4,7 @@ import { HEADER_INFO } from './constants';
 
 export class Header {
     private headerInfo = HEADER_INFO;
+
     public updateHeader(totalPrice: number, totalCount: number) {
         const totalCountEl = document.querySelector(`.${this.headerInfo.cartItemsCounter}`) as HTMLElement;
         this.updateTotalPrice(totalPrice);
@@ -32,6 +33,8 @@ export class Header {
     }
 
     public createHeader() {
+        const [moneyAmount, totalProducts] = this.loadCartStateFromLocalStorage();
+
         const headerBlock = document.createElement('header');
         const logoContainer = document.createElement('a');
         logoContainer.href = `#${PageIds.CatalogPage}`;
@@ -43,19 +46,26 @@ export class Header {
         brandName.innerText = 'Online Store';
         logoContainer.append(logo, brandName);
 
-        const totalPrice = this.updateTotalPrice(0);
+        const totalPrice = this.updateTotalPrice(moneyAmount);
 
         const shoppingCart = document.createElement('a');
         shoppingCart.href = `#${PageIds.CartPage}`;
         shoppingCart.className = 'shopping-cart';
         const cartItems = createDiv('cart-items');
         const cartItemsCounter = createDiv(this.headerInfo.cartItemsCounter);
-        cartItemsCounter.innerText = `0`;
+        cartItemsCounter.innerText = `${totalProducts}`;
         cartItems.append(cartItemsCounter);
         shoppingCart.append(cartItems);
 
         headerBlock?.append(logoContainer, totalPrice, shoppingCart);
 
         return headerBlock;
+    }
+
+    private loadCartStateFromLocalStorage(): [number, number] {
+        const moneyAmount: string | null = localStorage.getItem('moneyAmount');
+        const totalProducts: string | null = localStorage.getItem('totalProducts');
+
+        return [Number(moneyAmount), Number(totalProducts)];
     }
 }

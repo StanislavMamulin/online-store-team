@@ -16,8 +16,13 @@ export class CatalogPage extends Page {
     private priceSlider?: RangeSlider;
     private stockSlider?: RangeSlider;
 
-    constructor(el: HTMLElement, id: string, productsController: ProductsController, cartController: CartController) {
-        super(el, id, productsController, cartController);
+    constructor(
+        el: HTMLElement,
+        id: string,
+        private productsController: ProductsController,
+        private cartController: CartController
+    ) {
+        super(el, id);
     }
 
     public render() {
@@ -209,9 +214,10 @@ export class CatalogPage extends Page {
         const block = createDiv('card-buttons');
         const buttonAdd = document.createElement('button');
         buttonAdd.className = 'button-add';
-        buttonAdd.innerText = 'ADD TO CART';
+        buttonAdd.innerText = this.cartController.isProductInCart(obj) ? 'DROP FROM CART' : 'ADD TO CART';
         buttonAdd.addEventListener('click', () => {
-            this.cartController.addProductToCartByID(obj.id, obj);
+            this.cartController.addProductToCart(obj);
+            this.renderCards();
         });
 
         const buttonDetails = document.createElement('button');
@@ -222,6 +228,9 @@ export class CatalogPage extends Page {
 
     private renderCard(obj: IProduct): HTMLElement {
         const productItem = createDiv('product-item');
+        this.cartController.isProductInCart(obj)
+            ? productItem.classList.add('in-cart')
+            : productItem.classList.remove('in-cart');
         const div = document.createElement('div');
         const cardWrapper = createDiv('card-wrapper');
         // cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;

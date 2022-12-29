@@ -1,10 +1,9 @@
 import { Page } from '../../../helpers/Page';
 import { CartController } from '../../controllers/cartController';
-import { ProductsController } from '../../controllers/productsController';
 
 export class ProductPage extends Page {
-    constructor(el: HTMLElement, id: string, productsController: ProductsController, cartController: CartController) {
-        super(el, id, productsController, cartController);
+    constructor(el: HTMLElement, id: string, private cartController: CartController) {
+        super(el, id);
     }
 
     render() {

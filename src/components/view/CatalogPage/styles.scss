@@ -377,8 +377,6 @@ main {
             width: 23%;
             padding-top: 20%;
             position: relative;
-            // width: 14.6%;
-            // padding-top: 12%;
             margin: 1%;
             border: 1px solid orange;
             border-radius: 0.5rem;
@@ -388,6 +386,10 @@ main {
             &.small {
                 width: 14.6%;
                 padding-top: 12%;
+            }
+            &.in-cart {
+                box-shadow: 0 0 5px 2px #c45f07;
+                border: 1px solid rgb(235, 68, 68);
             }
             div {
                 .card-wrapper {
