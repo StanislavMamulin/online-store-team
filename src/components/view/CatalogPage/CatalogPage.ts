@@ -7,6 +7,7 @@ import { RangeSlider, SliderValues } from './Slider/RangeSlider';
 import { getMinAndMaxNumberFromArray } from '../../../helpers/arrayHelpers';
 import { Page } from '../../../helpers/Page';
 import { CartController } from '../../controllers/cartController';
+import { PageIds } from '../../../helpers/constants';
 
 export class CatalogPage extends Page {
     private HEADER_OPTION = 'Sort options:';
@@ -29,11 +30,8 @@ export class CatalogPage extends Page {
         this.el.innerHTML = '';
         const cardsBlock = this.createCardsBlock();
         const filtersBlock = this.createFiltersBlock();
-        // const header = createHeader(0, 0);
-
         this.el.append(filtersBlock, cardsBlock);
         this.foundCounter();
-        // this.el.before(header);
     }
 
     private setSliderTextValue(slider: HTMLElement, type: string, value: number): void {
@@ -222,6 +220,17 @@ export class CatalogPage extends Page {
 
         const buttonDetails = document.createElement('button');
         buttonDetails.innerText = 'DETAILS';
+        buttonDetails.addEventListener('click', () => {
+            if (window.location.href.includes(PageIds.CatalogPage)) {
+                window.location.href = window.location.href.replace(
+                    PageIds.CatalogPage,
+                    `${PageIds.ProductPage}/${obj.id}`
+                );
+            } else {
+                window.location.href += `#${PageIds.ProductPage}/${obj.id}`;
+            }
+        });
+
         block.append(buttonAdd, buttonDetails);
         return block;
     }
