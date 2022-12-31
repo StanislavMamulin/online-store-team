@@ -9,6 +9,7 @@ import './components/view/CatalogPage/styles.css';
 import './components/view/ErrorPage/error.css';
 import './components/view/CartPage/cart.css';
 import './components/view/ProductPage/product.css';
+import './components/view/ModalWindow/modal.css';
 import { CartController } from './components/controllers/cartController';
 import { Header } from './components/view/Header/Header';
 import { getLastSubstring } from './helpers/routeHelper';

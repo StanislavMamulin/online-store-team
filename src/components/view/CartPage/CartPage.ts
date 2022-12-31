@@ -2,10 +2,15 @@ import { Page } from '../../../helpers/Page';
 import { CartController } from '../../controllers/cartController';
 import { createDiv } from '../../../helpers/createHTMLElements';
 import { IProduct } from '../../types';
+import { ModalWindow } from '../ModalWindow/ModalWindow';
 
 export class CartPage extends Page {
+    private static modalWindow = new ModalWindow();
+    private modal: HTMLElement;
+
     constructor(el: HTMLElement, id: string, private cartController: CartController) {
         super(el, id);
+        this.modal = CartPage.modalWindow.createModalWindow();
     }
 
     render(): void {
@@ -98,7 +103,7 @@ export class CartPage extends Page {
         const stockControl = createDiv('stock-control');
         stockControl.innerText = ` Stock: ${product.stock} `;
         const incDecControl = createDiv('incDec-control');
-        incDecControl.innerText = ` ${products.length} `; // will be changed
+        incDecControl.innerText = ` ${products.length} `;
         const buttonInc = document.createElement('button');
         buttonInc.innerText = '+';
         buttonInc.addEventListener('click', () => {
@@ -114,7 +119,7 @@ export class CartPage extends Page {
         incDecControl.prepend(buttonInc);
         incDecControl.append(buttonDec);
         const amountControl = createDiv('amount-control');
-        amountControl.innerText = ` €${product.price.toFixed(2)} `; // will be changed
+        amountControl.innerText = ` €${product.price.toFixed(2)} `;
         itemControl.append(stockControl, incDecControl, amountControl);
         return itemControl;
     }
@@ -159,6 +164,9 @@ export class CartPage extends Page {
         const { promoCode, promoCodeExample: promoEx } = this.createPromoCodes();
         const buyButton = document.createElement('button');
         buyButton.innerText = 'BUY NOW';
+        buyButton.addEventListener('click', () => {
+            this.el.append(this.modal);
+        });
         total.append(totalTitle, totalAmount, totalPrices, promoCode, promoEx, buyButton);
         return total;
     }
