@@ -462,6 +462,14 @@ main {
   cursor: pointer;
 }
 
+.products .products-items .not-found {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 200%;
+  margin-top: 10%;
+  color: wheat;
+}
+
 .slider-wrapper {
   border: 1px solid orange;
   border-radius: 0.5rem;

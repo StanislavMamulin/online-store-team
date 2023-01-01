@@ -396,6 +396,12 @@ export class CatalogPage extends Page {
         return block;
     }
 
+    private renderNotFoundBlock() {
+        const notFound = createDiv('not-found');
+        notFound.innerText = 'No products found 😏';
+        return notFound;
+    }
+
     private renderCards(): HTMLElement {
         let productsItems: HTMLElement;
 
@@ -411,6 +417,12 @@ export class CatalogPage extends Page {
             const card = this.renderCard(product);
             productsItems.append(card);
         }
+
+        if (!this.productsController.filteredProducts.length) {
+            const notFoundBlock = this.renderNotFoundBlock();
+            productsItems.append(notFoundBlock);
+        }
+
         return productsItems;
     }
 
