@@ -86,3 +86,7 @@ export class ModalWindow {
         return inputElement;
     }
 }
+
+// валидация (+Trello)
+// можно запустить из productPage (запускается только корзина - почему?)
+// реализован submit корзины, при этом появляется окно с timeout

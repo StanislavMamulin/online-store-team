@@ -5,16 +5,17 @@ import { IProduct } from '../../types';
 import { ModalWindow } from '../ModalWindow/ModalWindow';
 
 export class CartPage extends Page {
-    private static modalWindow = new ModalWindow();
-    private modal: HTMLElement;
+    // private static modalWindow = new ModalWindow();
+    // private modal: HTMLElement;
 
     constructor(el: HTMLElement, id: string, private cartController: CartController) {
         super(el, id);
-        this.modal = CartPage.modalWindow.createModalWindow();
+        // this.modal = CartPage.modalWindow.createModalWindow();
     }
 
     render(): void {
         this.el.innerHTML = '';
+        this.el.className = 'page';
         if (this.cartController.getAllProducts().size) {
             const cartWrapper = this.createCartWrapper();
             this.el.append(cartWrapper);
@@ -165,7 +166,9 @@ export class CartPage extends Page {
         const buyButton = document.createElement('button');
         buyButton.innerText = 'BUY NOW';
         buyButton.addEventListener('click', () => {
-            this.el.append(this.modal);
+            const modalWindow = new ModalWindow();
+            this.el.append(modalWindow.createModalWindow());
+            // this.el.append(this.modal);
         });
         total.append(totalTitle, totalAmount, totalPrices, promoCode, promoEx, buyButton);
         return total;

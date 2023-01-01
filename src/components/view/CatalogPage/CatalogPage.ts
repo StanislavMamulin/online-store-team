@@ -28,6 +28,7 @@ export class CatalogPage extends Page {
 
     public render() {
         this.el.innerHTML = '';
+        this.el.className = 'page';
         const cardsBlock = this.createCardsBlock();
         const filtersBlock = this.createFiltersBlock();
         this.el.append(filtersBlock, cardsBlock);
