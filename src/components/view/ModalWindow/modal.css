@@ -67,6 +67,14 @@
   margin: 2% auto;
 }
 
+.modal-wrapper .modal .modal-content .modal-content-wrapper form .person-details .form-item .error-message {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: red;
+}
+
 .modal-wrapper .modal .modal-content .modal-content-wrapper form .card-details {
   margin-top: 1%;
   width: 100%;

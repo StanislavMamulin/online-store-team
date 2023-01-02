@@ -2,6 +2,7 @@
 const Logo = require('../../../assets/images/pay-logo.jpg');
 
 import { createDiv } from '../../../helpers/createHTMLElements';
+import { InputPatterns } from '../../../helpers/constants';
 
 export class ModalWindow {
     public createModalWindow() {
@@ -37,10 +38,10 @@ export class ModalWindow {
         const person = createDiv('person-details');
         const title = document.createElement('h2');
         title.innerText = 'Personal details ';
-        const nameInput = this.createInputBlock('person-name', 'Name');
-        const phoneInput = this.createInputBlock('phone-number', 'Phone number');
-        const addressInput = this.createInputBlock('address', 'Delivery address');
-        const emailInput = this.createInputBlock('email', 'E-mail');
+        const nameInput = this.createInputBlock('person-name', 'Name', InputPatterns.Name);
+        const phoneInput = this.createInputBlock('phone-number', 'Phone number', InputPatterns.PhoneNumber);
+        const addressInput = this.createInputBlock('address', 'Delivery address', InputPatterns.Address);
+        const emailInput = this.createInputBlock('email', 'E-mail', '', 'email');
         person.append(title, nameInput, phoneInput, addressInput, emailInput);
         return person;
     }
@@ -71,19 +72,42 @@ export class ModalWindow {
         return payCard;
     }
 
-    private createInputBlock(addedClass: string, inputText: string) {
+    private createInputBlock(addedClass: string, inputText: string, inputPattern?: string, inputType?: string) {
         const inputWrapper = createDiv('form-item');
         inputWrapper.classList.add(addedClass);
-        const inputField = this.createInputField(inputText);
+        const inputField = this.createInputField(inputText, inputPattern, inputType);
+        const errorMessage = this.createErrorMessage();
+        inputField.addEventListener('blur', () => {
+            inputField.setCustomValidity('');
+            if (!inputField.validity.valid) {
+                inputWrapper.append(errorMessage);
+            } else {
+                errorMessage.remove();
+            }
+        });
         inputWrapper.append(inputField);
         return inputWrapper;
     }
 
-    private createInputField(fieldText: string) {
+    private createInputField(fieldText: string, setPattern?: string, innerType?: string) {
         const inputElement = document.createElement('input');
-        inputElement.type = 'text';
+        if (innerType) {
+            inputElement.type = innerType;
+        } else {
+            inputElement.type = 'text';
+        }
         inputElement.placeholder = fieldText;
+        inputElement.setAttribute('required', '');
+        if (setPattern) {
+            inputElement.pattern = setPattern;
+        }
         return inputElement;
+    }
+
+    private createErrorMessage() {
+        const error = createDiv('error-message');
+        error.innerText = ' error ';
+        return error;
     }
 }
 

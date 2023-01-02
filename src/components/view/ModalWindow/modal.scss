@@ -54,6 +54,13 @@
                                 text-align: center;
                                 margin: 2% auto;
                             }
+                            .error-message {
+                                width: 100%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: red;
+                            }
                         }
                     }
                     .card-details {
