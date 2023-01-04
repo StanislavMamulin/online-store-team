@@ -1,7 +1,7 @@
 import { SliderValues } from '../components/view/CatalogPage/Slider/RangeSlider';
 
 const parameterType = {
-    singleChoice: ['sort'],
+    singleChoice: ['sort', 'search'],
     multipleChoice: ['category', 'brand'],
     range: ['price', 'stock'],
 };
@@ -13,6 +13,9 @@ export const setUrlParameter = (key: string, value: string | SliderValues) => {
 
     if (parameterType.singleChoice.includes(key)) {
         currentSearch.set(key, value as string);
+        if (value === '') {
+            currentSearch.delete(key);
+        }
     } else if (parameterType.multipleChoice.includes(key)) {
         if (currentSearch.has(key)) {
             const currentValueString = currentSearch.get(key) as string;

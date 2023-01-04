@@ -334,8 +334,10 @@ export class CatalogPage extends Page {
         searchBar.append(searchInput);
 
         searchInput.addEventListener('input', (e: Event) => {
-            this.productsController.searchProduct((e.target as HTMLInputElement).value);
+            const currentSearchString = (e.target as HTMLInputElement).value;
+            this.productsController.searchProduct(currentSearchString);
             this.filterDidUpdate();
+            setUrlParameter('search', currentSearchString);
         });
 
         return searchBar;
