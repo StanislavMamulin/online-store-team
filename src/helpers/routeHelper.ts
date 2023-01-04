@@ -6,8 +6,9 @@ const parameterType = {
     range: ['price', 'stock'],
 };
 
+export const AND_SYMBOL = '↕';
+
 export const setUrlParameter = (key: string, value: string | SliderValues) => {
-    const replaceSymbol = '↕';
     const currentUrl: URL = new URL(window.location.href);
     const currentSearch: URLSearchParams = currentUrl.searchParams;
 
@@ -19,7 +20,7 @@ export const setUrlParameter = (key: string, value: string | SliderValues) => {
     } else if (parameterType.multipleChoice.includes(key)) {
         if (currentSearch.has(key)) {
             const currentValueString = currentSearch.get(key) as string;
-            const values = currentValueString.split(replaceSymbol);
+            const values = currentValueString.split(AND_SYMBOL);
             const existValueIndex = values.indexOf(value as string);
             if (existValueIndex !== -1) {
                 // the value exist in the query - delete it
@@ -27,13 +28,13 @@ export const setUrlParameter = (key: string, value: string | SliderValues) => {
             } else {
                 values.push(value as string);
             }
-            currentSearch.set(key, values.join(replaceSymbol));
+            currentSearch.set(key, values.join(AND_SYMBOL));
         } else {
             currentSearch.append(key, value as string);
         }
     } else if (parameterType.range.includes(key)) {
         if (Array.isArray(value)) {
-            currentSearch.set(key, value.join(replaceSymbol));
+            currentSearch.set(key, value.join(AND_SYMBOL));
         }
     }
 

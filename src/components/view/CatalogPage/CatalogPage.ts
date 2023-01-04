@@ -1,5 +1,5 @@
 import { getSortDirectionAndFieldName } from '../../controllers/catalogPageController';
-import { ProductsController } from '../../controllers/productsController';
+import { FilterRange, ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
 import { addClass, removeClass } from '../../../helpers/classToggle';
 import { createDiv } from '../../../helpers/createHTMLElements';
@@ -43,9 +43,14 @@ export class CatalogPage extends Page {
         }
     }
 
-    private createSlider(type: string, range: [number, number], rangeForField: number[]): HTMLElement {
-        const minValue = range[0];
-        const maxValue = range[1];
+    private createSlider(
+        type: string,
+        range: [number, number],
+        rangeForField: number[],
+        initialValue?: FilterRange
+    ): HTMLElement {
+        const minValue = initialValue ? initialValue[0] : range[0];
+        const maxValue = initialValue ? initialValue[1] : range[1];
         const sliderWrapper = createDiv('slider-wrapper');
         const sliderHeader = document.createElement('h3');
         sliderHeader.innerText = type;
@@ -66,6 +71,10 @@ export class CatalogPage extends Page {
         this.setSliderTextValue(maxValueEl, type, maxValue);
 
         const slider = new RangeSlider(rangeForField, `${type}-slider`);
+        if (initialValue) {
+            slider.setValues(initialValue[0], initialValue[1]);
+        }
+
         slider.addHandler((values: SliderValues) => {
             const [minValue, maxValue] = values;
 
@@ -96,8 +105,9 @@ export class CatalogPage extends Page {
         this.RANGE_SLIDER_FIELDS.forEach((field: string) => {
             const rangeForField = Array.from(this.productsController.getAllValuesFromField(field)) as Array<number>;
             const [minValue, maxValue]: number[] = getMinAndMaxNumberFromArray(rangeForField);
+            const currentRange: FilterRange = this.productsController.getRangeForField(field);
 
-            const slider = this.createSlider(field, [minValue, maxValue], rangeForField);
+            const slider = this.createSlider(field, [minValue, maxValue], rangeForField, currentRange);
             sliders.push(slider);
         });
 
@@ -441,6 +451,7 @@ export class CatalogPage extends Page {
                     this.setSliderTextValue(minTextEl, field, minValue);
                     this.setSliderTextValue(maxTextEl, field, maxValue);
                 }
+                setUrlParameter(field, [minValue, maxValue]);
             }
         });
     }

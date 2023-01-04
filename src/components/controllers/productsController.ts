@@ -1,8 +1,15 @@
-import { loweredArrayValues, toggleValueInArray } from '../../helpers/arrayHelpers';
+import { getMinAndMaxNumberFromArray, loweredArrayValues, toggleValueInArray } from '../../helpers/arrayHelpers';
 import { isNumberInRange, isStringInArray } from '../../helpers/checkers';
-import { setUrlParameter } from '../../helpers/routeHelper';
+import { AND_SYMBOL, FiltersFromQuery, getFiltersFromQuery, setUrlParameter } from '../../helpers/routeHelper';
 import { productsCollection } from '../products';
 import { IProduct } from '../types';
+
+export enum SortDirection {
+    asc = 'ASC',
+    desc = 'DESC',
+}
+
+export type FilterRange = [number, number];
 
 export class ProductsController {
     private readonly products: IProduct[];
@@ -10,8 +17,8 @@ export class ProductsController {
 
     private categoriesForFilter: string[] = [];
     private brandsForFilter: string[] = [];
-    private priceRange: [number, number] = [0, Number.MAX_VALUE];
-    private stockRange: [number, number] = [0, Number.MAX_VALUE];
+    private priceRange: FilterRange = [0, Number.MAX_VALUE];
+    private stockRange: FilterRange = [0, Number.MAX_VALUE];
 
     filteredProducts: IProduct[];
 
@@ -20,6 +27,8 @@ export class ProductsController {
         this.filteredProducts = this.products;
 
         this.addFilters();
+        this.setRanges();
+        this.applyFiltersFromQueryString();
     }
 
     private addFilters(): void {
@@ -145,5 +154,54 @@ export class ProductsController {
 
             return productValues.some((value) => value.includes(searchRequest.toLowerCase()));
         });
+    }
+
+    private applyFiltersFromQueryString(): void {
+        const filtersObject: FiltersFromQuery = getFiltersFromQuery();
+
+        for (const [filterName, value] of Object.entries(filtersObject)) {
+            if (value.includes(AND_SYMBOL)) {
+                // multiple choice or range filter
+                if (filterName === 'category' || filterName === 'brand') {
+                    const filterValues = value.split(AND_SYMBOL);
+                    filterValues.forEach((filterValue) => {
+                        this.setFilterForField(filterName, filterValue);
+                    });
+                } else if (filterName === 'price' || filterName === 'stock') {
+                    const [from, to] = value.split(AND_SYMBOL);
+                    this.setFilterForField(filterName, [Number(from), Number(to)]);
+                }
+            } else {
+                // single choice filter
+                if (filterName === 'sort') {
+                    const [typeOfSort, direction] = value.split('-');
+                    if (direction === SortDirection.asc) {
+                        this.sortAsc(typeOfSort);
+                    } else {
+                        this.sortDesc(typeOfSort);
+                    }
+                } else if (filterName === 'search') {
+                    this.searchProduct(value);
+                }
+            }
+        }
+    }
+
+    getRangeForField(field: string): FilterRange {
+        if (field === 'price') {
+            return this.priceRange;
+        }
+
+        return this.stockRange;
+    }
+
+    private setRanges() {
+        const prices = Array.from(this.getAllValuesFromField('price')) as Array<number>;
+        const priceRange = getMinAndMaxNumberFromArray(prices);
+        this.priceRange = priceRange;
+
+        const stocks = Array.from(this.getAllValuesFromField('stock')) as Array<number>;
+        const stockRange = getMinAndMaxNumberFromArray(stocks);
+        this.stockRange = stockRange;
     }
 }
