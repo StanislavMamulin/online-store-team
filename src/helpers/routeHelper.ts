@@ -50,3 +50,19 @@ export function getLastSubstring(str: string): string {
     const arr = str.split('/');
     return arr[arr.length - 1];
 }
+
+export type FiltersFromQuery = {
+    [filterType: string]: string;
+};
+
+export const getFiltersFromQuery = (): FiltersFromQuery => {
+    const currentUrl: URL = new URL(window.location.href);
+    const currentSearch: URLSearchParams = currentUrl.searchParams;
+
+    const searchObj: FiltersFromQuery = {};
+    for (const [key, value] of currentSearch) {
+        searchObj[key] = value;
+    }
+
+    return searchObj;
+};
