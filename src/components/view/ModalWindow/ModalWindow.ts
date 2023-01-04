@@ -1,8 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logo = require('../../../assets/images/pay-logo.jpg');
+const PayLogo = require('../../../assets/images/pay-logo.jpg');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const VisaLogo = require('../../../assets/images/visa-logo.png');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const MCLogo = require('../../../assets/images/mc-logo.png');
 
 import { createDiv } from '../../../helpers/createHTMLElements';
 import { InputPatterns } from '../../../helpers/constants';
+import { CardNumberFormatter, CardDateFormatter } from '../../../helpers/formatters';
 
 export class ModalWindow {
     public createModalWindow() {
@@ -40,8 +45,8 @@ export class ModalWindow {
         title.innerText = 'Personal details ';
         const nameInput = this.createInputBlock('person-name', 'Name', InputPatterns.Name);
         const phoneInput = this.createInputBlock('phone-number', 'Phone number', InputPatterns.PhoneNumber);
-        const addressInput = this.createInputBlock('address', 'Delivery address', InputPatterns.Address);
-        const emailInput = this.createInputBlock('email', 'E-mail', '', 'email');
+        const addressInput = this.createInputBlock('address', 'Delivery address', InputPatterns.Address, 'text');
+        const emailInput = this.createInputBlock('email', 'E-mail', InputPatterns.Email, 'email');
         person.append(title, nameInput, phoneInput, addressInput, emailInput);
         return person;
     }
@@ -53,18 +58,31 @@ export class ModalWindow {
         const cardData = createDiv('card-data');
         const cardNumber = createDiv('card-number');
         const cardNumberImg = document.createElement('img');
-        cardNumberImg.src = Logo;
+        cardNumberImg.src = PayLogo;
         cardNumberImg.alt = 'pay-logo';
-        const cardNumberInput = this.createInputField('Card number');
+        const cardNumberInput = this.createInputField('Card number', InputPatterns.CardNumber);
+        cardNumberInput.addEventListener('keyup', (e) => {
+            if (cardNumberInput.value[0] === '4') {
+                cardNumberImg.src = VisaLogo;
+            } else if (cardNumberInput.value[0] === '5') {
+                cardNumberImg.src = MCLogo;
+            } else {
+                cardNumberImg.src = PayLogo;
+            }
+            CardNumberFormatter(e.target as HTMLInputElement);
+        });
         cardNumber.append(cardNumberImg, cardNumberInput);
         const cardOther = createDiv('other-data');
         const cardTerm = createDiv('valid-data');
         cardTerm.innerText = ' VALID: ';
-        const termInput = this.createInputField('Valid Thru');
+        const termInput = this.createInputField('Valid Thru', InputPatterns.CardDate);
+        termInput.addEventListener('keyup', (e) => {
+            CardDateFormatter(e.target as HTMLInputElement);
+        });
         cardTerm.append(termInput);
         const cardCVV = createDiv('cvv-data');
         cardCVV.innerText = ' CVV: ';
-        const CVVInput = this.createInputField('Code');
+        const CVVInput = this.createInputField('Code', InputPatterns.CardCvv);
         cardCVV.append(CVVInput);
         cardOther.append(cardTerm, cardCVV);
         cardData.append(cardNumber, cardOther);
@@ -76,7 +94,7 @@ export class ModalWindow {
         const inputWrapper = createDiv('form-item');
         inputWrapper.classList.add(addedClass);
         const inputField = this.createInputField(inputText, inputPattern, inputType);
-        const errorMessage = this.createErrorMessage();
+        const errorMessage = this.createErrorMessage('error-message');
         inputField.addEventListener('blur', () => {
             inputField.setCustomValidity('');
             if (!inputField.validity.valid) {
@@ -104,13 +122,18 @@ export class ModalWindow {
         return inputElement;
     }
 
-    private createErrorMessage() {
-        const error = createDiv('error-message');
-        error.innerText = ' error ';
+    private createErrorMessage(messageClass: string, message?: string) {
+        const error = createDiv(messageClass);
+        if (message) {
+            error.innerText = message;
+        } else {
+            error.innerText = ' error ';
+        }
         return error;
     }
 }
 
 // валидация (+Trello)
-// можно запустить из productPage (запускается только корзина - почему?)
+// error card блоки (!)
+// как типизировать require
 // реализован submit корзины, при этом появляется окно с timeout

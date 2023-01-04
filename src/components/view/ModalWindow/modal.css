@@ -125,6 +125,10 @@
   font-weight: 700;
 }
 
+.modal-wrapper .modal .modal-content .modal-content-wrapper form .card-details .card-data .card-number input:invalid {
+  background: red;
+}
+
 .modal-wrapper .modal .modal-content .modal-content-wrapper form .card-details .card-data .other-data {
   margin-bottom: 5%;
   display: flex;
@@ -153,6 +157,16 @@
   text-align: center;
   margin-left: 2%;
   color: #000;
+}
+
+.modal-wrapper .modal .modal-content .modal-content-wrapper form .card-details .card-data .other-data .valid-data input:invalid, .modal-wrapper .modal .modal-content .modal-content-wrapper form .card-details .card-data .other-data .cvv-data input:invalid {
+  background: red;
+}
+
+.modal-wrapper .modal .modal-content .modal-content-wrapper form .card-details .card-err {
+  color: red;
+  text-align: center;
+  padding-top: 1%;
 }
 
 .modal-wrapper .modal .modal-content .modal-content-wrapper form button {

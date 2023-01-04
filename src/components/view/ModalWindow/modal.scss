@@ -108,6 +108,9 @@
                                     font-size: 90%;
                                     color: #000;
                                     font-weight: 700;
+                                    &:invalid {
+                                        background: red;
+                                    }
                                 }
                             }
                             .other-data {
@@ -134,12 +137,20 @@
                                         text-align: center;
                                         margin-left: 2%;
                                         color: #000;
+                                        &:invalid {
+                                            background: red;
+                                        }
                                     }
                                 }
                                 .cvv-data {
                                     @extend .valid-data;
                                 }
                             }
+                        }
+                        .card-err {
+                            color: red;
+                            text-align: center;
+                            padding-top: 1%;
                         }
                     }
                     button {

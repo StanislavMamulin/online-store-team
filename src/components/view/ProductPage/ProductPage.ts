@@ -5,7 +5,6 @@ import { productsCollection } from '../../products';
 import { createDiv } from '../../../helpers/createHTMLElements';
 import { PageIds } from '../../../helpers/constants';
 import { ModalWindow } from '../ModalWindow/ModalWindow';
-import { CartPage } from '../CartPage/CartPage';
 
 export class ProductPage extends Page {
     selectedProduct?: IProduct;
@@ -144,6 +143,8 @@ export class ProductPage extends Page {
             buyButton.innerText = 'BUY NOW';
             buyButton.addEventListener('click', () => {
                 window.location.href = window.location.href.replace(window.location.hash.slice(1), PageIds.CartPage);
+                const modalWindow = new ModalWindow();
+                document.body.append(modalWindow.createModalWindow());
             });
             buttonsBlock.append(addButton, buyButton);
             addContainer.append(buttonsBlock);
