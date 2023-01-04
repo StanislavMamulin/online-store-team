@@ -1,5 +1,6 @@
 import { loweredArrayValues, toggleValueInArray } from '../../helpers/arrayHelpers';
 import { isNumberInRange, isStringInArray } from '../../helpers/checkers';
+import { setUrlParameter } from '../../helpers/routeHelper';
 import { productsCollection } from '../products';
 import { IProduct } from '../types';
 
@@ -67,6 +68,8 @@ export class ProductsController {
     sortAsc(field: string) {
         const searchField: string = this.normalizeField(field);
 
+        setUrlParameter('sort', `${field}-asc`);
+
         return this.filteredProducts.sort(
             (a, b) => Number(a[searchField as keyof IProduct]) - Number(b[searchField as keyof IProduct])
         );
@@ -74,6 +77,8 @@ export class ProductsController {
 
     sortDesc(field: string) {
         const searchField: string = this.normalizeField(field);
+
+        setUrlParameter('sort', `${field}-desc`);
 
         return this.filteredProducts.sort(
             (a, b) => Number(b[searchField as keyof IProduct]) - Number(a[searchField as keyof IProduct])

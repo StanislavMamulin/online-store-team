@@ -8,6 +8,7 @@ import { getMinAndMaxNumberFromArray } from '../../../helpers/arrayHelpers';
 import { Page } from '../../../helpers/Page';
 import { CartController } from '../../controllers/cartController';
 import { PageIds } from '../../../helpers/constants';
+import { setUrlParameter } from '../../../helpers/routeHelper';
 
 export class CatalogPage extends Page {
     private HEADER_OPTION = 'Sort options:';
@@ -75,6 +76,7 @@ export class CatalogPage extends Page {
                 this.productsController.setFilterForField(`${type as keyof IProduct}`, [minValue, maxValue]);
 
                 this.filterDidUpdate(type);
+                setUrlParameter(type, values);
             }
         });
 
@@ -132,6 +134,7 @@ export class CatalogPage extends Page {
     private filterHandler = (event: Event, typeOfFilter: string) => {
         const clickedFilter = (event.target as HTMLInputElement).id;
         this.productsController.setFilterForField(typeOfFilter as keyof IProduct, clickedFilter);
+        setUrlParameter(typeOfFilter, clickedFilter);
 
         this.filterDidUpdate();
     };
