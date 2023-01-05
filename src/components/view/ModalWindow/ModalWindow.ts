@@ -99,7 +99,7 @@ export class ModalWindow {
         });
 
         cardNumberInput.addEventListener('blur', () => {
-            this.checkValidaty(cardNumberInput, 'Card number');
+            this.checkValidity(cardNumberInput, 'Card number');
         });
 
         cardNumber.append(cardNumberImg, cardNumberInput);
@@ -112,7 +112,7 @@ export class ModalWindow {
         cardCVV.innerText = ' CVV: ';
         const CVVInput = this.createInputField('Code', InputPatterns.CardCvv);
         CVVInput.addEventListener('blur', () => {
-            this.checkValidaty(CVVInput, 'Card CVV');
+            this.checkValidity(CVVInput, 'Card CVV');
         });
         cardCVV.append(CVVInput);
         return cardCVV;
@@ -134,13 +134,13 @@ export class ModalWindow {
             }
         });
         termInput.addEventListener('blur', () => {
-            this.checkValidaty(termInput, TERM_INPUT_ERROR_TEXT);
+            this.checkValidity(termInput, TERM_INPUT_ERROR_TEXT);
         });
         cardTerm.append(termInput);
         return cardTerm;
     }
 
-    private checkValidaty(inputEl: HTMLInputElement, errorText: string) {
+    private checkValidity(inputEl: HTMLInputElement, errorText: string) {
         inputEl.setCustomValidity('');
         if (!inputEl.validity.valid) {
             this.errorsTexts.add(errorText);
