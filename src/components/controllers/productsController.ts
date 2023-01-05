@@ -20,6 +20,7 @@ export class ProductsController {
     private priceRange: FilterRange = [0, Number.MAX_VALUE];
     private stockRange: FilterRange = [0, Number.MAX_VALUE];
     private sort = '';
+    private searchString = '';
 
     filteredProducts: IProduct[];
 
@@ -159,6 +160,7 @@ export class ProductsController {
 
             return productValues.some((value) => value.includes(searchRequest.toLowerCase()));
         });
+        this.searchString = searchRequest;
     }
 
     private applyFiltersFromQueryString(): void {
@@ -217,5 +219,9 @@ export class ProductsController {
      */
     getCurrentSort(): string {
         return this.sort;
+    }
+
+    getSearchString(): string {
+        return this.searchString;
     }
 }

@@ -350,6 +350,12 @@ export class CatalogPage extends Page {
         const searchInput = document.createElement('input');
         searchInput.type = 'search';
         searchInput.placeholder = 'Search product';
+
+        const appliedSearch = this.productsController.getSearchString();
+        if (appliedSearch) {
+            searchInput.value = appliedSearch;
+        }
+
         searchBar.append(searchInput);
 
         searchInput.addEventListener('input', (e: Event) => {
