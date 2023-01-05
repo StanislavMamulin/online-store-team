@@ -12,13 +12,14 @@ import { getMinAndMaxNumberFromArray } from '../../../helpers/arrayHelpers';
 import { Page } from '../../../helpers/Page';
 import { CartController } from '../../controllers/cartController';
 import { PageIds } from '../../../helpers/constants';
-import { setUrlParameter } from '../../../helpers/routeHelper';
+import { resetQueryParams, setUrlParameter } from '../../../helpers/routeHelper';
 
 export class CatalogPage extends Page {
     private HEADER_OPTION = 'Sort options:';
     private FIELDS_FOR_SORT = ['price', 'rating', 'discount'];
     private SORT_DIRECTION = ['ASC', 'DESC'];
     private RANGE_SLIDER_FIELDS = ['price', 'stock'];
+    private RESET_FILTER_FLAG = 'reset filter';
     private priceSlider?: RangeSlider;
     private stockSlider?: RangeSlider;
 
@@ -121,8 +122,7 @@ export class CatalogPage extends Page {
     private createFiltersBlock(): HTMLElement {
         const block = createDiv('filters');
         const filtersButtons = createDiv('filter-buttons');
-        const resetButton = document.createElement('button');
-        resetButton.innerText = 'Reset Filters';
+        const resetButton = this.createResetButton();
 
         const copyButton = this.createCopyButton();
 
@@ -144,6 +144,17 @@ export class CatalogPage extends Page {
 
         block.append(filtersButtons, categoryList, brandList, ...sliders);
         return block;
+    }
+
+    private createResetButton() {
+        const resetButton = document.createElement('button');
+        resetButton.innerText = 'Reset Filters';
+
+        resetButton.addEventListener('click', () => {
+            this.resetFiltersViews(this.RESET_FILTER_FLAG);
+        });
+
+        return resetButton;
     }
 
     private createCopyButton() {
@@ -455,15 +466,23 @@ export class CatalogPage extends Page {
     }
 
     private createCardsSortRow(): HTMLElement {
-        const block = createDiv('products-sort');
+        const productsSortClassname = 'products-sort';
+        let productsSort: HTMLElement | null = document.querySelector(`.${productsSortClassname}`);
+
+        if (productsSort) {
+            productsSort.innerHTML = '';
+        } else {
+            productsSort = createDiv(productsSortClassname);
+        }
 
         const sortOptionsBar = this.createSortOptionsBar();
         const foundCount = this.createFoundCount();
         const searchBar = this.createSearchBar();
         const viewMode = this.createViewMode();
 
-        block.append(sortOptionsBar, foundCount, searchBar, viewMode);
-        return block;
+        productsSort.append(sortOptionsBar, foundCount, searchBar, viewMode);
+
+        return productsSort;
     }
 
     private createCardsBlock(): HTMLElement {
@@ -516,8 +535,19 @@ export class CatalogPage extends Page {
                     this.setSliderTextValue(minTextEl, field, minValue);
                     this.setSliderTextValue(maxTextEl, field, maxValue);
                 }
-                setUrlParameter(field, [minValue, maxValue]);
+
+                if (filter !== this.RESET_FILTER_FLAG) {
+                    setUrlParameter(field, [minValue, maxValue]);
+                }
             }
         });
+    }
+
+    private resetFiltersViews(resetFlag: string) {
+        resetQueryParams();
+        this.productsController.resetFilters();
+        this.filterDidUpdate(resetFlag);
+        this.createCardsSortRow();
+        this.foundCounter();
     }
 }

@@ -218,4 +218,14 @@ export class ProductsController {
     getSearchString(): string {
         return this.searchString;
     }
+
+    resetFilters() {
+        this.categoriesForFilter = [];
+        this.brandsForFilter = [];
+        this.sort = '';
+        this.searchString = '';
+        this.setRanges();
+
+        this.filteredProducts = productsCollection;
+    }
 }
