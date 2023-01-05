@@ -123,8 +123,9 @@ export class CatalogPage extends Page {
         const filtersButtons = createDiv('filter-buttons');
         const resetButton = document.createElement('button');
         resetButton.innerText = 'Reset Filters';
-        const copyButton = document.createElement('button');
-        copyButton.innerText = 'Copy Link';
+
+        const copyButton = this.createCopyButton();
+
         filtersButtons.append(resetButton, copyButton);
 
         const categoryList = createDiv('category-list');
@@ -143,6 +144,15 @@ export class CatalogPage extends Page {
 
         block.append(filtersButtons, categoryList, brandList, ...sliders);
         return block;
+    }
+
+    private createCopyButton() {
+        const copyButton = document.createElement('button');
+        copyButton.innerText = 'Copy Link';
+        copyButton.addEventListener('click', () => {
+            navigator.clipboard.writeText(window.location.href);
+        });
+        return copyButton;
     }
 
     private filterHandler = (event: Event, typeOfFilter: string) => {
