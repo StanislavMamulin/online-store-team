@@ -1,5 +1,9 @@
-import { getSortDirectionAndFieldName } from '../../controllers/catalogPageController';
-import { ProductsController } from '../../controllers/productsController';
+import {
+    getCurrentViewModeFromQuery,
+    getSortDirectionAndFieldName,
+    ViewMode,
+} from '../../controllers/catalogPageController';
+import { FilterRange, ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
 import { addClass, removeClass } from '../../../helpers/classToggle';
 import { createDiv } from '../../../helpers/createHTMLElements';
@@ -8,12 +12,14 @@ import { getMinAndMaxNumberFromArray } from '../../../helpers/arrayHelpers';
 import { Page } from '../../../helpers/Page';
 import { CartController } from '../../controllers/cartController';
 import { PageIds } from '../../../helpers/constants';
+import { resetQueryParams, setUrlParameter } from '../../../helpers/routeHelper';
 
 export class CatalogPage extends Page {
     private HEADER_OPTION = 'Sort options:';
     private FIELDS_FOR_SORT = ['price', 'rating', 'discount'];
     private SORT_DIRECTION = ['ASC', 'DESC'];
     private RANGE_SLIDER_FIELDS = ['price', 'stock'];
+    private RESET_FILTER_FLAG = 'reset filter';
     private priceSlider?: RangeSlider;
     private stockSlider?: RangeSlider;
 
@@ -43,9 +49,14 @@ export class CatalogPage extends Page {
         }
     }
 
-    private createSlider(type: string, range: [number, number], rangeForField: number[]): HTMLElement {
-        const minValue = range[0];
-        const maxValue = range[1];
+    private createSlider(
+        type: string,
+        range: [number, number],
+        rangeForField: number[],
+        initialValue?: FilterRange
+    ): HTMLElement {
+        const minValue = initialValue ? initialValue[0] : range[0];
+        const maxValue = initialValue ? initialValue[1] : range[1];
         const sliderWrapper = createDiv('slider-wrapper');
         const sliderHeader = document.createElement('h3');
         sliderHeader.innerText = type;
@@ -66,6 +77,10 @@ export class CatalogPage extends Page {
         this.setSliderTextValue(maxValueEl, type, maxValue);
 
         const slider = new RangeSlider(rangeForField, `${type}-slider`);
+        if (initialValue) {
+            slider.setValues(initialValue[0], initialValue[1]);
+        }
+
         slider.addHandler((values: SliderValues) => {
             const [minValue, maxValue] = values;
 
@@ -76,6 +91,7 @@ export class CatalogPage extends Page {
                 this.productsController.setFilterForField(`${type as keyof IProduct}`, [minValue, maxValue]);
 
                 this.filterDidUpdate(type);
+                setUrlParameter(type, values);
             }
         });
 
@@ -95,8 +111,9 @@ export class CatalogPage extends Page {
         this.RANGE_SLIDER_FIELDS.forEach((field: string) => {
             const rangeForField = Array.from(this.productsController.getAllValuesFromField(field)) as Array<number>;
             const [minValue, maxValue]: number[] = getMinAndMaxNumberFromArray(rangeForField);
+            const currentRange: FilterRange = this.productsController.getRangeForField(field);
 
-            const slider = this.createSlider(field, [minValue, maxValue], rangeForField);
+            const slider = this.createSlider(field, [minValue, maxValue], rangeForField, currentRange);
             sliders.push(slider);
         });
 
@@ -106,10 +123,10 @@ export class CatalogPage extends Page {
     private createFiltersBlock(): HTMLElement {
         const block = createDiv('filters');
         const filtersButtons = createDiv('filter-buttons');
-        const resetButton = document.createElement('button');
-        resetButton.innerText = 'Reset Filters';
-        const copyButton = document.createElement('button');
-        copyButton.innerText = 'Copy Link';
+        const resetButton = this.createResetButton();
+
+        const copyButton = this.createCopyButton();
+
         filtersButtons.append(resetButton, copyButton);
 
         const categoryList = createDiv('category-list');
@@ -130,9 +147,37 @@ export class CatalogPage extends Page {
         return block;
     }
 
+    private createResetButton() {
+        const resetButton = document.createElement('button');
+        resetButton.innerText = 'Reset Filters';
+
+        resetButton.addEventListener('click', () => {
+            this.resetFiltersViews(this.RESET_FILTER_FLAG);
+        });
+
+        return resetButton;
+    }
+
+    private createCopyButton() {
+        const DEFAULT_COPY_TEXT = 'Copy Link';
+        const COPY_DONE_TEXT = 'Copied!';
+
+        const copyButton = document.createElement('button');
+        copyButton.innerText = DEFAULT_COPY_TEXT;
+        copyButton.addEventListener('click', () => {
+            navigator.clipboard.writeText(window.location.href);
+            copyButton.innerText = COPY_DONE_TEXT;
+            setTimeout(() => {
+                copyButton.innerText = DEFAULT_COPY_TEXT;
+            }, 1000);
+        });
+        return copyButton;
+    }
+
     private filterHandler = (event: Event, typeOfFilter: string) => {
         const clickedFilter = (event.target as HTMLInputElement).id;
         this.productsController.setFilterForField(typeOfFilter as keyof IProduct, clickedFilter);
+        setUrlParameter(typeOfFilter, clickedFilter);
 
         this.filterDidUpdate();
     };
@@ -241,6 +286,7 @@ export class CatalogPage extends Page {
         this.cartController.isProductInCart(obj)
             ? productItem.classList.add('in-cart')
             : productItem.classList.remove('in-cart');
+
         const div = document.createElement('div');
         const cardWrapper = createDiv('card-wrapper');
         // cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
@@ -248,24 +294,37 @@ export class CatalogPage extends Page {
         const cardText = createDiv('card-text');
         const cardTitle = createDiv('card-title');
         cardTitle.innerText = obj.title;
+
         const cardInfo = createDiv('card-info');
         const cardInfoItem = this.createCardInfoTexts(obj);
+
         cardInfo.append(cardInfoItem);
         cardText.append(cardTitle, cardInfo);
         cardWrapper.append(cardText, cardButtons);
         div.append(cardWrapper);
         productItem.append(div);
+
+        const selectedViewMode = getCurrentViewModeFromQuery();
+        if (selectedViewMode === ViewMode.big) {
+            productItem.classList.remove('small');
+            cardInfo.classList.remove('small');
+        } else {
+            productItem.classList.add('small');
+            cardInfo.classList.add('small');
+        }
+
         return productItem;
     }
 
-    private createOption(optionValue: string): HTMLOptionElement {
+    private createOption(optionText: string, optionValue: string): HTMLOptionElement {
         const option = document.createElement('option');
-        option.text = optionValue;
+        option.text = optionText;
+        option.value = optionValue;
         return option;
     }
 
     private addHeaderForSortOptions(text: string): HTMLOptionElement {
-        const headerOption = this.createOption(text);
+        const headerOption = this.createOption(text, 'header');
         headerOption.disabled = true;
         headerOption.defaultSelected = true;
 
@@ -278,7 +337,10 @@ export class CatalogPage extends Page {
 
         this.FIELDS_FOR_SORT.forEach((field) => {
             this.SORT_DIRECTION.forEach((direction) => {
-                const option: HTMLOptionElement = this.createOption(`Sort by ${field} ${direction}`);
+                const option: HTMLOptionElement = this.createOption(
+                    `Sort by ${field} ${direction}`,
+                    `${field}-${direction.toLowerCase()}`
+                );
                 selectEl.add(option);
             });
         });
@@ -290,7 +352,7 @@ export class CatalogPage extends Page {
         this.addSortOptions(barSelection);
 
         barSelection.addEventListener('change', () => {
-            const selectedValues: string = barSelection.options[barSelection.selectedIndex].value;
+            const selectedValues: string = barSelection.options[barSelection.selectedIndex].text;
             const [direction, field]: [string, string] = getSortDirectionAndFieldName(selectedValues);
 
             if (direction === 'ASC') {
@@ -300,6 +362,11 @@ export class CatalogPage extends Page {
             }
             this.renderCards();
         });
+
+        const appliedSorting = this.productsController.getCurrentSort();
+        if (appliedSorting) {
+            barSelection.value = appliedSorting;
+        }
 
         sortOptionsBar.append(barSelection);
 
@@ -329,11 +396,19 @@ export class CatalogPage extends Page {
         const searchInput = document.createElement('input');
         searchInput.type = 'search';
         searchInput.placeholder = 'Search product';
+
+        const appliedSearch = this.productsController.getSearchString();
+        if (appliedSearch) {
+            searchInput.value = appliedSearch;
+        }
+
         searchBar.append(searchInput);
 
         searchInput.addEventListener('input', (e: Event) => {
-            this.productsController.searchProduct((e.target as HTMLInputElement).value);
+            const currentSearchString = (e.target as HTMLInputElement).value;
+            this.productsController.searchProduct(currentSearchString);
             this.filterDidUpdate();
+            setUrlParameter('search', currentSearchString);
         });
 
         return searchBar;
@@ -357,35 +432,58 @@ export class CatalogPage extends Page {
         }
         viewMode.append(smallV, bigV);
 
-        bigV.classList.add('active-mode');
+        const selectedViewMode = getCurrentViewModeFromQuery();
+        if (selectedViewMode === ViewMode.big) {
+            bigV.classList.add('active-mode');
+        } else {
+            smallV.classList.add('active-mode');
+        }
 
         bigV.addEventListener('click', () => {
-            smallV.classList.remove('active-mode');
-            bigV.classList.add('active-mode');
-            removeClass(document.querySelectorAll('.product-item'), 'small');
-            removeClass(document.querySelectorAll('.card-info'), 'small');
+            this.applyBigViewmode(smallV, bigV);
         });
 
         smallV.addEventListener('click', () => {
-            bigV.classList.remove('active-mode');
-            smallV.classList.add('active-mode');
-            addClass(document.querySelectorAll('.product-item'), 'small');
-            addClass(document.querySelectorAll('.card-info'), 'small');
+            this.applySmallViewmode(bigV, smallV);
         });
 
         return viewMode;
     }
 
+    private applySmallViewmode(bigV: HTMLDivElement, smallV: HTMLDivElement) {
+        bigV.classList.remove('active-mode');
+        smallV.classList.add('active-mode');
+        addClass(document.querySelectorAll('.product-item'), 'small');
+        addClass(document.querySelectorAll('.card-info'), 'small');
+        setUrlParameter('viewmode', ViewMode.small);
+    }
+
+    private applyBigViewmode(smallV: HTMLDivElement, bigV: HTMLDivElement) {
+        smallV.classList.remove('active-mode');
+        bigV.classList.add('active-mode');
+        removeClass(document.querySelectorAll('.product-item'), 'small');
+        removeClass(document.querySelectorAll('.card-info'), 'small');
+        setUrlParameter('viewmode', ViewMode.big);
+    }
+
     private createCardsSortRow(): HTMLElement {
-        const block = createDiv('products-sort');
+        const productsSortClassname = 'products-sort';
+        let productsSort: HTMLElement | null = document.querySelector(`.${productsSortClassname}`);
+
+        if (productsSort) {
+            productsSort.innerHTML = '';
+        } else {
+            productsSort = createDiv(productsSortClassname);
+        }
 
         const sortOptionsBar = this.createSortOptionsBar();
         const foundCount = this.createFoundCount();
         const searchBar = this.createSearchBar();
         const viewMode = this.createViewMode();
 
-        block.append(sortOptionsBar, foundCount, searchBar, viewMode);
-        return block;
+        productsSort.append(sortOptionsBar, foundCount, searchBar, viewMode);
+
+        return productsSort;
     }
 
     private createCardsBlock(): HTMLElement {
@@ -449,7 +547,19 @@ export class CatalogPage extends Page {
                     this.setSliderTextValue(minTextEl, field, minValue);
                     this.setSliderTextValue(maxTextEl, field, maxValue);
                 }
+
+                if (filter !== this.RESET_FILTER_FLAG) {
+                    setUrlParameter(field, [minValue, maxValue]);
+                }
             }
         });
+    }
+
+    private resetFiltersViews(resetFlag: string) {
+        resetQueryParams();
+        this.productsController.resetFilters();
+        this.filterDidUpdate(resetFlag);
+        this.createCardsSortRow();
+        this.foundCounter();
     }
 }
