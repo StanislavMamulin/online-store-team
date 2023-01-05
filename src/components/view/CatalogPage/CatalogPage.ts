@@ -1,4 +1,8 @@
-import { getSortDirectionAndFieldName } from '../../controllers/catalogPageController';
+import {
+    getCurrentViewModeFromQuery,
+    getSortDirectionAndFieldName,
+    ViewMode,
+} from '../../controllers/catalogPageController';
 import { FilterRange, ProductsController } from '../../controllers/productsController';
 import { IProduct } from '../../types';
 import { addClass, removeClass } from '../../../helpers/classToggle';
@@ -253,6 +257,7 @@ export class CatalogPage extends Page {
         this.cartController.isProductInCart(obj)
             ? productItem.classList.add('in-cart')
             : productItem.classList.remove('in-cart');
+
         const div = document.createElement('div');
         const cardWrapper = createDiv('card-wrapper');
         // cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
@@ -260,13 +265,25 @@ export class CatalogPage extends Page {
         const cardText = createDiv('card-text');
         const cardTitle = createDiv('card-title');
         cardTitle.innerText = obj.title;
+
         const cardInfo = createDiv('card-info');
         const cardInfoItem = this.createCardInfoTexts(obj);
+
         cardInfo.append(cardInfoItem);
         cardText.append(cardTitle, cardInfo);
         cardWrapper.append(cardText, cardButtons);
         div.append(cardWrapper);
         productItem.append(div);
+
+        const selectedViewMode = getCurrentViewModeFromQuery();
+        if (selectedViewMode === ViewMode.big) {
+            productItem.classList.remove('small');
+            cardInfo.classList.remove('small');
+        } else {
+            productItem.classList.add('small');
+            cardInfo.classList.add('small');
+        }
+
         return productItem;
     }
 
@@ -386,23 +403,38 @@ export class CatalogPage extends Page {
         }
         viewMode.append(smallV, bigV);
 
-        bigV.classList.add('active-mode');
+        const selectedViewMode = getCurrentViewModeFromQuery();
+        if (selectedViewMode === ViewMode.big) {
+            bigV.classList.add('active-mode');
+        } else {
+            smallV.classList.add('active-mode');
+        }
 
         bigV.addEventListener('click', () => {
-            smallV.classList.remove('active-mode');
-            bigV.classList.add('active-mode');
-            removeClass(document.querySelectorAll('.product-item'), 'small');
-            removeClass(document.querySelectorAll('.card-info'), 'small');
+            this.applyBigViewmode(smallV, bigV);
         });
 
         smallV.addEventListener('click', () => {
-            bigV.classList.remove('active-mode');
-            smallV.classList.add('active-mode');
-            addClass(document.querySelectorAll('.product-item'), 'small');
-            addClass(document.querySelectorAll('.card-info'), 'small');
+            this.applySmallViewmode(bigV, smallV);
         });
 
         return viewMode;
+    }
+
+    private applySmallViewmode(bigV: HTMLDivElement, smallV: HTMLDivElement) {
+        bigV.classList.remove('active-mode');
+        smallV.classList.add('active-mode');
+        addClass(document.querySelectorAll('.product-item'), 'small');
+        addClass(document.querySelectorAll('.card-info'), 'small');
+        setUrlParameter('viewmode', ViewMode.small);
+    }
+
+    private applyBigViewmode(smallV: HTMLDivElement, bigV: HTMLDivElement) {
+        smallV.classList.remove('active-mode');
+        bigV.classList.add('active-mode');
+        removeClass(document.querySelectorAll('.product-item'), 'small');
+        removeClass(document.querySelectorAll('.card-info'), 'small');
+        setUrlParameter('viewmode', ViewMode.big);
     }
 
     private createCardsSortRow(): HTMLElement {
@@ -440,6 +472,7 @@ export class CatalogPage extends Page {
             const card = this.renderCard(product);
             productsItems.append(card);
         }
+
         return productsItems;
     }
 

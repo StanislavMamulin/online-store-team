@@ -1,7 +1,7 @@
 import { SliderValues } from '../components/view/CatalogPage/Slider/RangeSlider';
 
 const parameterType = {
-    singleChoice: ['sort', 'search'],
+    singleChoice: ['sort', 'search', 'viewmode'],
     multipleChoice: ['category', 'brand'],
     range: ['price', 'stock'],
 };
