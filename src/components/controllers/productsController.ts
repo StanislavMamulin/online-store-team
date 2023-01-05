@@ -167,30 +167,24 @@ export class ProductsController {
         const filtersObject: FiltersFromQuery = getFiltersFromQuery();
 
         for (const [filterName, value] of Object.entries(filtersObject)) {
-            if (value.includes(AND_SYMBOL)) {
-                // multiple choice or range filter
-                if (filterName === 'category' || filterName === 'brand') {
-                    const filterValues = value.split(AND_SYMBOL);
-                    filterValues.forEach((filterValue) => {
-                        this.setFilterForField(filterName, filterValue);
-                    });
-                } else if (filterName === 'price' || filterName === 'stock') {
-                    const [from, to] = value.split(AND_SYMBOL);
-                    this.setFilterForField(filterName, [Number(from), Number(to)]);
+            if (filterName === 'category' || filterName === 'brand') {
+                const filterValues = value.split(AND_SYMBOL);
+                filterValues.forEach((filterValue) => {
+                    this.setFilterForField(filterName, filterValue);
+                });
+            } else if (filterName === 'price' || filterName === 'stock') {
+                const [from, to] = value.split(AND_SYMBOL);
+                this.setFilterForField(filterName, [Number(from), Number(to)]);
+            } else if (filterName === 'sort') {
+                this.sort = value;
+                const [typeOfSort, direction] = value.split('-');
+                if (direction === SortDirection.asc) {
+                    this.sortAsc(typeOfSort);
+                } else {
+                    this.sortDesc(typeOfSort);
                 }
-            } else {
-                // single choice filter
-                if (filterName === 'sort') {
-                    this.sort = value;
-                    const [typeOfSort, direction] = value.split('-');
-                    if (direction === SortDirection.asc) {
-                        this.sortAsc(typeOfSort);
-                    } else {
-                        this.sortDesc(typeOfSort);
-                    }
-                } else if (filterName === 'search') {
-                    this.searchProduct(value);
-                }
+            } else if (filterName === 'search') {
+                this.searchProduct(value);
             }
         }
     }
