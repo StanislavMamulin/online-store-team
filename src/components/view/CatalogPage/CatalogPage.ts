@@ -147,10 +147,17 @@ export class CatalogPage extends Page {
     }
 
     private createCopyButton() {
+        const DEFAULT_COPY_TEXT = 'Copy Link';
+        const COPY_DONE_TEXT = 'Copied!';
+
         const copyButton = document.createElement('button');
-        copyButton.innerText = 'Copy Link';
+        copyButton.innerText = DEFAULT_COPY_TEXT;
         copyButton.addEventListener('click', () => {
             navigator.clipboard.writeText(window.location.href);
+            copyButton.innerText = COPY_DONE_TEXT;
+            setTimeout(() => {
+                copyButton.innerText = DEFAULT_COPY_TEXT;
+            }, 1000);
         });
         return copyButton;
     }
