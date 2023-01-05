@@ -10,6 +10,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+
         .modal-content {
             padding: 1%;
             border: 1px solid orange;
@@ -18,6 +19,7 @@
             background-color: #181a1c;
             z-index: 99;
             position: absolute;
+
             .modal-content-wrapper {
                 width: 100%;
                 margin: auto;
@@ -26,22 +28,27 @@
                 justify-content: center;
                 height: -moz-fit-content;
                 height: fit-content;
+
                 form {
                     height: -moz-fit-content;
                     height: fit-content;
+
                     .person-details {
                         width: 90%;
                         margin: auto;
+
                         h2 {
                             text-align: center;
                             margin: 0 auto;
                             font-size: 90%;
                         }
+
                         .form-item {
                             width: 100%;
                             display: flex;
                             align-items: center;
                             justify-content: center;
+
                             input {
                                 background-color: #181a1c;
                                 width: 100%;
@@ -54,6 +61,7 @@
                                 text-align: center;
                                 margin: 2% auto;
                             }
+
                             .error-message {
                                 width: 100%;
                                 display: flex;
@@ -63,40 +71,44 @@
                             }
                         }
                     }
+
                     .card-details {
                         margin-top: 1%;
                         width: 100%;
+
                         h2 {
                             text-align: center;
                             margin: 0 auto;
                             font-size: 90%;
                             margin-bottom: 2%;
                         }
+
                         .card-data {
                             border: 1px solid orange;
                             margin: 0 auto;
                             border-radius: 0.5rem;
                             background: rgb(0, 9, 36);
-                            background: linear-gradient(
-                                90deg,
-                                rgb(0, 9, 36) 6%,
-                                rgb(9, 9, 121) 34%,
-                                rgb(0, 212, 255) 100%
-                            );
+                            background: linear-gradient(90deg,
+                                    rgb(0, 9, 36) 6%,
+                                    rgb(9, 9, 121) 34%,
+                                    rgb(0, 212, 255) 100%);
                             width: 55%;
                             height: 7rem;
+
                             .card-number {
                                 width: 100%;
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
                                 margin: 7% auto 10%;
+
                                 img {
                                     background-color: #fff;
                                     width: 10%;
                                     border-radius: 0.3rem;
                                     padding: 0.3rem;
                                 }
+
                                 input {
                                     width: 80%;
                                     background: rgb(233, 233, 202);
@@ -108,11 +120,13 @@
                                     font-size: 90%;
                                     color: #000;
                                     font-weight: 700;
+
                                     &:invalid {
                                         background: red;
                                     }
                                 }
                             }
+
                             .other-data {
                                 margin-bottom: 5%;
                                 display: flex;
@@ -120,11 +134,13 @@
                                 justify-content: space-between;
                                 width: 90%;
                                 margin: 0 auto;
+
                                 .valid-data {
                                     display: flex;
                                     align-items: center;
                                     justify-content: center;
                                     font-size: 50%;
+
                                     input {
                                         font-weight: 700;
                                         font-size: 130%;
@@ -137,22 +153,26 @@
                                         text-align: center;
                                         margin-left: 2%;
                                         color: #000;
+
                                         &:invalid {
                                             background: red;
                                         }
                                     }
                                 }
+
                                 .cvv-data {
                                     @extend .valid-data;
                                 }
                             }
                         }
+
                         .card-err {
                             color: red;
                             text-align: center;
                             padding-top: 1%;
                         }
                     }
+
                     button {
                         width: 40%;
                         font-size: 90%;
