@@ -7,10 +7,11 @@ const MCLogo = require('../../../assets/images/mc-logo.png');
 
 import { createDiv } from '../../../helpers/createHTMLElements';
 import { InputPatterns } from '../../../helpers/constants';
-import { CardNumberFormatter, CardDateFormatter } from '../../../helpers/formatters';
+import { CardDateFormatter, ccFormat } from '../../../helpers/formatters';
 
 export class ModalWindow {
     private errorsTexts: Set<string> = new Set();
+    private fields: HTMLDivElement[] = [];
 
     public createModalWindow() {
         const modalWrapper = createDiv('modal-wrapper');
@@ -37,6 +38,27 @@ export class ModalWindow {
         const formButton = document.createElement('button');
         formButton.innerText = 'CONFIRM';
         formButton.type = 'submit';
+        formButton.addEventListener('click', () => {
+            for (const field of this.fields) {
+                const input = field.getElementsByTagName('input');
+                const currentField = input[0];
+                const isErrorExist: HTMLElement | null = field.querySelector('.error-message');
+
+                if (!currentField.value) {
+                    const errorMessage = this.createErrorMessage('error-message');
+                    currentField.setCustomValidity('');
+                    if (!currentField.validity.valid && !isErrorExist) {
+                        field.append(errorMessage);
+                    } else {
+                        console.log('In SUBMIT');
+                        const errorMessages = field.querySelectorAll('.error-message');
+                        errorMessages.forEach((error) => {
+                            error.remove();
+                        });
+                    }
+                }
+            }
+        });
 
         modalForm.append(personDetailsBlock, cardDetailsBlock, formButton);
         modalContentWrapper.append(modalForm);
@@ -55,7 +77,8 @@ export class ModalWindow {
         const addressInput = this.createInputBlock('address', 'Delivery address', InputPatterns.Address, 'text');
         const emailInput = this.createInputBlock('email', 'E-mail', InputPatterns.Email, 'email');
 
-        person.append(title, nameInput, phoneInput, addressInput, emailInput);
+        this.fields.push(nameInput, phoneInput, addressInput, emailInput);
+        person.append(title, ...this.fields);
 
         return person;
     }
@@ -87,7 +110,9 @@ export class ModalWindow {
         cardNumberImg.alt = 'pay-logo';
 
         const cardNumberInput = this.createInputField('Card number', InputPatterns.CardNumber);
-        cardNumberInput.addEventListener('keyup', (e) => {
+        cardNumberInput.addEventListener('input', (e) => {
+            const inputEl = e.target as HTMLInputElement;
+
             if (cardNumberInput.value[0] === '4') {
                 cardNumberImg.src = VisaLogo;
             } else if (cardNumberInput.value[0] === '5') {
@@ -95,7 +120,9 @@ export class ModalWindow {
             } else {
                 cardNumberImg.src = PayLogo;
             }
-            CardNumberFormatter(e.target as HTMLInputElement);
+
+            const number = inputEl.value;
+            inputEl.value = ccFormat(number);
         });
 
         cardNumberInput.addEventListener('blur', () => {
@@ -124,13 +151,20 @@ export class ModalWindow {
 
         const termInput = this.createInputField('Valid Thru', InputPatterns.CardDate);
         const TERM_INPUT_ERROR_TEXT = 'Card valid thru';
-        termInput.addEventListener('keyup', (e) => {
+        termInput.addEventListener('input', (e) => {
+            const currentDate = (e.target as HTMLInputElement).value;
+
             CardDateFormatter(e.target as HTMLInputElement);
-            if (this.errorsTexts.has('valid')) {
-                if (termInput.validity.valid) {
-                    this.errorsTexts.delete(TERM_INPUT_ERROR_TEXT);
-                    this.showCardInfoErrors();
-                }
+            // if (this.errorsTexts.has('valid')) {
+            //     if (termInput.validity.valid) {
+            //         this.errorsTexts.delete(TERM_INPUT_ERROR_TEXT);
+            //         this.showCardInfoErrors();
+            //     }
+            // }
+
+            if (Number(currentDate.slice(0, 2)) > 12) {
+                this.errorsTexts.add(TERM_INPUT_ERROR_TEXT);
+                this.showCardInfoErrors();
             }
         });
         termInput.addEventListener('blur', () => {
@@ -185,16 +219,38 @@ export class ModalWindow {
 
         inputField.addEventListener('blur', () => {
             inputField.setCustomValidity('');
-            if (!inputField.validity.valid) {
-                inputWrapper.append(errorMessage);
-            } else {
-                errorMessage.remove();
-            }
+            this.addErrorToField(inputWrapper, errorMessage);
+            // const isErrorExist: HTMLElement | null = inputWrapper.querySelector('.error-message');
+            // if (!inputField.validity.valid && !isErrorExist) {
+            //     inputWrapper.append(errorMessage);
+            // } else {
+            //     const errorMessages = inputWrapper.querySelectorAll('.error-message');
+            //     errorMessages.forEach((error) => {
+            //         error.remove();
+            //     });
+            // }
         });
 
         inputWrapper.append(inputField);
 
         return inputWrapper;
+    }
+
+    private addErrorToField(wrapper: HTMLDivElement, error: HTMLDivElement) {
+        // const isErrorExist: HTMLElement | null = wrapper.querySelector('.error-message');
+
+        const input = wrapper.getElementsByTagName('input');
+
+        if (!input[0].validity.valid) {
+            wrapper.append(error);
+        } else {
+            // const errorMessages = wrapper.querySelectorAll('.error-message');
+            // errorMessages.forEach((error) => {
+            // if (JSON.stringify(error) !== JSON.stringify(isErrorExist)) {
+            error.remove();
+            // }
+            // });
+        }
     }
 
     private createInputField(fieldText: string, setPattern?: string, innerType?: string) {
