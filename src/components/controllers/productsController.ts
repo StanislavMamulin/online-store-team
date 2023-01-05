@@ -19,6 +19,7 @@ export class ProductsController {
     private brandsForFilter: string[] = [];
     private priceRange: FilterRange = [0, Number.MAX_VALUE];
     private stockRange: FilterRange = [0, Number.MAX_VALUE];
+    private sort = '';
 
     filteredProducts: IProduct[];
 
@@ -77,7 +78,9 @@ export class ProductsController {
     sortAsc(field: string) {
         const searchField: string = this.normalizeField(field);
 
-        setUrlParameter('sort', `${field}-asc`);
+        const sort = `${field}-asc`;
+        this.sort = sort;
+        setUrlParameter('sort', sort);
 
         return this.filteredProducts.sort(
             (a, b) => Number(a[searchField as keyof IProduct]) - Number(b[searchField as keyof IProduct])
@@ -87,7 +90,9 @@ export class ProductsController {
     sortDesc(field: string) {
         const searchField: string = this.normalizeField(field);
 
-        setUrlParameter('sort', `${field}-desc`);
+        const sort = `${field}-desc`;
+        this.sort = sort;
+        setUrlParameter('sort', sort);
 
         return this.filteredProducts.sort(
             (a, b) => Number(b[searchField as keyof IProduct]) - Number(a[searchField as keyof IProduct])
@@ -174,6 +179,7 @@ export class ProductsController {
             } else {
                 // single choice filter
                 if (filterName === 'sort') {
+                    this.sort = value;
                     const [typeOfSort, direction] = value.split('-');
                     if (direction === SortDirection.asc) {
                         this.sortAsc(typeOfSort);
@@ -203,5 +209,13 @@ export class ProductsController {
         const stocks = Array.from(this.getAllValuesFromField('stock')) as Array<number>;
         const stockRange = getMinAndMaxNumberFromArray(stocks);
         this.stockRange = stockRange;
+    }
+
+    /**
+     * Get current sort options
+     * @returns "Sort-string": sort field before "-", sort direction after "-"
+     */
+    getCurrentSort(): string {
+        return this.sort;
     }
 }

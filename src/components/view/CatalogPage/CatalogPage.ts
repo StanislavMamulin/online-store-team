@@ -270,14 +270,15 @@ export class CatalogPage extends Page {
         return productItem;
     }
 
-    private createOption(optionValue: string): HTMLOptionElement {
+    private createOption(optionText: string, optionValue: string): HTMLOptionElement {
         const option = document.createElement('option');
-        option.text = optionValue;
+        option.text = optionText;
+        option.value = optionValue;
         return option;
     }
 
     private addHeaderForSortOptions(text: string): HTMLOptionElement {
-        const headerOption = this.createOption(text);
+        const headerOption = this.createOption(text, 'header');
         headerOption.disabled = true;
         headerOption.defaultSelected = true;
 
@@ -290,7 +291,10 @@ export class CatalogPage extends Page {
 
         this.FIELDS_FOR_SORT.forEach((field) => {
             this.SORT_DIRECTION.forEach((direction) => {
-                const option: HTMLOptionElement = this.createOption(`Sort by ${field} ${direction}`);
+                const option: HTMLOptionElement = this.createOption(
+                    `Sort by ${field} ${direction}`,
+                    `${field}-${direction.toLowerCase()}`
+                );
                 selectEl.add(option);
             });
         });
@@ -302,7 +306,7 @@ export class CatalogPage extends Page {
         this.addSortOptions(barSelection);
 
         barSelection.addEventListener('change', () => {
-            const selectedValues: string = barSelection.options[barSelection.selectedIndex].value;
+            const selectedValues: string = barSelection.options[barSelection.selectedIndex].text;
             const [direction, field]: [string, string] = getSortDirectionAndFieldName(selectedValues);
 
             if (direction === 'ASC') {
@@ -312,6 +316,11 @@ export class CatalogPage extends Page {
             }
             this.renderCards();
         });
+
+        const appliedSorting = this.productsController.getCurrentSort();
+        if (appliedSorting) {
+            barSelection.value = appliedSorting;
+        }
 
         sortOptionsBar.append(barSelection);
 
