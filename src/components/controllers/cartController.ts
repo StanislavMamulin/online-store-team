@@ -139,4 +139,11 @@ export class CartController {
         this.header.updateHeader(this.moneyAmount, this.totalProducts);
         this.saveCartStateToLocalStorage();
     }
+
+    clearCart(): void {
+        this.cart.clear();
+        this.totalProducts = 0;
+        this.moneyAmount = 0;
+        this.cartDidUpdate();
+    }
 }

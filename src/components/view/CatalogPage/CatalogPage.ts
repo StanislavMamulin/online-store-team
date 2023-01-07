@@ -34,6 +34,7 @@ export class CatalogPage extends Page {
 
     public render() {
         this.el.innerHTML = '';
+        this.el.className = 'page';
         const cardsBlock = this.createCardsBlock();
         const filtersBlock = this.createFiltersBlock();
         this.el.append(filtersBlock, cardsBlock);
@@ -204,6 +205,11 @@ export class CatalogPage extends Page {
 
         const totalElement: HTMLSpanElement = document.createElement('span');
         totalElement.innerHTML = `(${currentCount}/${totalCount})`;
+        if (!currentCount) {
+            filterLine.classList.add('inactive');
+        } else {
+            filterLine.classList.remove('inactive');
+        }
         filterLine.append(check, label, totalElement);
         return filterLine;
     }
@@ -493,6 +499,12 @@ export class CatalogPage extends Page {
         return block;
     }
 
+    private renderNotFoundBlock() {
+        const notFound = createDiv('not-found');
+        notFound.innerText = 'No products found 😏';
+        return notFound;
+    }
+
     private renderCards(): HTMLElement {
         let productsItems: HTMLElement;
 
@@ -507,6 +519,11 @@ export class CatalogPage extends Page {
         for (const product of this.productsController.filteredProducts) {
             const card = this.renderCard(product);
             productsItems.append(card);
+        }
+
+        if (!this.productsController.filteredProducts.length) {
+            const notFoundBlock = this.renderNotFoundBlock();
+            productsItems.append(notFoundBlock);
         }
 
         return productsItems;

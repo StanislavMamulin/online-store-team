@@ -2,14 +2,20 @@ import { Page } from '../../../helpers/Page';
 import { CartController } from '../../controllers/cartController';
 import { createDiv } from '../../../helpers/createHTMLElements';
 import { IProduct } from '../../types';
+import { ModalWindow } from '../ModalWindow/ModalWindow';
+import { PageIds } from '../../../helpers/constants';
 
 export class CartPage extends Page {
+    private instanceOfModalWindow: ModalWindow = new ModalWindow();
+    private modalWindowEl?: HTMLDivElement;
+
     constructor(el: HTMLElement, id: string, private cartController: CartController) {
         super(el, id);
     }
 
     render(): void {
         this.el.innerHTML = '';
+        this.el.className = 'page';
         if (this.cartController.getAllProducts().size) {
             const cartWrapper = this.createCartWrapper();
             this.el.append(cartWrapper);
@@ -98,7 +104,7 @@ export class CartPage extends Page {
         const stockControl = createDiv('stock-control');
         stockControl.innerText = ` Stock: ${product.stock} `;
         const incDecControl = createDiv('incDec-control');
-        incDecControl.innerText = ` ${products.length} `; // will be changed
+        incDecControl.innerText = ` ${products.length} `;
         const buttonInc = document.createElement('button');
         buttonInc.innerText = '+';
         buttonInc.addEventListener('click', () => {
@@ -114,7 +120,7 @@ export class CartPage extends Page {
         incDecControl.prepend(buttonInc);
         incDecControl.append(buttonDec);
         const amountControl = createDiv('amount-control');
-        amountControl.innerText = ` €${product.price.toFixed(2)} `; // will be changed
+        amountControl.innerText = ` €${product.price.toFixed(2)} `;
         itemControl.append(stockControl, incDecControl, amountControl);
         return itemControl;
     }
@@ -150,6 +156,17 @@ export class CartPage extends Page {
         return pageNumbers;
     }
 
+    private orderDoneHandler(): void {
+        window.location.href = window.location.href.replace(window.location.hash.slice(1), PageIds.CatalogPage);
+    }
+
+    private submitDoneHandler(): void {
+        this.cartController.clearCart();
+        this.modalWindowEl?.remove();
+        this.render();
+        this.el.append(this.instanceOfModalWindow.createSubmitMessage(this.orderDoneHandler));
+    }
+
     private createTotalCart(): HTMLElement {
         const total = createDiv('total-cart');
         const totalTitle = document.createElement('h2');
@@ -159,6 +176,10 @@ export class CartPage extends Page {
         const { promoCode, promoCodeExample: promoEx } = this.createPromoCodes();
         const buyButton = document.createElement('button');
         buyButton.innerText = 'BUY NOW';
+        buyButton.addEventListener('click', () => {
+            this.modalWindowEl = this.instanceOfModalWindow.createModalWindow(this.submitDoneHandler.bind(this));
+            this.el.append(this.modalWindowEl);
+        });
         total.append(totalTitle, totalAmount, totalPrices, promoCode, promoEx, buyButton);
         return total;
     }

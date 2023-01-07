@@ -4,9 +4,12 @@ import { IProduct } from '../../types';
 import { productsCollection } from '../../products';
 import { createDiv } from '../../../helpers/createHTMLElements';
 import { PageIds } from '../../../helpers/constants';
+import { ModalWindow } from '../ModalWindow/ModalWindow';
 
 export class ProductPage extends Page {
     selectedProduct?: IProduct;
+    private instanceOfModalWindow: ModalWindow = new ModalWindow();
+    private modalWindowEl?: HTMLDivElement;
 
     constructor(el: HTMLElement, id: string, private cartController: CartController, productID: number) {
         super(el, id);
@@ -122,6 +125,17 @@ export class ProductPage extends Page {
         return infoContainer;
     }
 
+    private orderDoneHandler(): void {
+        window.location.href = window.location.href.replace(window.location.hash.slice(1), PageIds.CatalogPage);
+    }
+
+    private submitDoneHandler(): void {
+        this.cartController.clearCart();
+        this.modalWindowEl?.remove();
+        this.render();
+        this.el.append(this.instanceOfModalWindow.createSubmitMessage(this.orderDoneHandler));
+    }
+
     private createAddToCart(): HTMLElement {
         const addContainer = createDiv('add-to-cart');
 
@@ -140,6 +154,12 @@ export class ProductPage extends Page {
             });
             const buyButton = document.createElement('button');
             buyButton.innerText = 'BUY NOW';
+            buyButton.addEventListener('click', () => {
+                window.location.href = window.location.href.replace(window.location.hash.slice(1), PageIds.CartPage);
+
+                this.modalWindowEl = this.instanceOfModalWindow.createModalWindow(this.submitDoneHandler);
+                document.body.append(this.modalWindowEl);
+            });
             buttonsBlock.append(addButton, buyButton);
             addContainer.append(buttonsBlock);
         }

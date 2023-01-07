@@ -3,7 +3,7 @@
     "extends": [
         "plugin:prettier/recommended",
         "prettier",
-        "eslint:recommended", 
+        "eslint:recommended",
         "plugin:@typescript-eslint/recommended"
     ],
     "parser": "@typescript-eslint/parser",
@@ -23,5 +23,5 @@
         "no-console": 0,
         "class-methods-use-this": "off",
         "@typescript-eslint/no-explicit-any": 2
-    } 
+    }
 }

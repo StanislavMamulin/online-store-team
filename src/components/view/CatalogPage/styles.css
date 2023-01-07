@@ -87,6 +87,10 @@ input[type="search"]::-webkit-search-cancel-button {
   align-items: center;
 }
 
+.filters .category-list .filter-list-category .filter-line.inactive label, .filters .brand-list .filter-list-brand .filter-line.inactive label, .filters .category-list .filter-list-category .filter-line.inactive span, .filters .brand-list .filter-list-brand .filter-line.inactive span {
+  color: #968566;
+}
+
 .filters .category-list .filter-list-category .filter-line input, .filters .brand-list .filter-list-brand .filter-line input {
   cursor: grab;
 }
@@ -460,6 +464,14 @@ main {
   padding-right: 2%;
   font-size: 80%;
   cursor: pointer;
+}
+
+.products .products-items .not-found {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 200%;
+  margin-top: 10%;
+  color: wheat;
 }
 
 .slider-wrapper {
