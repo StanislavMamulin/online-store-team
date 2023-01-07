@@ -205,6 +205,11 @@ export class CatalogPage extends Page {
 
         const totalElement: HTMLSpanElement = document.createElement('span');
         totalElement.innerHTML = `(${currentCount}/${totalCount})`;
+        if (!currentCount) {
+            filterLine.classList.add('inactive');
+        } else {
+            filterLine.classList.remove('inactive');
+        }
         filterLine.append(check, label, totalElement);
         return filterLine;
     }

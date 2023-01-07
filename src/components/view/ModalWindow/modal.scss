@@ -130,10 +130,6 @@
                                     font-size: 90%;
                                     color: #000;
                                     font-weight: 700;
-
-                                    &:invalid {
-                                        background: red;
-                                    }
                                 }
                             }
 
@@ -163,10 +159,6 @@
                                         text-align: center;
                                         margin-left: 2%;
                                         color: #000;
-
-                                        &:invalid {
-                                            background: red;
-                                        }
                                     }
                                 }
 
@@ -176,10 +168,12 @@
                             }
                         }
 
-                        .card-err {
-                            color: red;
-                            text-align: center;
-                            padding-top: 1%;
+                        .card-data__error-wrapper {
+                            .error-message {
+                                color: red;
+                                text-align: center;
+                                padding-top: 1%;
+                            }
                         }
                     }
 

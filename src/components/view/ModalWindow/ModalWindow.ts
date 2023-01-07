@@ -4,6 +4,8 @@ const PayLogo = require('../../../assets/images/pay-logo.jpg');
 const VisaLogo = require('../../../assets/images/visa-logo.png');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const MCLogo = require('../../../assets/images/mc-logo.png');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const MirLogo = require('../../../assets/images/mir-logo.jpeg');
 
 import { createDiv } from '../../../helpers/createHTMLElements';
 import { InputPatterns } from '../../../helpers/constants';
@@ -115,6 +117,8 @@ export class ModalWindow {
                 cardNumberImg.src = VisaLogo;
             } else if (cardNumberInput.value[0] === '5') {
                 cardNumberImg.src = MCLogo;
+            } else if (cardNumberInput.value[0] === '2') {
+                cardNumberImg.src = MirLogo;
             } else {
                 cardNumberImg.src = PayLogo;
             }
@@ -148,6 +152,10 @@ export class ModalWindow {
             if (inputEl.value) {
                 this.checkCardFieldValidity(cardCVV);
             }
+        });
+
+        CVVInput.addEventListener('blur', () => {
+            this.checkCardFieldValidity(cardCVV);
         });
 
         cardCVV.append(CVVInput);
