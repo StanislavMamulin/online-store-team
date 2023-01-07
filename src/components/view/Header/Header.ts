@@ -1,5 +1,6 @@
 import { PageIds } from '../../../helpers/constants';
 import { createDiv } from '../../../helpers/createHTMLElements';
+import { resetQueryParams } from '../../../helpers/routeHelper';
 import { HEADER_INFO } from './constants';
 
 export class Header {
@@ -44,6 +45,9 @@ export class Header {
         const brandName = document.createElement('h2');
         brandName.className = 'brand-name';
         brandName.innerText = 'Online Store';
+        logoContainer.addEventListener('click', () => {
+            resetQueryParams();
+        });
         logoContainer.append(logo, brandName);
 
         const totalPrice = this.updateTotalPrice(moneyAmount);
