@@ -9,16 +9,15 @@ import { createDiv } from '../../../helpers/createHTMLElements';
 import { InputPatterns } from '../../../helpers/constants';
 import { CardDateFormatter, ccFormat, cvvFormat } from '../../../helpers/formatters';
 import { CardDataFieldsNames, classNames, getErrorTextForField } from './modalConstants';
-import { CartController } from '../../controllers/cartController';
 
 export class ModalWindow {
     private personDetailsFields: HTMLDivElement[] = [];
     private cardDataFields: HTMLDivElement[] = [];
 
-    public createModalWindow(cartController: CartController) {
+    public createModalWindow(submitDoneHandler: () => void) {
         const modalWrapper = createDiv('modal-wrapper');
         const modalWindow = createDiv('modal');
-        const modalContent = this.createModalWindowContent(cartController);
+        const modalContent = this.createModalWindowContent(submitDoneHandler);
         modalWindow.append(modalContent);
         modalWrapper.append(modalWindow);
         modalWrapper.addEventListener('click', (e) => {
@@ -29,7 +28,7 @@ export class ModalWindow {
         return modalWrapper;
     }
 
-    private createModalWindowContent(cartController: CartController) {
+    private createModalWindowContent(submitDoneHandler: () => void) {
         const content = createDiv('modal-content');
         const modalContentWrapper = createDiv('modal-content-wrapper');
         const modalForm = document.createElement('form');
@@ -47,12 +46,12 @@ export class ModalWindow {
         modalForm.noValidate = true;
 
         modalForm.addEventListener('submit', (ev) => {
+            ev.preventDefault();
             const cardInfoErrors = this.isCardInfoHasErrors();
             const personDataErrors = this.isPersonalInfoFieldsError();
-            if (cardInfoErrors || personDataErrors) {
-                ev.preventDefault();
+            if (!cardInfoErrors || !personDataErrors) {
+                submitDoneHandler();
             }
-            cartController.clearCart();
         });
 
         return content;
@@ -345,7 +344,7 @@ export class ModalWindow {
         }
     }
 
-    createSubmitMessage() {
+    createSubmitMessage(orderDoneHandler: () => void) {
         const wrapper = createDiv('message-wrapper');
         const message = createDiv('submit-message');
         let time = 5;
@@ -356,6 +355,7 @@ export class ModalWindow {
         setTimeout(() => {
             clearInterval(timer);
             wrapper.remove();
+            orderDoneHandler();
         }, 5000);
         wrapper.append(message);
         return wrapper;

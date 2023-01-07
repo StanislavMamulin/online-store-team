@@ -144,6 +144,6 @@ export class CartController {
         this.cart.clear();
         this.totalProducts = 0;
         this.moneyAmount = 0;
-        this.saveCartStateToLocalStorage();
+        this.cartDidUpdate();
     }
 }

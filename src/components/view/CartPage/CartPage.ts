@@ -3,8 +3,12 @@ import { CartController } from '../../controllers/cartController';
 import { createDiv } from '../../../helpers/createHTMLElements';
 import { IProduct } from '../../types';
 import { ModalWindow } from '../ModalWindow/ModalWindow';
+import { PageIds } from '../../../helpers/constants';
 
 export class CartPage extends Page {
+    private instanceOfModalWindow: ModalWindow = new ModalWindow();
+    private modalWindowEl?: HTMLDivElement;
+
     constructor(el: HTMLElement, id: string, private cartController: CartController) {
         super(el, id);
     }
@@ -152,6 +156,17 @@ export class CartPage extends Page {
         return pageNumbers;
     }
 
+    private orderDoneHandler(): void {
+        window.location.href = window.location.href.replace(window.location.hash.slice(1), PageIds.CatalogPage);
+    }
+
+    private submitDoneHandler(): void {
+        this.cartController.clearCart();
+        this.modalWindowEl?.remove();
+        this.render();
+        this.el.append(this.instanceOfModalWindow.createSubmitMessage(this.orderDoneHandler));
+    }
+
     private createTotalCart(): HTMLElement {
         const total = createDiv('total-cart');
         const totalTitle = document.createElement('h2');
@@ -162,8 +177,8 @@ export class CartPage extends Page {
         const buyButton = document.createElement('button');
         buyButton.innerText = 'BUY NOW';
         buyButton.addEventListener('click', () => {
-            const modalWindow = new ModalWindow();
-            this.el.append(modalWindow.createModalWindow(this.cartController));
+            this.modalWindowEl = this.instanceOfModalWindow.createModalWindow(this.submitDoneHandler.bind(this));
+            this.el.append(this.modalWindowEl);
         });
         total.append(totalTitle, totalAmount, totalPrices, promoCode, promoEx, buyButton);
         return total;
