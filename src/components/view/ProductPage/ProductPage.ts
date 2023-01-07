@@ -144,7 +144,7 @@ export class ProductPage extends Page {
             buyButton.addEventListener('click', () => {
                 window.location.href = window.location.href.replace(window.location.hash.slice(1), PageIds.CartPage);
                 const modalWindow = new ModalWindow();
-                document.body.append(modalWindow.createModalWindow());
+                document.body.append(modalWindow.createModalWindow(this.cartController));
             });
             buttonsBlock.append(addButton, buyButton);
             addContainer.append(buttonsBlock);

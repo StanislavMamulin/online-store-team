@@ -9,15 +9,16 @@ import { createDiv } from '../../../helpers/createHTMLElements';
 import { InputPatterns } from '../../../helpers/constants';
 import { CardDateFormatter, ccFormat, cvvFormat } from '../../../helpers/formatters';
 import { CardDataFieldsNames, classNames, getErrorTextForField } from './modalConstants';
+import { CartController } from '../../controllers/cartController';
 
 export class ModalWindow {
     private personDetailsFields: HTMLDivElement[] = [];
     private cardDataFields: HTMLDivElement[] = [];
 
-    public createModalWindow() {
+    public createModalWindow(cartController: CartController) {
         const modalWrapper = createDiv('modal-wrapper');
         const modalWindow = createDiv('modal');
-        const modalContent = this.createModalWindowContent();
+        const modalContent = this.createModalWindowContent(cartController);
         modalWindow.append(modalContent);
         modalWrapper.append(modalWindow);
         modalWrapper.addEventListener('click', (e) => {
@@ -28,7 +29,7 @@ export class ModalWindow {
         return modalWrapper;
     }
 
-    private createModalWindowContent() {
+    private createModalWindowContent(cartController: CartController) {
         const content = createDiv('modal-content');
         const modalContentWrapper = createDiv('modal-content-wrapper');
         const modalForm = document.createElement('form');
@@ -51,6 +52,7 @@ export class ModalWindow {
             if (cardInfoErrors || personDataErrors) {
                 ev.preventDefault();
             }
+            cartController.clearCart();
         });
 
         return content;
