@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PayLogo = require('../../../assets/images/pay-logo.jpg');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const VisaLogo = '../../../assets/images/visa-logo.png';
+const VisaLogo = require('../../../assets/images/visa-logo.png');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const MCLogo = require('../../../assets/images/mc-logo.png');
 
