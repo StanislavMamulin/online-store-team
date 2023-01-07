@@ -1,4 +1,4 @@
-.modal-wrapper .modal {
+.modal-wrapper .modal, .message-wrapper {
   z-index: 99;
   position: fixed;
   top: 0;
@@ -11,7 +11,7 @@
   justify-content: center;
 }
 
-.modal-wrapper .modal .modal-content {
+.modal-wrapper .modal .modal-content, .message-wrapper .submit-message {
   padding: 1%;
   border: 1px solid orange;
   border-radius: 0.5rem;
@@ -179,4 +179,13 @@
   cursor: pointer;
   display: block;
   margin: 5% auto;
+}
+
+.message-wrapper {
+  z-index: 100;
+}
+
+.message-wrapper .submit-message {
+  text-align: center;
+  z-index: 100;
 }

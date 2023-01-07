@@ -163,7 +163,7 @@ export class CartPage extends Page {
         buyButton.innerText = 'BUY NOW';
         buyButton.addEventListener('click', () => {
             const modalWindow = new ModalWindow();
-            this.el.append(modalWindow.createModalWindow());
+            this.el.append(modalWindow.createSubmitMessage());
         });
         total.append(totalTitle, totalAmount, totalPrices, promoCode, promoEx, buyButton);
         return total;

@@ -1,24 +1,32 @@
+%wrapper {
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(13, 13, 13, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+%content {
+    padding: 1%;
+    border: 1px solid orange;
+    border-radius: 0.5rem;
+    width: 40%;
+    background-color: #181a1c;
+    z-index: 99;
+    position: absolute;
+}
+
 .modal-wrapper {
     .modal {
-        z-index: 99;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(13, 13, 13, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @extend %wrapper;
 
         .modal-content {
-            padding: 1%;
-            border: 1px solid orange;
-            border-radius: 0.5rem;
-            width: 40%;
-            background-color: #181a1c;
-            z-index: 99;
-            position: absolute;
+            @extend %content;
 
             .modal-content-wrapper {
                 width: 100%;
@@ -88,10 +96,12 @@
                             margin: 0 auto;
                             border-radius: 0.5rem;
                             background: rgb(0, 9, 36);
-                            background: linear-gradient(90deg,
-                                    rgb(0, 9, 36) 6%,
-                                    rgb(9, 9, 121) 34%,
-                                    rgb(0, 212, 255) 100%);
+                            background: linear-gradient(
+                                90deg,
+                                rgb(0, 9, 36) 6%,
+                                rgb(9, 9, 121) 34%,
+                                rgb(0, 212, 255) 100%
+                            );
                             width: 55%;
                             height: 7rem;
 
@@ -187,5 +197,15 @@
                 }
             }
         }
+    }
+}
+
+.message-wrapper {
+    @extend %wrapper;
+    z-index: 100;
+    .submit-message {
+        @extend %content;
+        text-align: center;
+        z-index: 100;
     }
 }

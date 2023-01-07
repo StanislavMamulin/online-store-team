@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PayLogo = require('../../../assets/images/pay-logo.jpg');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const VisaLogo = require('../../../assets/images/visa-logo.png');
+const VisaLogo = '../../../assets/images/visa-logo.png';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const MCLogo = require('../../../assets/images/mc-logo.png');
 
@@ -44,6 +44,7 @@ export class ModalWindow {
         content.append(modalContentWrapper);
 
         modalForm.noValidate = true;
+
         modalForm.addEventListener('submit', (ev) => {
             const hasErrors = this.isCardInfoHasErrors();
             if (!hasErrors) {
@@ -60,6 +61,11 @@ export class ModalWindow {
         formButton.type = 'submit';
 
         // formButton.addEventListener('click', (ev) => {
+        //     const hasErrors = this.isCardInfoHasErrors();
+        //     if (!hasErrors) {
+        //         document.body.append(this.createSubmitMessage());
+        //     }
+        // });
         //     // this.checkCardInfos();
 
         //     for (const field of this.fields) {
@@ -307,6 +313,22 @@ export class ModalWindow {
             // this.formValidated = true;
             return false;
         }
+    }
+
+    createSubmitMessage() {
+        const wrapper = createDiv('message-wrapper');
+        const message = createDiv('submit-message');
+        let time = 5;
+        message.innerText = `Thanks for your order. Redirect to the store after ${time} sec`;
+        const timer = setInterval(() => {
+            message.innerText = `Thanks for your order. Redirect to the store after ${--time} sec`;
+        }, 1000);
+        setTimeout(() => {
+            clearInterval(timer);
+            wrapper.remove();
+        }, 5000);
+        wrapper.append(message);
+        return wrapper;
     }
 }
 
