@@ -23,3 +23,8 @@ export const getErrorTextForField = (field: CardDataFieldsNames): string => {
 
     return errorText;
 };
+
+export const classNames = {
+    VALIDITY_ERROR: 'error-message',
+    INFO_FORM: 'customer-info',
+};

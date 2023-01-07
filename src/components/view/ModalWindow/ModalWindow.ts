@@ -7,12 +7,11 @@ const MCLogo = require('../../../assets/images/mc-logo.png');
 
 import { createDiv } from '../../../helpers/createHTMLElements';
 import { InputPatterns } from '../../../helpers/constants';
-import { CardDateFormatter, ccFormat } from '../../../helpers/formatters';
-import { CardDataFieldsNames, getErrorTextForField } from './modalConstants';
+import { CardDateFormatter, ccFormat, cvvFormat } from '../../../helpers/formatters';
+import { CardDataFieldsNames, classNames, getErrorTextForField } from './modalConstants';
 
 export class ModalWindow {
-    private errorsTexts: Set<string> = new Set();
-    private fields: HTMLDivElement[] = [];
+    private personDetailsFields: HTMLDivElement[] = [];
     private cardDataFields: HTMLDivElement[] = [];
 
     public createModalWindow() {
@@ -33,6 +32,7 @@ export class ModalWindow {
         const content = createDiv('modal-content');
         const modalContentWrapper = createDiv('modal-content-wrapper');
         const modalForm = document.createElement('form');
+        modalForm.classList.add(classNames.INFO_FORM);
 
         const personDetailsBlock = this.createPersonDetails();
         const cardDetailsBlock = this.createCardDetails();
@@ -46,8 +46,9 @@ export class ModalWindow {
         modalForm.noValidate = true;
 
         modalForm.addEventListener('submit', (ev) => {
-            const hasErrors = this.isCardInfoHasErrors();
-            if (!hasErrors) {
+            const cardInfoErrors = this.isCardInfoHasErrors();
+            const personDataErrors = this.isPersonalInfoFieldsError();
+            if (cardInfoErrors || personDataErrors) {
                 ev.preventDefault();
             }
         });
@@ -59,35 +60,6 @@ export class ModalWindow {
         const formButton = document.createElement('button');
         formButton.innerText = 'CONFIRM';
         formButton.type = 'submit';
-
-        // formButton.addEventListener('click', (ev) => {
-        //     const hasErrors = this.isCardInfoHasErrors();
-        //     if (!hasErrors) {
-        //         document.body.append(this.createSubmitMessage());
-        //     }
-        // });
-        //     // this.checkCardInfos();
-
-        //     for (const field of this.fields) {
-        //         const input = field.getElementsByTagName('input');
-        //         const currentField = input[0];
-        //         const isErrorExist: HTMLElement | null = field.querySelector('.error-message');
-
-        //         if (!currentField.value) {
-        //             const errorMessage = this.createErrorMessage('error-message');
-        //             currentField.setCustomValidity('');
-        //             if (!currentField.validity.valid && !isErrorExist) {
-        //                 currentField.setCustomValidity('');
-        //                 field.append(errorMessage);
-        //             } else if (currentField.validity.valid) {
-        //                 const errorMessages = field.querySelectorAll('.error-message');
-        //                 errorMessages.forEach((error) => {
-        //                     error.remove();
-        //                 });
-        //             }
-        //         }
-        //     }
-        // });
 
         return formButton;
     }
@@ -102,8 +74,8 @@ export class ModalWindow {
         const addressInput = this.createInputBlock('address', 'Delivery address', InputPatterns.Address, 'text');
         const emailInput = this.createInputBlock('email', 'E-mail', InputPatterns.Email, 'email');
 
-        this.fields.push(nameInput, phoneInput, addressInput, emailInput);
-        person.append(title, ...this.fields);
+        this.personDetailsFields.push(nameInput, phoneInput, addressInput, emailInput);
+        person.append(title, ...this.personDetailsFields);
 
         return person;
     }
@@ -122,14 +94,13 @@ export class ModalWindow {
 
         cardOther.append(cardTerm, cardCVV);
         cardData.append(cardNumber, cardOther);
-        payCard.append(payCardTitle, cardData);
+        payCard.append(payCardTitle, cardData, this.renderErrorBlock());
 
         return payCard;
     }
 
     private createCardNumberField() {
         const cardNumber = createDiv(CardDataFieldsNames.cardNumber);
-        const textError = getErrorTextForField(CardDataFieldsNames.cardNumber);
 
         const cardNumberImg = document.createElement('img');
         cardNumberImg.src = PayLogo;
@@ -149,10 +120,11 @@ export class ModalWindow {
 
             const number = inputEl.value;
             inputEl.value = ccFormat(number);
+            this.checkCardFieldValidity(cardNumber);
         });
 
         cardNumberInput.addEventListener('blur', () => {
-            this.checkValidity(cardNumberInput, textError);
+            this.checkCardFieldValidity(cardNumber);
         });
 
         cardNumber.append(cardNumberImg, cardNumberInput);
@@ -163,13 +135,20 @@ export class ModalWindow {
     }
 
     private createCVVField() {
-        const textError = getErrorTextForField(CardDataFieldsNames.cvv);
         const cardCVV = createDiv(CardDataFieldsNames.cvv);
         cardCVV.innerText = ' CVV: ';
+
         const CVVInput = this.createInputField('Code', InputPatterns.CardCvv);
-        CVVInput.addEventListener('input', () => {
-            this.checkValidity(CVVInput, textError);
+        CVVInput.maxLength = 3;
+
+        CVVInput.addEventListener('input', (e) => {
+            const inputEl = e.target as HTMLInputElement;
+            inputEl.value = cvvFormat(inputEl.value);
+            if (inputEl.value) {
+                this.checkCardFieldValidity(cardCVV);
+            }
         });
+
         cardCVV.append(CVVInput);
 
         this.cardDataFields.push(cardCVV);
@@ -179,23 +158,19 @@ export class ModalWindow {
 
     private createValidThruField() {
         const cardTerm = createDiv(CardDataFieldsNames.validThru);
-        const textError = getErrorTextForField(CardDataFieldsNames.validThru);
         cardTerm.innerText = ' VALID: ';
 
         const termInput = this.createInputField('Valid Thru', InputPatterns.CardDate);
+
         termInput.addEventListener('input', (e) => {
-            const currentDate = (e.target as HTMLInputElement).value;
-
-            CardDateFormatter(e.target as HTMLInputElement);
-
-            if (Number(currentDate.slice(0, 2)) > 12) {
-                this.errorsTexts.add(textError);
-                this.showCardInfoErrors();
-            }
+            const input = e.target as HTMLInputElement;
+            input.value = CardDateFormatter(input.value);
+            this.checkCardFieldValidity(cardTerm);
         });
         termInput.addEventListener('blur', () => {
-            this.checkValidity(termInput, textError);
+            this.checkCardFieldValidity(cardTerm);
         });
+
         cardTerm.append(termInput);
 
         this.cardDataFields.push(cardTerm);
@@ -203,30 +178,12 @@ export class ModalWindow {
         return cardTerm;
     }
 
-    private checkValidity(inputEl: HTMLInputElement, errorText: string) {
-        inputEl.setCustomValidity('');
-        if (!inputEl.validity.valid) {
-            this.errorsTexts.add(errorText);
+    private checkCardFieldValidity(inputEl: HTMLDivElement) {
+        const input: HTMLInputElement | null = inputEl.getElementsByTagName('input')[0];
+        if (!input.validity.valid) {
+            this.showCardInfoError(inputEl);
         } else {
-            this.errorsTexts.delete(errorText);
-        }
-        this.showCardInfoErrors();
-    }
-
-    private showCardInfoErrors() {
-        const cardDetailInfoEl = document.querySelector('.card-details');
-        let errorBlock: HTMLElement | null = document.querySelector('.card-data__error-wrapper');
-
-        if (errorBlock) {
-            errorBlock.innerHTML = '';
-        } else {
-            errorBlock = createDiv('card-data__error-wrapper');
-            cardDetailInfoEl?.append(errorBlock);
-        }
-
-        for (const errorText of this.errorsTexts) {
-            const errorEl = this.createErrorMessage('error-message', errorText);
-            errorBlock?.append(errorEl);
+            this.deleteErrorFromErrorBlock(inputEl);
         }
     }
 
@@ -235,20 +192,14 @@ export class ModalWindow {
         inputWrapper.classList.add(addedClass);
 
         const inputField = this.createInputField(inputText, inputPattern, inputType);
-        const errorMessage = this.createErrorMessage('error-message');
 
         inputField.addEventListener('input', () => {
             inputField.setCustomValidity('');
-
-            const isErrorExist: HTMLElement | null = inputWrapper.querySelector('.error-message');
-            if (!inputField.validity.valid && !isErrorExist) {
-                inputWrapper.append(errorMessage);
-            } else if (inputField.validity.valid) {
-                const errorMessages = inputWrapper.querySelectorAll('.error-message');
-                errorMessages.forEach((error) => {
-                    error.remove();
-                });
-            }
+            this.showPersonalInfoError(inputWrapper);
+        });
+        inputField.addEventListener('blur', () => {
+            inputField.setCustomValidity('');
+            this.showPersonalInfoError(inputWrapper);
         });
 
         inputWrapper.append(inputField);
@@ -281,8 +232,35 @@ export class ModalWindow {
         return error;
     }
 
-    private isCardInfoHasErrors(): boolean {
-        const allOk: boolean[] = [];
+    private showCardInfoError(cardInfoField: HTMLDivElement) {
+        const errorBlock: HTMLElement | null = document.querySelector('.card-data__error-wrapper');
+
+        const textError = getErrorTextForField(cardInfoField.className as CardDataFieldsNames);
+
+        if (!this.isErrorInErrorsBlock(textError)) {
+            const errorEl = this.createErrorMessage('error-message', textError);
+            errorBlock?.append(errorEl);
+        }
+    }
+
+    private showPersonalInfoError(inputFieldWrapper: HTMLDivElement) {
+        const errorMessage = this.createErrorMessage(classNames.VALIDITY_ERROR);
+        const inputField: HTMLInputElement | null = inputFieldWrapper.getElementsByTagName('input')[0];
+
+        inputField.setCustomValidity('');
+
+        const isErrorExist: HTMLElement | null = inputFieldWrapper.querySelector(`.${classNames.VALIDITY_ERROR}`);
+        if (!inputField.validity.valid && !isErrorExist) {
+            inputFieldWrapper.append(errorMessage);
+        } else if (inputField.validity.valid) {
+            const errorMessages = inputFieldWrapper.querySelectorAll(`.${classNames.VALIDITY_ERROR}`);
+            errorMessages.forEach((error) => {
+                error.remove();
+            });
+        }
+    }
+
+    private renderErrorBlock(): HTMLElement {
         const cardDetailInfoEl = document.querySelector('.card-details');
         let errorBlock: HTMLElement | null = document.querySelector('.card-data__error-wrapper');
 
@@ -293,25 +271,75 @@ export class ModalWindow {
             cardDetailInfoEl?.append(errorBlock);
         }
 
+        return errorBlock;
+    }
+
+    private isCardInfoHasErrors(): boolean {
+        const allOk: boolean[] = [];
+        this.renderErrorBlock();
+
         this.cardDataFields.forEach((cardInfoField: HTMLDivElement) => {
             const input: HTMLInputElement | null = cardInfoField.getElementsByTagName('input')[0];
             if (input.value === '' || !input.validity.valid) {
-                const textError = getErrorTextForField(cardInfoField.className as CardDataFieldsNames);
-
-                const errorEl = this.createErrorMessage('error-message', textError);
-                errorBlock?.append(errorEl);
-                allOk.push(true);
-            } else if (input.validity.valid) {
+                this.showCardInfoError(cardInfoField);
                 allOk.push(false);
+            } else if (input.validity.valid) {
+                allOk.push(true);
             }
         });
 
-        if (allOk.includes(false)) {
-            // this.formValidated = false;
-            return true;
-        } else {
-            // this.formValidated = true;
-            return false;
+        return allOk.includes(false);
+    }
+
+    private isPersonalInfoFieldsError(): boolean {
+        const allOk: boolean[] = [];
+
+        for (const field of this.personDetailsFields) {
+            const input = field.getElementsByTagName('input');
+            const currentField = input[0];
+
+            const isErrorExist: HTMLElement | null = field.querySelector('.error-message');
+            if (isErrorExist) {
+                allOk.push(false);
+            }
+
+            if (!currentField.validity.valid) {
+                allOk.push(false);
+                this.showPersonalInfoError(field);
+            } else if (currentField.validity.valid) {
+                allOk.push(true);
+            }
+        }
+
+        return allOk.includes(false);
+    }
+
+    private isErrorInErrorsBlock(errorText: string) {
+        const errorBlock: HTMLElement | null = document.querySelector('.card-data__error-wrapper');
+
+        const errorsDiv = errorBlock?.children;
+        if (errorsDiv) {
+            for (const error of errorsDiv) {
+                if (error.textContent === errorText) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private deleteErrorFromErrorBlock(cardInfoField: HTMLDivElement) {
+        const textError = getErrorTextForField(cardInfoField.className as CardDataFieldsNames);
+        const errorBlock: HTMLElement | null = document.querySelector('.card-data__error-wrapper');
+
+        const errorsDiv = errorBlock?.children;
+        if (errorsDiv) {
+            for (const error of errorsDiv) {
+                if (error.textContent === textError) {
+                    error.remove();
+                }
+            }
         }
     }
 
