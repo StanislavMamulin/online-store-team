@@ -42,10 +42,14 @@ export class CatalogPage extends Page {
     }
 
     private setSliderTextValue(slider: HTMLElement, type: string, value: number): void {
-        if (type === 'price') {
-            slider.innerText = `€${String(value.toFixed(2))}`;
+        if (isFinite(value)) {
+            if (type === 'price') {
+                slider.innerText = `€${String(value.toFixed(2))}`;
+            } else {
+                slider.innerText = String(value);
+            }
         } else {
-            slider.innerText = String(value);
+            slider.innerText = 'Not found';
         }
     }
 
@@ -542,6 +546,7 @@ export class CatalogPage extends Page {
             if (field !== filter) {
                 const values = this.productsController.getAllValuesFromField(field, true) as Set<number>;
                 const [minValue, maxValue] = getMinAndMaxNumberFromArray(Array.from(values));
+                console.log(minValue, maxValue);
 
                 const slider: RangeSlider | undefined = field === 'price' ? this.priceSlider : this.stockSlider;
                 slider?.setValues(minValue, maxValue);
