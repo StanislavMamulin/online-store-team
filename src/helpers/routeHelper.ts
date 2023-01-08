@@ -52,15 +52,15 @@ export function getLastSubstring(str: string): string {
     return arr[arr.length - 1];
 }
 
-export type FiltersFromQuery = {
+export type ParametersFromQuery = {
     [filterType: string]: string;
 };
 
-export const getFiltersFromQuery = (): FiltersFromQuery => {
+export const getParametersFromQuery = (): ParametersFromQuery => {
     const currentUrl: URL = new URL(window.location.href);
     const currentSearch: URLSearchParams = currentUrl.searchParams;
 
-    const searchObj: FiltersFromQuery = {};
+    const searchObj: ParametersFromQuery = {};
     for (const [key, value] of currentSearch) {
         searchObj[key] = value;
     }
