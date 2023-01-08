@@ -1,4 +1,4 @@
-import { getFiltersFromQuery } from '../../helpers/routeHelper';
+import { getParametersFromQuery } from '../../helpers/routeHelper';
 
 export const getSortDirectionAndFieldName = (selectedValue: string): [string, string] => {
     const select = selectedValue.split(' ');
@@ -13,7 +13,7 @@ export const enum ViewMode {
 }
 
 export const getCurrentViewModeFromQuery = (): ViewMode => {
-    const viewMode: string | undefined = getFiltersFromQuery().viewmode;
+    const viewMode: string | undefined = getParametersFromQuery().viewmode;
     if (viewMode && viewMode === ViewMode.small) {
         return ViewMode.small;
     }
