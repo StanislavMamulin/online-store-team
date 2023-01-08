@@ -1,5 +1,6 @@
 import { IProduct } from '../types';
 import { Header } from '../view/Header/Header';
+import { setUrlParameter, getParametersFromQuery } from '../../helpers/routeHelper';
 
 const INIT_SHOWED_ON_PAGE = 3;
 const INIT_CURRENT_PAGE = 1;
@@ -18,6 +19,7 @@ export class CartController {
 
         this.currentPage = INIT_CURRENT_PAGE;
         this.showedOnPage = INIT_SHOWED_ON_PAGE;
+        this.applySettingsFromQueryString();
     }
 
     getProductId(product: IProduct): number {
@@ -206,6 +208,7 @@ export class CartController {
         }
 
         this.currentPage = newPage;
+        setUrlParameter('page', String(this.currentPage));
     }
 
     public get productLimitPerPage() {
@@ -219,11 +222,26 @@ export class CartController {
 
         this.showedOnPage = newLimit;
         this.actualizeCurrentPage();
+
+        setUrlParameter('limit', String(newLimit));
     }
 
     private actualizeCurrentPage(): void {
         if (this.currentPage > this.totalPage) {
             this.currentPage = this.totalPage;
+            setUrlParameter('page', String(this.currentPage));
+        }
+    }
+
+    private applySettingsFromQueryString(): void {
+        const parametersObject = getParametersFromQuery();
+
+        for (const [parameter, value] of Object.entries(parametersObject)) {
+            if (parameter === 'limit') {
+                this.productLimitPerPage = Number(value);
+            } else if (parameter === 'page') {
+                this.currentPage = Number(value);
+            }
         }
     }
 }
