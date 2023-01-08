@@ -1,15 +1,23 @@
 import { IProduct } from '../types';
 import { Header } from '../view/Header/Header';
 
+const INIT_SHOWED_ON_PAGE = 3;
+const INIT_CURRENT_PAGE = 0;
+
 export class CartController {
     private cart: Map<number, IProduct[]> = new Map();
     private moneyAmount: number;
     private totalProducts: number;
+    private currentPage: number;
+    private showedOnPage: number;
 
     constructor(private header: Header) {
         this.moneyAmount = 0;
         this.totalProducts = 0;
         this.loadCartStateFromLocalStorage();
+
+        this.currentPage = INIT_CURRENT_PAGE;
+        this.showedOnPage = INIT_SHOWED_ON_PAGE;
     }
 
     getProductId(product: IProduct): number {
@@ -145,5 +153,38 @@ export class CartController {
         this.totalProducts = 0;
         this.moneyAmount = 0;
         this.cartDidUpdate();
+    }
+
+    private get totalPage(): number {
+        return Math.ceil(this.cart.size / this.showedOnPage);
+    }
+
+    private getIdsForPage(page: number): number[] {
+        const idsInCart: number[] = [...this.cart.keys()];
+
+        const startProductOffset = (page - 1) * this.showedOnPage;
+        const endProductOffset = startProductOffset + this.showedOnPage;
+
+        const neededProductsIDs = idsInCart.slice(startProductOffset, endProductOffset);
+
+        return neededProductsIDs;
+    }
+
+    public getProductsForPage(page: number): Map<number, IProduct[]> | null {
+        if (page > this.totalPage) {
+            return null;
+        }
+
+        const resultProducts: Map<number, IProduct[]> = new Map();
+
+        const neededProductsIDs = this.getIdsForPage(page);
+        neededProductsIDs.forEach((id) => {
+            const productFromCart: IProduct[] | undefined = this.cart.get(id);
+            if (productFromCart) {
+                resultProducts.set(id, productFromCart);
+            }
+        });
+
+        return resultProducts;
     }
 }
