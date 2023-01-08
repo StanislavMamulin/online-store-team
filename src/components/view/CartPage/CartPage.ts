@@ -98,8 +98,17 @@ export class CartPage extends Page {
     private createLimitInput() {
         const limit = createDiv('limit');
         limit.innerText = ' ITEMS: ';
+
         const limitInput = document.createElement('input');
-        limitInput.value = '3';
+        limitInput.type = 'number';
+        limitInput.value = String(this.cartController.productLimitPerPage);
+        limitInput.addEventListener('change', (ev) => {
+            if (ev.target instanceof HTMLInputElement) {
+                this.cartController.productLimitPerPage = Number(ev.target.value);
+                this.render();
+            }
+        });
+
         limit.append(limitInput);
 
         return limit;

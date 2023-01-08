@@ -205,4 +205,16 @@ export class CartController {
 
         this.currentPage = newPage;
     }
+
+    public get productLimitPerPage() {
+        return this.showedOnPage;
+    }
+
+    public set productLimitPerPage(newLimit) {
+        if (newLimit < 1) {
+            return;
+        }
+
+        this.showedOnPage = newLimit;
+    }
 }
