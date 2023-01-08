@@ -116,24 +116,27 @@ export class CartPage extends Page {
         stockControl.innerText = ` Stock: ${product.stock} `;
         const incDecControl = createDiv('incDec-control');
         incDecControl.innerText = ` ${products.length} `;
-        const buttonInc = document.createElement('button');
-        buttonInc.innerText = '+';
-        buttonInc.addEventListener('click', () => {
-            this.cartController.changeQuantityById(product.id, 1);
-            this.render();
-        });
-        const buttonDec = document.createElement('button');
-        buttonDec.innerText = '-';
-        buttonDec.addEventListener('click', () => {
-            this.cartController.changeQuantityById(product.id, -1);
-            this.render();
-        });
+
+        const buttonInc = this.createChangeQuantityButton('+', 1, product.id);
+        const buttonDec = this.createChangeQuantityButton('-', -1, product.id);
+
         incDecControl.prepend(buttonInc);
         incDecControl.append(buttonDec);
         const amountControl = createDiv('amount-control');
         amountControl.innerText = ` €${product.price.toFixed(2)} `;
         itemControl.append(stockControl, incDecControl, amountControl);
         return itemControl;
+    }
+
+    private createChangeQuantityButton(text: string, step: number, id: number): HTMLButtonElement {
+        const button = document.createElement('button');
+        button.innerText = text;
+        button.addEventListener('click', () => {
+            this.cartController.changeQuantityById(id, step);
+            this.render();
+        });
+
+        return button;
     }
 
     private createItemTitle(product: IProduct): HTMLElement {
