@@ -83,16 +83,26 @@ export class CartPage extends Page {
         const title = createDiv('title-and-page-control');
         const titleName = document.createElement('h2');
         titleName.innerText = 'Products In Cart';
+
         const pageControl = createDiv('page-control');
+
+        const limit = this.createLimitInput();
+
+        const pageNumbers = this.createPageNumbers();
+        pageControl.append(limit, pageNumbers);
+
+        title.append(titleName, pageControl);
+        return title;
+    }
+
+    private createLimitInput() {
         const limit = createDiv('limit');
         limit.innerText = ' ITEMS: ';
         const limitInput = document.createElement('input');
         limitInput.value = '3';
         limit.append(limitInput);
-        const pageNumbers = this.createPageNumbers();
-        pageControl.append(limit, pageNumbers);
-        title.append(titleName, pageControl);
-        return title;
+
+        return limit;
     }
 
     private createItemInfoBlock(product: IProduct): HTMLElement {
