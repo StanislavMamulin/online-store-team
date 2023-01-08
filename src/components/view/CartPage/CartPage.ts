@@ -157,14 +157,27 @@ export class CartPage extends Page {
     private createPageNumbers(): HTMLElement {
         const pageNumbers = createDiv('page-numbers');
         pageNumbers.innerText = ' PAGE: ';
-        const buttonBack = document.createElement('button');
-        buttonBack.innerText = ' < ';
+
+        const buttonBack = this.createChangePageButton(' < ', -1);
+
         const numberPage = document.createElement('span');
-        numberPage.innerText = '1'; // will be changed
-        const buttonForward = document.createElement('button');
-        buttonForward.innerText = ' > ';
+        numberPage.innerText = String(this.cartController.currentCartPage);
+
+        const buttonForward = this.createChangePageButton(' > ', 1);
+
         pageNumbers.append(buttonBack, numberPage, buttonForward);
         return pageNumbers;
+    }
+
+    private createChangePageButton(text: string, step: number) {
+        const button = document.createElement('button');
+        button.innerText = text;
+        button.addEventListener('click', () => {
+            this.cartController.incDecPageNumberBy(step);
+            this.render();
+        });
+
+        return button;
     }
 
     private orderDoneHandler(): void {

@@ -191,4 +191,18 @@ export class CartController {
 
         return resultProducts;
     }
+
+    public get currentCartPage(): number {
+        return this.currentPage;
+    }
+
+    public incDecPageNumberBy(step: number) {
+        const newPage = this.currentPage + step;
+
+        if (newPage < 1 || newPage > this.totalPage) {
+            return;
+        }
+
+        this.currentPage = newPage;
+    }
 }
