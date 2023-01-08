@@ -142,7 +142,7 @@ export class CartPage extends Page {
         incDecControl.prepend(buttonInc);
         incDecControl.append(buttonDec);
         const amountControl = createDiv('amount-control');
-        amountControl.innerText = ` €${product.price.toFixed(2)} `;
+        amountControl.innerText = ` €${(product.price * products.length).toFixed(2)} `;
         itemControl.append(stockControl, incDecControl, amountControl);
         return itemControl;
     }
