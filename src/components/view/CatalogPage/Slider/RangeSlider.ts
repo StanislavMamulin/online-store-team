@@ -45,4 +45,8 @@ export class RangeSlider {
     public addHandler(onChange: (values: SliderValues) => void): void {
         this.sliderElement.noUiSlider?.on('slide', onChange);
     }
+
+    public disableSlider(): void {
+        this.sliderElement.setAttribute('disabled', 'true');
+    }
 }

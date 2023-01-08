@@ -546,9 +546,11 @@ export class CatalogPage extends Page {
             if (field !== filter) {
                 const values = this.productsController.getAllValuesFromField(field, true) as Set<number>;
                 const [minValue, maxValue] = getMinAndMaxNumberFromArray(Array.from(values));
-                console.log(minValue, maxValue);
 
                 const slider: RangeSlider | undefined = field === 'price' ? this.priceSlider : this.stockSlider;
+                if (!isFinite(minValue) || !isFinite(maxValue)) {
+                    slider?.disableSlider();
+                }
                 slider?.setValues(minValue, maxValue);
 
                 const minTextEl = document.querySelector(`.${field}-min-value`);
