@@ -47,25 +47,36 @@ export class CartPage extends Page {
         const productsBlock = createDiv('products-in-cart');
         const title = this.createCartProductsTitle();
         const items = createDiv('cart-items');
-        let ind = 0;
-        for (const key of this.cartController.getAllProducts().keys()) {
-            const products = this.cartController.getAllProducts().get(key);
-            if (products) {
+
+        let ind = this.cartController.startIndexForCurrentPage;
+        const partOfProducts: Map<number, IProduct[]> | null = this.cartController.getProductsForPage();
+        if (partOfProducts) {
+            for (const products of partOfProducts.values()) {
                 const product = products[0];
-                const itemWrapper = createDiv('cart-item-wrapper');
-                const item = createDiv('cart-item');
-                const itemIndex = createDiv('item-index');
-                ind++;
-                itemIndex.innerText = `${ind}`;
-                const itemInfo = this.createItemInfoBlock(product);
-                const itemControl = this.createItemAdditionBlock(product, products);
-                item.append(itemIndex, itemInfo, itemControl);
-                itemWrapper.append(item);
-                items.append(itemWrapper);
+                const item = this.createProductInfo(ind, product, products);
+                items.append(item);
+                ind += 1;
             }
         }
+
         productsBlock.append(title, items);
+
         return productsBlock;
+    }
+
+    private createProductInfo(ind: number, product: IProduct, products: IProduct[]) {
+        const itemWrapper = createDiv('cart-item-wrapper');
+        const item = createDiv('cart-item');
+
+        const itemIndex = createDiv('item-index');
+        itemIndex.innerText = `${ind}`;
+        const itemInfo = this.createItemInfoBlock(product);
+        const itemControl = this.createItemAdditionBlock(product, products);
+
+        item.append(itemIndex, itemInfo, itemControl);
+        itemWrapper.append(item);
+
+        return itemWrapper;
     }
 
     private createCartProductsTitle(): HTMLElement {

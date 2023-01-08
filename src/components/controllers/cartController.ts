@@ -2,7 +2,7 @@ import { IProduct } from '../types';
 import { Header } from '../view/Header/Header';
 
 const INIT_SHOWED_ON_PAGE = 3;
-const INIT_CURRENT_PAGE = 0;
+const INIT_CURRENT_PAGE = 1;
 
 export class CartController {
     private cart: Map<number, IProduct[]> = new Map();
@@ -159,6 +159,10 @@ export class CartController {
         return Math.ceil(this.cart.size / this.showedOnPage);
     }
 
+    public get startIndexForCurrentPage(): number {
+        return (this.currentPage - 1) * this.showedOnPage + 1;
+    }
+
     private getIdsForPage(page: number): number[] {
         const idsInCart: number[] = [...this.cart.keys()];
 
@@ -170,7 +174,7 @@ export class CartController {
         return neededProductsIDs;
     }
 
-    public getProductsForPage(page: number): Map<number, IProduct[]> | null {
+    public getProductsForPage(page: number = this.currentPage): Map<number, IProduct[]> | null {
         if (page > this.totalPage) {
             return null;
         }
