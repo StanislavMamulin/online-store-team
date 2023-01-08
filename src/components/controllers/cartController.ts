@@ -70,6 +70,7 @@ export class CartController {
 
             if (newQuantity <= 0) {
                 this.cart.delete(id); // delete the product
+                this.actualizeCurrentPage();
             } else {
                 // change the quantity
                 if (quantity > 0) {
@@ -102,6 +103,7 @@ export class CartController {
         if (productItemsInCart) {
             this.quantityHasChangedByPcs(-productItemsInCart.length, productItemsInCart[0]);
             this.cart.delete(id);
+            this.actualizeCurrentPage();
         }
         this.cartDidUpdate();
     }
@@ -216,5 +218,12 @@ export class CartController {
         }
 
         this.showedOnPage = newLimit;
+        this.actualizeCurrentPage();
+    }
+
+    private actualizeCurrentPage(): void {
+        if (this.currentPage > this.totalPage) {
+            this.currentPage = this.totalPage;
+        }
     }
 }
