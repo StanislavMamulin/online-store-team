@@ -560,7 +560,7 @@ export class CatalogPage extends Page {
                     this.setSliderTextValue(maxTextEl, field, maxValue);
                 }
 
-                if (filter !== this.RESET_FILTER_FLAG) {
+                if (filter !== this.RESET_FILTER_FLAG && isFinite(minValue) && isFinite(maxValue)) {
                     setUrlParameter(field, [minValue, maxValue]);
                 }
             }
