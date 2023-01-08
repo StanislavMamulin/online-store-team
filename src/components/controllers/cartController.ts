@@ -227,7 +227,7 @@ export class CartController {
     }
 
     private actualizeCurrentPage(): void {
-        if (this.currentPage > this.totalPage) {
+        if (this.currentPage > this.totalPage && this.totalPage !== 0) {
             this.currentPage = this.totalPage;
             setUrlParameter('page', String(this.currentPage));
         }
