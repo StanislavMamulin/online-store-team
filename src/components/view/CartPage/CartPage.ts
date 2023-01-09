@@ -3,7 +3,7 @@ import { CartController } from '../../controllers/cartController';
 import { createDiv } from '../../../helpers/createHTMLElements';
 import { IProduct } from '../../types';
 import { ModalWindow } from '../ModalWindow/ModalWindow';
-import { PageIds } from '../../../helpers/constants';
+import { PageIds, PromoCodes } from '../../../helpers/constants';
 
 export class CartPage extends Page {
     private instanceOfModalWindow: ModalWindow = new ModalWindow();
@@ -173,30 +173,52 @@ export class CartPage extends Page {
         totalTitle.innerText = 'Summary';
         const totalAmount = this.createTotalAmount();
         const totalPrices = this.createTotalPrices();
-        const { promoCode, promoCodeExample: promoEx } = this.createPromoCodes();
+        const newPrices = this.createNewTotalPrices();
+        const { promoCode, promoCodesBlock, promoCodeExample: promoEx } = this.createPromoCodes();
         const buyButton = document.createElement('button');
         buyButton.innerText = 'BUY NOW';
         buyButton.addEventListener('click', () => {
             this.modalWindowEl = this.instanceOfModalWindow.createModalWindow(this.submitDoneHandler.bind(this));
             this.el.append(this.modalWindowEl);
         });
-        total.append(totalTitle, totalAmount, totalPrices, promoCode, promoEx, buyButton);
+        const appliedPromoCodes = this.createAppliedPromoCodesBlock();
+        total.append(
+            totalTitle,
+            totalAmount,
+            totalPrices,
+            appliedPromoCodes,
+            promoCode,
+            promoCodesBlock,
+            promoEx,
+            buyButton
+        );
+        if (this.cartController.checkPromoCodes()) {
+            totalPrices.style.textDecoration = 'line-through';
+            totalPrices.after(newPrices);
+        }
         return total;
     }
 
     private createPromoCodes(): {
         promoCode: HTMLElement;
+        promoCodesBlock: HTMLElement;
         promoCodeExample: HTMLElement;
     } {
         const promoCode = createDiv('promo-code');
         const promoCodeInput = document.createElement('input');
         promoCodeInput.type = 'search';
-        const correctPromoCode = this.createCorrectPromoCodesResponse();
+        const promoCodesBlock = createDiv('promo-codes');
+        const RSPromoCode = this.createCorrectPromoCodesResponse('RS');
+        const EPMPromoCode = this.createCorrectPromoCodesResponse('EPM');
         promoCodeInput.addEventListener('input', () => {
-            if (promoCodeInput.value === 'RS' || promoCodeInput.value === 'EPM') {
-                promoCode.after(correctPromoCode);
-            } else {
-                correctPromoCode.remove();
+            promoCodesBlock.innerHTML = '';
+            const addBtn = this.createaddPromoBtn(promoCodeInput.value);
+            if (promoCodeInput.value === 'RS') {
+                RSPromoCode.append(addBtn);
+                promoCodesBlock.append(RSPromoCode);
+            } else if (promoCodeInput.value === 'EPM') {
+                EPMPromoCode.append(addBtn);
+                promoCodesBlock.append(EPMPromoCode);
             }
         });
         promoCodeInput.placeholder = 'Enter promo code';
@@ -204,16 +226,63 @@ export class CartPage extends Page {
         const promoEx = document.createElement('span');
         promoEx.className = 'promo-ex';
         promoEx.innerText = `Promo for test: 'RS', 'EPM'`;
-        return { promoCode, promoCodeExample: promoEx };
+        return { promoCode, promoCodesBlock, promoCodeExample: promoEx };
     }
 
-    private createCorrectPromoCodesResponse(): HTMLElement {
+    private createCorrectPromoCodesResponse(value: string): HTMLElement {
         const response = createDiv('res-promo');
-        response.innerText = 'Rolling Scopes School - 10% ';
-        const responseValue = document.createElement('span');
-        responseValue.innerText = 'ADD';
-        response.append(responseValue);
+        if (value === 'RS') {
+            response.innerText = `${PromoCodes.RS} - 10% `;
+        } else if (value === 'EPM') {
+            response.innerText = `${PromoCodes.EPM} - 10% `;
+        }
         return response;
+    }
+
+    private createaddPromoBtn(value: string) {
+        const btn = document.createElement('span');
+        btn.innerText = 'ADD';
+        btn.addEventListener('click', () => {
+            if (this.cartController.noPromoCode(value)) {
+                this.cartController.addPromoCode(value);
+                this.render();
+            }
+        });
+        if (this.cartController.noPromoCode(value)) {
+            btn.style.display = 'inline-block';
+        } else {
+            btn.style.display = 'none';
+        }
+        return btn;
+    }
+
+    private createDeletePromoBtn(value: string) {
+        const btn = document.createElement('span');
+        btn.innerText = 'DROP';
+        btn.addEventListener('click', () => {
+            this.cartController.deletePromoCode(value);
+            this.render();
+        });
+        return btn;
+    }
+
+    private createAppliedPromoCodesBlock() {
+        const block = createDiv('appl-codes');
+        const title = document.createElement('h3');
+        title.innerText = 'Applied codes';
+        block.append(title);
+        for (let i = 0; i < this.cartController.promoCodes.length; i++) {
+            const promoCode = this.createCorrectPromoCodesResponse(this.cartController.promoCodes[i]);
+            const deleteBtn = this.createDeletePromoBtn(this.cartController.promoCodes[i]);
+            promoCode.append(deleteBtn);
+            block.append(promoCode);
+        }
+        if (this.cartController.checkPromoCodes()) {
+            block.style.display = 'block';
+        } else {
+            block.style.display = 'none';
+        }
+        return block;
     }
 
     private createTotalPrices(): HTMLElement {
@@ -223,6 +292,13 @@ export class CartPage extends Page {
         totalPricesSpan.innerText = 'Total:';
         totalPrices.prepend(totalPricesSpan);
         return totalPrices;
+    }
+
+    private createNewTotalPrices() {
+        const newPrices = this.createTotalPrices();
+        const substr = newPrices.innerHTML.split('€')[1];
+        newPrices.innerHTML = newPrices.innerHTML.replace(substr, `${this.cartController.getNewPrice().toFixed(2)} `);
+        return newPrices;
     }
 
     private createTotalAmount(): HTMLElement {

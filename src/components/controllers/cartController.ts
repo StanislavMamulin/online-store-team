@@ -5,11 +5,42 @@ export class CartController {
     private cart: Map<number, IProduct[]> = new Map();
     private moneyAmount: number;
     private totalProducts: number;
+    promoCodes: string[];
 
     constructor(private header: Header) {
         this.moneyAmount = 0;
         this.totalProducts = 0;
         this.loadCartStateFromLocalStorage();
+        this.promoCodes = [];
+    }
+
+    addPromoCode(value: string): void {
+        this.promoCodes.push(value);
+    }
+
+    deletePromoCode(value: string): void {
+        const ind = this.promoCodes.indexOf(value);
+        this.promoCodes.splice(ind, 1);
+    }
+
+    checkPromoCodes(): boolean {
+        return this.promoCodes.length !== 0;
+    }
+
+    noPromoCode(value: string): boolean {
+        const ind = this.promoCodes.indexOf(value);
+        return ind === -1;
+    }
+
+    getNewPrice() {
+        let count = this.promoCodes.length;
+        const dec = this.moneyAmount / 10;
+        let newPrice = this.moneyAmount;
+        while (count) {
+            newPrice -= dec;
+            count--;
+        }
+        return newPrice;
     }
 
     getProductId(product: IProduct): number {
