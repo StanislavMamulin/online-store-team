@@ -13,6 +13,8 @@ import './components/view/ModalWindow/modal.css';
 import { CartController } from './components/controllers/cartController';
 import { Header } from './components/view/Header/Header';
 import { getLastSubstring } from './helpers/routeHelper';
+import './assets/images/rs_school_js.svg';
+import './index.css';
 
 class App {
     private static productsController = new ProductsController();

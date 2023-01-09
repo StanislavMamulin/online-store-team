@@ -1,0 +1,41 @@
+.footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.rsschool-link {
+    background-color: wheat;
+    border-radius: 5px;
+    margin: 4px;
+}
+
+.rsschool-logo {
+    width: 100px;
+    padding: 8px;
+}
+
+.authors {
+    margin-top: 4px;
+    /* margin-bottom: 4px; */
+    list-style: none;
+}
+
+.author {
+    padding-bottom: 8px;
+}
+
+.author__link {
+    font-size: 18px;
+    text-decoration: underline;
+    margin-bottom: 14px;
+}
+
+.gh-logo {
+    height: 15px;
+    width: 15px;
+    margin-right: 4px;
+}
+
+.footer__text {
+    font-size: 16px;
+}
