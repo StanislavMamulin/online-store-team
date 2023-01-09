@@ -298,7 +298,7 @@ export class CatalogPage extends Page {
 
         const div = document.createElement('div');
         const cardWrapper = createDiv('card-wrapper');
-        // cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
+        cardWrapper.style.background = `url("${obj.thumbnail}") 0% 0% / cover`;
         const cardButtons = this.createCardButtons(obj);
         const cardText = createDiv('card-text');
         const cardTitle = createDiv('card-title');
