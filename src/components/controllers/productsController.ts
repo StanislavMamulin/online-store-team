@@ -5,8 +5,8 @@ import { productsCollection } from '../products';
 import { IProduct } from '../types';
 
 export enum SortDirection {
-    asc = 'ASC',
-    desc = 'DESC',
+    asc = 'asc',
+    desc = 'desc',
 }
 
 export type FilterRange = [number, number];
@@ -110,11 +110,34 @@ export class ProductsController {
     private filterByStock = (product: IProduct): boolean => isNumberInRange(product.stock, this.stockRange);
 
     private filterProducts() {
-        this.filteredProducts = Array(...this.products);
+        let filteredProducts: IProduct[] = productsCollection;
+
+        filteredProducts = this.getFilteredProducts(filteredProducts);
+
+        if (this.searchString) {
+            filteredProducts = this.searchInProducts(this.searchString, filteredProducts);
+        }
+
+        this.filteredProducts = filteredProducts;
+
+        if (this.sort) {
+            const [typeOfSort, direction] = this.sort.split('-');
+            if (direction.toLowerCase() === SortDirection.asc) {
+                this.sortAsc(typeOfSort);
+            } else {
+                this.sortDesc(typeOfSort);
+            }
+        }
+    }
+
+    private getFilteredProducts(products: IProduct[]) {
+        let filteredProducts = products;
 
         for (const filterFunc of this.allFilters.values()) {
-            this.filteredProducts = this.filteredProducts.filter(filterFunc);
+            filteredProducts = filteredProducts.filter(filterFunc);
         }
+
+        return filteredProducts;
     }
 
     getAllValuesFromField(field: string, filtered = false): Set<number | string> {
@@ -147,20 +170,25 @@ export class ProductsController {
     }
 
     searchProduct(searchRequest: string) {
-        this.filteredProducts = Array(...this.products);
+        this.searchString = searchRequest;
         this.filterProducts();
+    }
 
-        this.filteredProducts = this.filteredProducts.filter((product) => {
+    private searchInProducts(searchRequest: string, products: IProduct[]) {
+        let filteredProducts: IProduct[] = products;
+
+        filteredProducts = filteredProducts.filter((product) => {
             // skip unnecessary fields
             const excludeField = new Set(['id', 'thumbnail', 'images']);
             const searchableFields = { ...Object.entries(product).filter((e) => !excludeField.has(e[0])) };
 
             // array of all product values
-            const productValues = Object.values(searchableFields).map((value) => String(value).toLowerCase());
+            const productValues: string[] = Object.values(searchableFields).map((value) => String(value).toLowerCase());
 
-            return productValues.some((value) => value.includes(searchRequest.toLowerCase()));
+            return productValues.some((value: string) => value.includes(searchRequest.toLowerCase()));
         });
-        this.searchString = searchRequest;
+
+        return filteredProducts;
     }
 
     private applyFiltersFromQueryString(): void {
@@ -178,7 +206,7 @@ export class ProductsController {
             } else if (filterName === 'sort') {
                 this.sort = value;
                 const [typeOfSort, direction] = value.split('-');
-                if (direction === SortDirection.asc) {
+                if (direction.toLowerCase() === SortDirection.asc) {
                     this.sortAsc(typeOfSort);
                 } else {
                     this.sortDesc(typeOfSort);
