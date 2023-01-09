@@ -1,6 +1,6 @@
 import { getMinAndMaxNumberFromArray, loweredArrayValues, toggleValueInArray } from '../../helpers/arrayHelpers';
 import { isNumberInRange, isStringInArray } from '../../helpers/checkers';
-import { AND_SYMBOL, FiltersFromQuery, getFiltersFromQuery, setUrlParameter } from '../../helpers/routeHelper';
+import { AND_SYMBOL, ParametersFromQuery, getParametersFromQuery, setUrlParameter } from '../../helpers/routeHelper';
 import { productsCollection } from '../products';
 import { IProduct } from '../types';
 
@@ -164,7 +164,7 @@ export class ProductsController {
     }
 
     private applyFiltersFromQueryString(): void {
-        const filtersObject: FiltersFromQuery = getFiltersFromQuery();
+        const filtersObject: ParametersFromQuery = getParametersFromQuery();
 
         for (const [filterName, value] of Object.entries(filtersObject)) {
             if (filterName === 'category' || filterName === 'brand') {

@@ -42,10 +42,14 @@ export class CatalogPage extends Page {
     }
 
     private setSliderTextValue(slider: HTMLElement, type: string, value: number): void {
-        if (type === 'price') {
-            slider.innerText = `€${String(value.toFixed(2))}`;
+        if (isFinite(value)) {
+            if (type === 'price') {
+                slider.innerText = `€${String(value.toFixed(2))}`;
+            } else {
+                slider.innerText = String(value);
+            }
         } else {
-            slider.innerText = String(value);
+            slider.innerText = 'Not found';
         }
     }
 
@@ -544,6 +548,9 @@ export class CatalogPage extends Page {
                 const [minValue, maxValue] = getMinAndMaxNumberFromArray(Array.from(values));
 
                 const slider: RangeSlider | undefined = field === 'price' ? this.priceSlider : this.stockSlider;
+                if (!isFinite(minValue) || !isFinite(maxValue)) {
+                    slider?.disableSlider();
+                }
                 slider?.setValues(minValue, maxValue);
 
                 const minTextEl = document.querySelector(`.${field}-min-value`);
@@ -553,7 +560,7 @@ export class CatalogPage extends Page {
                     this.setSliderTextValue(maxTextEl, field, maxValue);
                 }
 
-                if (filter !== this.RESET_FILTER_FLAG) {
+                if (filter !== this.RESET_FILTER_FLAG && isFinite(minValue) && isFinite(maxValue)) {
                     setUrlParameter(field, [minValue, maxValue]);
                 }
             }

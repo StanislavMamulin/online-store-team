@@ -47,41 +47,71 @@ export class CartPage extends Page {
         const productsBlock = createDiv('products-in-cart');
         const title = this.createCartProductsTitle();
         const items = createDiv('cart-items');
-        let ind = 0;
-        for (const key of this.cartController.getAllProducts().keys()) {
-            const products = this.cartController.getAllProducts().get(key);
-            if (products) {
+
+        let ind = this.cartController.startIndexForCurrentPage;
+        const partOfProducts: Map<number, IProduct[]> | null = this.cartController.getProductsForPage();
+        if (partOfProducts) {
+            for (const products of partOfProducts.values()) {
                 const product = products[0];
-                const itemWrapper = createDiv('cart-item-wrapper');
-                const item = createDiv('cart-item');
-                const itemIndex = createDiv('item-index');
-                ind++;
-                itemIndex.innerText = `${ind}`;
-                const itemInfo = this.createItemInfoBlock(product);
-                const itemControl = this.createItemAdditionBlock(product, products);
-                item.append(itemIndex, itemInfo, itemControl);
-                itemWrapper.append(item);
-                items.append(itemWrapper);
+                const item = this.createProductInfo(ind, product, products);
+                items.append(item);
+                ind += 1;
             }
         }
+
         productsBlock.append(title, items);
+
         return productsBlock;
+    }
+
+    private createProductInfo(ind: number, product: IProduct, products: IProduct[]) {
+        const itemWrapper = createDiv('cart-item-wrapper');
+        const item = createDiv('cart-item');
+
+        const itemIndex = createDiv('item-index');
+        itemIndex.innerText = `${ind}`;
+        const itemInfo = this.createItemInfoBlock(product);
+        const itemControl = this.createItemAdditionBlock(product, products);
+
+        item.append(itemIndex, itemInfo, itemControl);
+        itemWrapper.append(item);
+
+        return itemWrapper;
     }
 
     private createCartProductsTitle(): HTMLElement {
         const title = createDiv('title-and-page-control');
         const titleName = document.createElement('h2');
         titleName.innerText = 'Products In Cart';
+
         const pageControl = createDiv('page-control');
-        const limit = createDiv('limit');
-        limit.innerText = ' ITEMS: ';
-        const limitInput = document.createElement('input');
-        limitInput.value = '3';
-        limit.append(limitInput);
+
+        const limit = this.createLimitInput();
+
         const pageNumbers = this.createPageNumbers();
         pageControl.append(limit, pageNumbers);
+
         title.append(titleName, pageControl);
         return title;
+    }
+
+    private createLimitInput() {
+        const limit = createDiv('limit');
+        limit.innerText = ' ITEMS: ';
+
+        const limitInput = document.createElement('input');
+        limitInput.type = 'number';
+        limitInput.value = String(this.cartController.productLimitPerPage);
+        limitInput.addEventListener('change', (ev) => {
+            if (ev.target instanceof HTMLInputElement) {
+                this.cartController.productLimitPerPage = Number(ev.target.value);
+                this.render();
+            }
+        });
+
+        limit.append(limitInput);
+
+        return limit;
     }
 
     private createItemInfoBlock(product: IProduct): HTMLElement {
@@ -105,24 +135,27 @@ export class CartPage extends Page {
         stockControl.innerText = ` Stock: ${product.stock} `;
         const incDecControl = createDiv('incDec-control');
         incDecControl.innerText = ` ${products.length} `;
-        const buttonInc = document.createElement('button');
-        buttonInc.innerText = '+';
-        buttonInc.addEventListener('click', () => {
-            this.cartController.changeQuantityById(product.id, 1);
-            this.render();
-        });
-        const buttonDec = document.createElement('button');
-        buttonDec.innerText = '-';
-        buttonDec.addEventListener('click', () => {
-            this.cartController.changeQuantityById(product.id, -1);
-            this.render();
-        });
+
+        const buttonInc = this.createChangeQuantityButton('+', 1, product.id);
+        const buttonDec = this.createChangeQuantityButton('-', -1, product.id);
+
         incDecControl.prepend(buttonInc);
         incDecControl.append(buttonDec);
         const amountControl = createDiv('amount-control');
-        amountControl.innerText = ` €${product.price.toFixed(2)} `;
+        amountControl.innerText = ` €${(product.price * products.length).toFixed(2)} `;
         itemControl.append(stockControl, incDecControl, amountControl);
         return itemControl;
+    }
+
+    private createChangeQuantityButton(text: string, step: number, id: number): HTMLButtonElement {
+        const button = document.createElement('button');
+        button.innerText = text;
+        button.addEventListener('click', () => {
+            this.cartController.changeQuantityById(id, step);
+            this.render();
+        });
+
+        return button;
     }
 
     private createItemTitle(product: IProduct): HTMLElement {
@@ -146,14 +179,27 @@ export class CartPage extends Page {
     private createPageNumbers(): HTMLElement {
         const pageNumbers = createDiv('page-numbers');
         pageNumbers.innerText = ' PAGE: ';
-        const buttonBack = document.createElement('button');
-        buttonBack.innerText = ' < ';
+
+        const buttonBack = this.createChangePageButton(' < ', -1);
+
         const numberPage = document.createElement('span');
-        numberPage.innerText = '1'; // will be changed
-        const buttonForward = document.createElement('button');
-        buttonForward.innerText = ' > ';
+        numberPage.innerText = String(this.cartController.currentCartPage);
+
+        const buttonForward = this.createChangePageButton(' > ', 1);
+
         pageNumbers.append(buttonBack, numberPage, buttonForward);
         return pageNumbers;
+    }
+
+    private createChangePageButton(text: string, step: number) {
+        const button = document.createElement('button');
+        button.innerText = text;
+        button.addEventListener('click', () => {
+            this.cartController.incDecPageNumberBy(step);
+            this.render();
+        });
+
+        return button;
     }
 
     private orderDoneHandler(): void {

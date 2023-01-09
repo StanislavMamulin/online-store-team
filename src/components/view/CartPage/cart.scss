@@ -4,6 +4,7 @@
     padding: 2%;
     display: flex;
     justify-content: center;
+
     .wrapper {
         width: 100%;
         display: flex;
@@ -25,6 +26,7 @@
     width: 95%;
     display: flex;
     justify-content: space-between;
+
     .products-in-cart {
         width: 69%;
         border: 1px solid orange;
@@ -33,6 +35,7 @@
         background-color: rgba(30, 27, 27, 0.6);
         height: -moz-fit-content;
         height: fit-content;
+
         .title-and-page-control {
             display: flex;
             background-color: #181a1c;
@@ -40,17 +43,21 @@
             border-bottom: 1px solid orange;
             align-items: center;
             justify-content: space-between;
+
             h2 {
                 font-size: 130%;
             }
+
             .page-control {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+
                 .limit {
                     color: wheat;
+
                     input {
-                        width: 2rem;
+                        width: 3rem;
                         text-align: center;
                         outline: none;
                         border: 1px solid orange;
@@ -60,9 +67,11 @@
                         color: orange;
                     }
                 }
+
                 .page-numbers {
                     margin-left: 2rem;
                     color: wheat;
+
                     button {
                         background-color: #373636;
                         cursor: pointer;
@@ -71,6 +80,7 @@
                         padding: 0.1rem;
                         font-size: 140%;
                     }
+
                     span {
                         font-size: 140%;
                         margin: 0 0.5rem;
@@ -78,18 +88,22 @@
                 }
             }
         }
+
         .cart-items {
             width: 100%;
+
             .cart-item-wrapper {
                 width: 100%;
                 display: block;
                 padding: 0.5%;
                 border-bottom: 1px solid orange;
+
                 .cart-item {
                     display: flex;
                     align-items: center;
                     justify-content: space-around;
                     height: 5rem;
+
                     .item-index {
                         width: 3%;
                         text-align: center;
@@ -97,22 +111,26 @@
                         border-radius: 5rem;
                         background-color: #181a1c;
                     }
+
                     .item-info {
                         width: 75%;
                         height: 100%;
                         display: flex;
                         align-items: center;
                         cursor: pointer;
+
                         img {
                             width: 20%;
                             height: 100%;
                             border-radius: 0.5rem;
                             border: 0.2px solid orange;
                         }
+
                         .item-detail-p {
                             width: 80%;
                             height: 100%;
                             padding: 1%;
+
                             .item-title {
                                 width: 100%;
                                 display: flex;
@@ -121,22 +139,26 @@
                                 text-shadow: 0 0 5px rgb(88, 68, 68), 0 0 2px rgb(88, 19, 19), 0 0 3px rgb(164, 45, 45),
                                     0 0 5px rgb(150, 33, 33);
                                 border-bottom: 1px solid wheat;
+
                                 h3 {
                                     color: wheat;
                                     padding-bottom: 1%;
                                 }
                             }
+
                             .item-description {
                                 padding-top: 1%;
                                 color: wheat;
                                 font-size: 80%;
                                 text-align: center;
                             }
+
                             .item-other {
                                 padding-top: 1%;
                                 display: flex;
                                 align-items: end;
                                 justify-content: space-around;
+
                                 .item-rating,
                                 .item-discount {
                                     color: #d2b06f;
@@ -145,8 +167,10 @@
                             }
                         }
                     }
+
                     .item-control {
                         width: 15%;
+
                         .stock-control,
                         .amount-control {
                             display: flex;
@@ -155,11 +179,13 @@
                             justify-content: center;
                             margin: 7%;
                         }
+
                         .incDec-control {
                             display: flex;
                             align-items: center;
                             justify-content: space-between;
                             font-size: 150%;
+
                             button {
                                 width: 2rem;
                                 height: 2rem;
@@ -179,6 +205,7 @@
             }
         }
     }
+
     .total-cart {
         width: 29%;
         border: 1px solid orange;
@@ -187,6 +214,7 @@
         background-color: rgba(30, 27, 27, 0.6);
         height: -moz-fit-content;
         height: fit-content;
+
         h2 {
             text-align: center;
             font-size: 130%;
@@ -194,20 +222,24 @@
             padding: 0.3rem;
             border-bottom: 1px solid orange;
         }
+
         .total-price {
             width: 90%;
             font-size: 170%;
             color: wheat;
             text-align: center;
             margin: 4%;
+
             span {
                 font-size: 90%;
             }
         }
+
         .promo-code {
             display: flex;
             align-items: center;
             justify-content: center;
+
             input {
                 background-color: #181a1c;
                 width: 70%;
@@ -220,10 +252,12 @@
                 font-size: 100%;
             }
         }
+
         .res-promo {
             text-align: center;
             color: wheat;
             margin-top: 3%;
+
             span {
                 color: wheat;
                 background-color: #181a1c;
@@ -234,6 +268,7 @@
                 font-size: 90%;
             }
         }
+
         .promo-ex {
             display: block;
             margin: 3% auto;
@@ -241,6 +276,7 @@
             color: #e38383;
             font-size: 90%;
         }
+
         button {
             font-size: 100%;
             display: block;
