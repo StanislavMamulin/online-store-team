@@ -155,6 +155,9 @@ export class ProductPage extends Page {
             const buyButton = document.createElement('button');
             buyButton.innerText = 'BUY NOW';
             buyButton.addEventListener('click', () => {
+                if (this.selectedProduct && !this.cartController.isProductInCart(this.selectedProduct)) {
+                    this.cartController.addProductToCart(this.selectedProduct);
+                }
                 window.location.href = window.location.href.replace(window.location.hash.slice(1), PageIds.CartPage);
 
                 this.modalWindowEl = this.instanceOfModalWindow.createModalWindow(this.submitDoneHandler);
