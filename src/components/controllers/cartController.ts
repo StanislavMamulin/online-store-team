@@ -1,15 +1,56 @@
 import { IProduct } from '../types';
 import { Header } from '../view/Header/Header';
+import { setUrlParameter, getParametersFromQuery } from '../../helpers/routeHelper';
+
+const INIT_SHOWED_ON_PAGE = 3;
+const INIT_CURRENT_PAGE = 1;
 
 export class CartController {
     private cart: Map<number, IProduct[]> = new Map();
     private moneyAmount: number;
     private totalProducts: number;
+    promoCodes: string[];
+    private currentPage: number;
+    private showedOnPage: number;
 
     constructor(private header: Header) {
         this.moneyAmount = 0;
         this.totalProducts = 0;
         this.loadCartStateFromLocalStorage();
+        this.promoCodes = [];
+
+        this.currentPage = INIT_CURRENT_PAGE;
+        this.showedOnPage = INIT_SHOWED_ON_PAGE;
+        this.applySettingsFromQueryString();
+    }
+
+    addPromoCode(value: string): void {
+        this.promoCodes.push(value);
+    }
+
+    deletePromoCode(value: string): void {
+        const ind = this.promoCodes.indexOf(value);
+        this.promoCodes.splice(ind, 1);
+    }
+
+    checkPromoCodes(): boolean {
+        return this.promoCodes.length !== 0;
+    }
+
+    noPromoCode(value: string): boolean {
+        const ind = this.promoCodes.indexOf(value);
+        return ind === -1;
+    }
+
+    getNewPrice() {
+        let count = this.promoCodes.length;
+        const dec = this.moneyAmount / 10;
+        let newPrice = this.moneyAmount;
+        while (count) {
+            newPrice -= dec;
+            count--;
+        }
+        return newPrice;
     }
 
     getProductId(product: IProduct): number {
@@ -62,6 +103,7 @@ export class CartController {
 
             if (newQuantity <= 0) {
                 this.cart.delete(id); // delete the product
+                this.actualizeCurrentPage();
             } else {
                 // change the quantity
                 if (quantity > 0) {
@@ -94,6 +136,7 @@ export class CartController {
         if (productItemsInCart) {
             this.quantityHasChangedByPcs(-productItemsInCart.length, productItemsInCart[0]);
             this.cart.delete(id);
+            this.actualizeCurrentPage();
         }
         this.cartDidUpdate();
     }
@@ -145,5 +188,91 @@ export class CartController {
         this.totalProducts = 0;
         this.moneyAmount = 0;
         this.cartDidUpdate();
+    }
+
+    private get totalPage(): number {
+        return Math.ceil(this.cart.size / this.showedOnPage);
+    }
+
+    public get startIndexForCurrentPage(): number {
+        return (this.currentPage - 1) * this.showedOnPage + 1;
+    }
+
+    private getIdsForPage(page: number): number[] {
+        const idsInCart: number[] = [...this.cart.keys()];
+
+        const startProductOffset = (page - 1) * this.showedOnPage;
+        const endProductOffset = startProductOffset + this.showedOnPage;
+
+        const neededProductsIDs = idsInCart.slice(startProductOffset, endProductOffset);
+
+        return neededProductsIDs;
+    }
+
+    public getProductsForPage(page: number = this.currentPage): Map<number, IProduct[]> | null {
+        if (page > this.totalPage) {
+            return null;
+        }
+
+        const resultProducts: Map<number, IProduct[]> = new Map();
+
+        const neededProductsIDs = this.getIdsForPage(page);
+        neededProductsIDs.forEach((id) => {
+            const productFromCart: IProduct[] | undefined = this.cart.get(id);
+            if (productFromCart) {
+                resultProducts.set(id, productFromCart);
+            }
+        });
+
+        return resultProducts;
+    }
+
+    public get currentCartPage(): number {
+        return this.currentPage;
+    }
+
+    public incDecPageNumberBy(step: number) {
+        const newPage = this.currentPage + step;
+
+        if (newPage < 1 || newPage > this.totalPage) {
+            return;
+        }
+
+        this.currentPage = newPage;
+        setUrlParameter('page', String(this.currentPage));
+    }
+
+    public get productLimitPerPage() {
+        return this.showedOnPage;
+    }
+
+    public set productLimitPerPage(newLimit) {
+        if (newLimit < 1) {
+            return;
+        }
+
+        this.showedOnPage = newLimit;
+        this.actualizeCurrentPage();
+
+        setUrlParameter('limit', String(newLimit));
+    }
+
+    private actualizeCurrentPage(): void {
+        if (this.currentPage > this.totalPage && this.totalPage !== 0) {
+            this.currentPage = this.totalPage;
+            setUrlParameter('page', String(this.currentPage));
+        }
+    }
+
+    private applySettingsFromQueryString(): void {
+        const parametersObject = getParametersFromQuery();
+
+        for (const [parameter, value] of Object.entries(parametersObject)) {
+            if (parameter === 'limit') {
+                this.productLimitPerPage = Number(value);
+            } else if (parameter === 'page') {
+                this.currentPage = Number(value);
+            }
+        }
     }
 }

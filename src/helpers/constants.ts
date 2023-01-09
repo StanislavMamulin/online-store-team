@@ -14,3 +14,8 @@ export const enum InputPatterns {
     CardDate = '(0[1-9]|1[0-2])/[0-9]{2}',
     CardCvv = '[0-9]{3}',
 }
+
+export const enum PromoCodes {
+    RS = 'Rolling Scopes School',
+    EPM = 'EPAM Systems',
+}

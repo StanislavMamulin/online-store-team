@@ -62,7 +62,7 @@
 }
 
 .cart-wrapper .products-in-cart .title-and-page-control .page-control .limit input {
-  width: 2rem;
+  width: 3rem;
   text-align: center;
   outline: none;
   border: 1px solid orange;
@@ -289,4 +289,25 @@
   cursor: pointer;
   width: 50%;
   margin: 3rem auto 1rem;
+}
+
+.appl-codes {
+  width: 80%;
+  margin: 6% auto;
+  border: 1px solid orange;
+  border-radius: 0.3rem;
+  overflow: hidden;
+}
+
+.appl-codes h3 {
+  text-align: center;
+  background-color: #181a1c;
+  border-bottom: 1px solid orange;
+}
+
+.appl-codes .res-promo {
+  color: wheat;
+  text-align: center;
+  border-bottom: 1px solid orange;
+  padding: 2%;
 }
