@@ -117,7 +117,7 @@ export class CartPage extends Page {
     private createItemInfoBlock(product: IProduct): HTMLElement {
         const itemInfo = createDiv('item-info');
         const itemImage = document.createElement('img');
-        itemImage.src = '#'; // product.thumbnail;
+        itemImage.src = product.thumbnail;
         itemImage.alt = product.title;
         const itemDetail = createDiv('item-detail-p');
         const itemTitle = this.createItemTitle(product);
