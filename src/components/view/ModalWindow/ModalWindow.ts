@@ -51,7 +51,8 @@ export class ModalWindow {
             ev.preventDefault();
             const cardInfoErrors = this.isCardInfoHasErrors();
             const personDataErrors = this.isPersonalInfoFieldsError();
-            if (!cardInfoErrors || !personDataErrors) {
+
+            if (!cardInfoErrors && !personDataErrors) {
                 submitDoneHandler();
             }
         });
