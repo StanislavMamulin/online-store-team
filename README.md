@@ -1,5 +1,9 @@
 # Online-Store - Интернет магазин
 
+## Demo
+[Deploy](https://stanislavmamulin-online-store-team.netlify.app/)
+
+## Screenshot
 ![](https://user-images.githubusercontent.com/31639106/211273806-63fed9d2-6414-4171-9890-d50c13158d9c.png)
 
 ## Front-end part of the online store, containing:
